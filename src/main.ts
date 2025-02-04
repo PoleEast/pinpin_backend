@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
-import { GlobalExceptionFilter } from './common/filters/global_exception.filter';
+import { GlobalExceptionFilter } from './common/filters/global_exception.filter.js';
 import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
@@ -35,7 +35,12 @@ async function bootstrap() {
         .setVersion('1.0')
         .build();
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, document);
+    SwaggerModule.setup('api', app, document, {
+        swaggerOptions: {
+            defaultModelsExpandDepth: 1,
+            defaultModelExpandDepth: 1,
+        },
+    });
 
     //設定cookie
     app.use(cookieParser());

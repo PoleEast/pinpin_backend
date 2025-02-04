@@ -6,7 +6,7 @@ import {
     HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { DatabaseException } from '../exception/database.exception';
+import { DatabaseException } from '../exception/database.exception.js';
 import { ApiErrorResponseDTO } from 'pinpin_library';
 
 @Catch()

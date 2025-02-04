@@ -1,16 +1,17 @@
 import {
     Body,
     Controller,
+    Get,
     HttpCode,
     HttpStatus,
     Post,
     Res,
 } from '@nestjs/common';
-import { RegisterDto } from 'src/dtos/auth.dto';
-import { AuthService } from './auth.service';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ApiCommonResponses } from 'src/common/decorators/api_responses.decorator';
-import { ApiResponseDTO, RegisterResponseDTO } from 'pinpin_library';
+import { LoginDto, RegisterDto } from '../../dtos/auth.dto.js';
+import { AuthService } from './auth.service.js';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiCommonResponses } from '../../common/decorators/api_responses.decorator.js';
+import { ApiResponseDTO, AuthResponseDTO } from 'pinpin_library';
 import { Response } from 'express';
 
 @ApiTags('用戶')
@@ -19,6 +20,7 @@ export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
     @HttpCode(HttpStatus.CREATED)
+    @ApiOperation({ summary: '註冊用戶' })
     @ApiResponse({
         status: HttpStatus.CREATED,
         description: '註冊成功',
@@ -32,16 +34,11 @@ export class AuthController {
     async register(
         @Body() registerDto: RegisterDto,
         @Res({ passthrough: true }) response: Response,
-    ): Promise<ApiResponseDTO<RegisterResponseDTO>> {
-        const result = await this.authService.register(registerDto);
+    ): Promise<ApiResponseDTO<AuthResponseDTO>> {
+        const result = await this.authService.Register(registerDto);
 
         //設定cookie
-        response.cookie('access_token', result.token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        this.setCookie(response, result.token);
 
         return {
             statusCode: HttpStatus.CREATED,
@@ -50,5 +47,44 @@ export class AuthController {
                 nickname: result.nickname,
             },
         };
+    }
+
+    //TODO: 在library定義回傳格式
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: '登入成功',
+    })
+    @ApiCommonResponses()
+    @ApiResponse({
+        status: HttpStatus.UNAUTHORIZED,
+        description: '帳號或密碼錯誤',
+    })
+    @Get('login')
+    async Login(
+        @Body() loginDto: LoginDto,
+        @Res({ passthrough: true }) response: Response,
+    ): Promise<ApiResponseDTO<AuthResponseDTO>> {
+        const result = await this.authService.Login(loginDto);
+
+        //設定cookie
+        this.setCookie(response, result.token);
+
+        return {
+            statusCode: HttpStatus.CREATED,
+            message: '登入成功',
+            data: {
+                nickname: result.nickname,
+            },
+        };
+    }
+
+    private setCookie(response: Response, token: string) {
+        response.cookie('access_token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
     }
 }

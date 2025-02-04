@@ -4,8 +4,9 @@ import {
     JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,
+    Relation,
 } from 'typeorm';
-import { User } from './user.entity';
+import { User } from './user.entity.js';
 
 @Entity('user_profiles')
 export class UserProfile {
@@ -37,5 +38,5 @@ export class UserProfile {
 
     @OneToOne(() => User, (user) => user.profile)
     @JoinColumn({ name: 'user_id' })
-    user!: User;
+    user!: Relation<User>;
 }

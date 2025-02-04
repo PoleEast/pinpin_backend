@@ -5,8 +5,9 @@ import {
     Entity,
     OneToOne,
     PrimaryGeneratedColumn,
+    Relation,
 } from 'typeorm';
-import { UserProfile } from './user_profiles.entity';
+import { UserProfile } from './user_profiles.entity.js';
 
 @Entity('user')
 export class User {
@@ -39,5 +40,5 @@ export class User {
         cascade: true,
         eager: false,
     })
-    profile!: UserProfile;
+    profile!: Relation<UserProfile>;
 }

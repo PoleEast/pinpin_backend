@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './modules/auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module.js';
+import { fileURLToPath } from 'url';
 
 @Module({
     imports: [
@@ -20,7 +19,7 @@ import { AuthModule } from './modules/auth/auth.module';
                 username: ConfigService.get('DB_USERNAME'),
                 password: ConfigService.get('DB_PASSWORD'),
                 database: ConfigService.get('DB_DATABASE'),
-                entities: [__dirname + '/**/*.entity{.ts,.js}'],
+                entities: [fileURLToPath(import.meta.url) + '/**/*.entity{.ts,.js}'],
                 synchronize: true,
                 logging: true,
             }),
@@ -28,7 +27,5 @@ import { AuthModule } from './modules/auth/auth.module';
         }),
         AuthModule,
     ],
-    controllers: [AppController],
-    providers: [AppService],
 })
 export class AppModule {}

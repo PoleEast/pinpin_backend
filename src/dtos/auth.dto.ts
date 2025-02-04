@@ -7,12 +7,20 @@ import {
     MinLength,
 } from 'class-validator';
 import {
+    LOGIN_REQUSER_VALIDATION,
+    LoginRequestDTO,
     REGISTER_REQUSER_VALIDATION,
     RegisterRequestDTO,
 } from 'pinpin_library';
 
 class RegisterDto implements RegisterRequestDTO {
-    @ApiProperty({ description: '帳號', example: 'superman' })
+    @ApiProperty({
+        description: '帳號',
+        example: 'superman',
+        minLength: REGISTER_REQUSER_VALIDATION.ACCOUNT.MIN_LENGTH,
+        maxLength: REGISTER_REQUSER_VALIDATION.ACCOUNT.MAX_LENGTH,
+        required: true,
+    })
     @IsString()
     @IsNotEmpty()
     @MinLength(REGISTER_REQUSER_VALIDATION.ACCOUNT.MIN_LENGTH)
@@ -43,10 +51,41 @@ class RegisterDto implements RegisterRequestDTO {
     }
 }
 
+class LoginDto implements LoginRequestDTO {
+    @ApiProperty({ description: '帳號', example: 'superman' })
+    @IsString()
+    @IsNotEmpty()
+    @MinLength(LOGIN_REQUSER_VALIDATION.ACCOUNT.MIN_LENGTH)
+    @MaxLength(LOGIN_REQUSER_VALIDATION.ACCOUNT.MAX_LENGTH)
+    @Matches(LOGIN_REQUSER_VALIDATION.ACCOUNT.PATTERN, {
+        message: LOGIN_REQUSER_VALIDATION.ACCOUNT.PATTERN_MESSAGE,
+    })
+    account: string;
+
+    @ApiProperty({ description: '密碼', example: '123456' })
+    @IsString()
+    @IsNotEmpty()
+    @MinLength(LOGIN_REQUSER_VALIDATION.PASSWORD.MIN_LENGTH)
+    @MaxLength(LOGIN_REQUSER_VALIDATION.PASSWORD.MAX_LENGTH)
+    password: string;
+
+    constructor(account: string, password: string) {
+        this.account = account;
+        this.password = password;
+    }
+}
+
 interface RegisterServiceDto {
     nickname: string;
     account: string;
     token: string;
 }
 
-export type { RegisterDto, RegisterServiceDto };
+interface LoginServiceDto {
+    nickname: string;
+    account: string;
+    token: string;
+}
+
+export type { RegisterServiceDto, LoginServiceDto };
+export { RegisterDto, LoginDto };

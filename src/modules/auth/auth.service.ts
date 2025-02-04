@@ -1,19 +1,26 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { RegisterDto, RegisterServiceDto } from 'src/dtos/auth.dto';
-import { User } from 'src/entities/user.entity';
+import {
+    ConflictException,
+    Injectable,
+    UnauthorizedException,
+} from '@nestjs/common';
+import {
+    LoginDto,
+    LoginServiceDto,
+    RegisterDto,
+    RegisterServiceDto,
+} from '../../dtos/auth.dto.js';
+import { User } from '../../entities/user.entity.js';
 import * as bcrypt from 'bcrypt';
-import { UserProfile } from 'src/entities/user_profiles.entity';
+import { UserProfile } from '../../entities/user_profiles.entity.js';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, FindOneOptions, Repository, TypeORMError } from 'typeorm';
-import { DatabaseException } from 'src/common/exception/database.exception';
 import { JwtService } from '@nestjs/jwt';
+import { UserRepository } from '../../repositories/user.repository.js';
 
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
-        private dataSource: DataSource,
+        private readonly userRepository: UserRepository,
         private readonly jwtService: JwtService,
     ) {}
 
@@ -22,54 +29,51 @@ export class AuthService {
      *
      * @param registerDto 註冊資訊
      */
-    async register(registerDto: RegisterDto): Promise<RegisterServiceDto> {
+    async Register(registerDto: RegisterDto): Promise<RegisterServiceDto> {
         // 檢查帳號是否已經存在
-        const findOptions: FindOneOptions = {
-            where: { account: registerDto.account },
-        };
-        const existingUser = await this.userRepository.findOne(findOptions);
-        if (existingUser) {
+        if (await this.userRepository.FindUser(registerDto.account)) {
             throw new ConflictException('帳號已經存在');
         }
 
-        // 加密密碼
-        const hashPassword = await bcrypt.hash(registerDto.password, 10);
+        //整理使用者資料
+        const userProfile = new UserProfile();
+        userProfile.nickname = registerDto.nickname;
+
+        const user = new User();
+        user.account = registerDto.account;
+        user.password_hash = this.getHashPassword(registerDto.password);
+        user.profile = userProfile;
 
         // 建立用戶
-        const queryRunner = this.dataSource.createQueryRunner();
-        await queryRunner.connect();
-        await queryRunner.startTransaction();
+        const createdUser = await this.userRepository.CreateUser(user);
+        const registerServiceDto: RegisterServiceDto = {
+            token: this.generateToken(createdUser),
+            account: createdUser.account,
+            nickname: createdUser.profile.nickname,
+        };
 
-        try {
-            const userProfile = new UserProfile();
-            userProfile.nickname = registerDto.nickname;
+        return registerServiceDto;
+    }
 
-            const user = new User();
-            user.account = registerDto.account;
-            user.password_hash = hashPassword;
-            user.profile = userProfile;
-
-            await queryRunner.manager.save(user);
-
-            await queryRunner.commitTransaction();
-
-            const registerServiceDto: RegisterServiceDto = {
-                token: this.generateToken(user),
-                account: user.account,
-                nickname: user.profile.nickname,
-            };
-
-            return registerServiceDto;
-        } catch (error) {
-            await queryRunner.rollbackTransaction();
-            if (error instanceof TypeORMError) {
-                throw new DatabaseException('資料庫發生錯誤,請稍後再試', error);
-            } else {
-                throw error;
-            }
-        } finally {
-            await queryRunner.release();
+    async Login(loginDto: LoginDto): Promise<LoginServiceDto> {
+        const user = await this.userRepository.FindUser(loginDto.account);
+        if (!user) {
+            throw new UnauthorizedException('帳號或密碼錯誤');
         }
+
+        //比對密碼是否正確(compareSync會將第一個參數加密後和第二個參數進行比對)
+        if (!bcrypt.compareSync(loginDto.password, user.password_hash)) {
+            throw new UnauthorizedException('帳號或密碼錯誤');
+        }
+
+        //回傳token和使用者資料
+        const loginServiceDto: LoginServiceDto = {
+            token: this.generateToken(user),
+            account: user.account,
+            nickname: user.profile.nickname,
+        };
+
+        return loginServiceDto;
     }
 
     //TODO: 第二版預定實作refresh token
@@ -82,5 +86,14 @@ export class AuthService {
         const jwtToken = this.jwtService.sign(payload);
 
         return jwtToken;
+    }
+
+    /**
+     * 將密碼轉換為雜湊值
+     * @param password 明文密碼
+     * @returns 雜湊後的密碼
+     */
+    private getHashPassword(password: string): string {
+        return bcrypt.hashSync(password, 10);
     }
 }
