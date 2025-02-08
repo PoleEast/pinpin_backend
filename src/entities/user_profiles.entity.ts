@@ -1,5 +1,6 @@
 import {
     Column,
+    DeleteDateColumn,
     Entity,
     JoinColumn,
     OneToOne,
@@ -36,7 +37,14 @@ export class UserProfile {
     @Column({ type: 'nvarchar', length: 100, nullable: true })
     address?: string;
 
-    @OneToOne(() => User, (user) => user.profile)
+    @DeleteDateColumn({ type: 'datetime', nullable: true })
+    deleted_at?: Date;
+
+    @OneToOne(() => User, (user) => user.profile, {
+        cascade: true,
+        eager: false,
+    })
     @JoinColumn({ name: 'user_id' })
     user!: Relation<User>;
 }
+

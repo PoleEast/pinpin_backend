@@ -1,7 +1,7 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 
-export function ApiCommonResponses(
+function ApiCommonResponses(
     successStatusCode = HttpStatus.OK,
     successDescription = 'success',
 ) {
@@ -32,3 +32,6 @@ export function ApiCommonResponses(
         }),
     );
 }
+
+export default ApiCommonResponses;
+

@@ -4,6 +4,7 @@ import {
     ExceptionFilter,
     HttpException,
     HttpStatus,
+    Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { DatabaseException } from '../exception/database.exception.js';
@@ -11,6 +12,7 @@ import { ApiErrorResponseDTO } from 'pinpin_library';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+    private readonly logger = new Logger(GlobalExceptionFilter.name);
     catch(exception: any, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
@@ -30,8 +32,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
             errorResponse.statusCode = HttpStatus.SERVICE_UNAVAILABLE;
             errorResponse.message = exception.message || errorResponse.message;
             errorResponse.error = exception.name || errorResponse.error;
+
+            this.logger.error(exception.originalError);
         }
+
+        this.logger.debug(exception);
 
         response.status(errorResponse.statusCode).json(errorResponse);
     }
 }
+

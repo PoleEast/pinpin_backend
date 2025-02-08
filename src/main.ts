@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { GlobalExceptionFilter } from './common/filters/global_exception.filter.js';
 import cookieParser from 'cookie-parser';
+import { fileURLToPath } from 'url';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -48,3 +49,4 @@ async function bootstrap() {
     await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
+

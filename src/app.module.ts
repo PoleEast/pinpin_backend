@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 @Module({
     imports: [
@@ -19,9 +20,9 @@ import { fileURLToPath } from 'url';
                 username: ConfigService.get('DB_USERNAME'),
                 password: ConfigService.get('DB_PASSWORD'),
                 database: ConfigService.get('DB_DATABASE'),
-                entities: [fileURLToPath(import.meta.url) + '/**/*.entity{.ts,.js}'],
                 synchronize: true,
                 logging: true,
+                autoLoadEntities: true,
             }),
             inject: [ConfigService],
         }),
@@ -29,3 +30,4 @@ import { fileURLToPath } from 'url';
     ],
 })
 export class AppModule {}
+

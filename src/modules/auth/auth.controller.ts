@@ -6,13 +6,17 @@ import {
     HttpStatus,
     Post,
     Res,
+    UseGuards,
 } from '@nestjs/common';
 import { LoginDto, RegisterDto } from '../../dtos/auth.dto.js';
 import { AuthService } from './auth.service.js';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ApiCommonResponses } from '../../common/decorators/api_responses.decorator.js';
+import ApiCommonResponses from '../../common/decorators/api_responses.decorator.js';
 import { ApiResponseDTO, AuthResponseDTO } from 'pinpin_library';
 import { Response } from 'express';
+import { JwtGuard } from '../../common/guards/jwt.guard.js';
+import GetUser from '../../common/decorators/get-user.decorator.js';
+import { User } from '../../entities/user.entity.js';
 
 @ApiTags('用戶')
 @Controller('auth')
@@ -22,14 +26,10 @@ export class AuthController {
     @HttpCode(HttpStatus.CREATED)
     @ApiOperation({ summary: '註冊用戶' })
     @ApiResponse({
-        status: HttpStatus.CREATED,
-        description: '註冊成功',
-    })
-    @ApiResponse({
         status: HttpStatus.CONFLICT,
         description: '帳號已經存在',
     })
-    @ApiCommonResponses()
+    @ApiCommonResponses(HttpStatus.CREATED, '註冊成功')
     @Post('register')
     async register(
         @Body() registerDto: RegisterDto,
@@ -49,18 +49,13 @@ export class AuthController {
         };
     }
 
-    //TODO: 在library定義回傳格式
     @HttpCode(HttpStatus.OK)
-    @ApiResponse({
-        status: HttpStatus.OK,
-        description: '登入成功',
-    })
-    @ApiCommonResponses()
+    @ApiCommonResponses(HttpStatus.OK, '登入成功')
     @ApiResponse({
         status: HttpStatus.UNAUTHORIZED,
         description: '帳號或密碼錯誤',
     })
-    @Get('login')
+    @Post('login')
     async Login(
         @Body() loginDto: LoginDto,
         @Res({ passthrough: true }) response: Response,
@@ -79,6 +74,27 @@ export class AuthController {
         };
     }
 
+    @UseGuards(JwtGuard)
+    @ApiOperation({ summary: '驗證token' })
+    @ApiCommonResponses(HttpStatus.OK, '授權成功')
+    @Get('chackauth')
+    async ChackAuth(
+        @GetUser() user: User,
+    ): Promise<ApiResponseDTO<AuthResponseDTO>> {
+        return {
+            statusCode: HttpStatus.OK,
+            message: '授權成功',
+            data: {
+                nickname: user.profile.nickname,
+            },
+        };
+    }
+
+    /**
+     * 設定cookie
+     * @param response express response
+     * @param token jwt token
+     */
     private setCookie(response: Response, token: string) {
         response.cookie('access_token', token, {
             httpOnly: true,
@@ -88,3 +104,4 @@ export class AuthController {
         });
     }
 }
+

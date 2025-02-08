@@ -3,4 +3,11 @@ interface JwtConfig {
     expiresIn: string;
 }
 
-export type { JwtConfig };
+interface JwtPayload {
+    account: string;
+    nickname: string;
+    id: number;
+}
+
+export type { JwtConfig, JwtPayload };
+

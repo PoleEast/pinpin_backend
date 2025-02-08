@@ -34,11 +34,9 @@ export class User {
     is_active!: boolean;
 
     @DeleteDateColumn()
-    unactive_at?: Date;
+    deleted_at?: Date;
 
-    @OneToOne(() => UserProfile, (userProfile) => userProfile.user, {
-        cascade: true,
-        eager: false,
-    })
+    @OneToOne(() => UserProfile, (userProfile) => userProfile.user)
     profile!: Relation<UserProfile>;
 }
+

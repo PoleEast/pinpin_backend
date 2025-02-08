@@ -2,6 +2,7 @@ import {
     ConflictException,
     Injectable,
     UnauthorizedException,
+    Logger,
 } from '@nestjs/common';
 import {
     LoginDto,
@@ -11,16 +12,16 @@ import {
 } from '../../dtos/auth.dto.js';
 import { User } from '../../entities/user.entity.js';
 import * as bcrypt from 'bcrypt';
-import { UserProfile } from '../../entities/user_profiles.entity.js';
-import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { UserRepository } from '../../repositories/user.repository.js';
+import { UserRepositoryManager } from '../../repositories/user.repository.js';
+import { JwtPayload } from '../../interfaces/jwt.interface.js';
+import { userProfileRepository } from '../../repositories/userProfile.repository.js';
 
 @Injectable()
 export class AuthService {
     constructor(
-        @InjectRepository(User)
-        private readonly userRepository: UserRepository,
+        private readonly userRepositoryManager: UserRepositoryManager,
+        private readonly userprofileRepositoryManager: userProfileRepository,
         private readonly jwtService: JwtService,
     ) {}
 
@@ -31,21 +32,28 @@ export class AuthService {
      */
     async Register(registerDto: RegisterDto): Promise<RegisterServiceDto> {
         // 檢查帳號是否已經存在
-        if (await this.userRepository.FindUser(registerDto.account)) {
+        if (
+            await this.userRepositoryManager.FindOneByAccount(
+                registerDto.account,
+            )
+        ) {
             throw new ConflictException('帳號已經存在');
         }
 
         //整理使用者資料
-        const userProfile = new UserProfile();
-        userProfile.nickname = registerDto.nickname;
 
-        const user = new User();
-        user.account = registerDto.account;
-        user.password_hash = this.getHashPassword(registerDto.password);
-        user.profile = userProfile;
+        const userProfile = this.userprofileRepositoryManager.New(
+            registerDto.nickname,
+        );
+
+        const user = this.userRepositoryManager.New(
+            registerDto.account,
+            this.getHashPassword(registerDto.password),
+            userProfile,
+        );
 
         // 建立用戶
-        const createdUser = await this.userRepository.CreateUser(user);
+        const createdUser = await this.userRepositoryManager.Save(user);
         const registerServiceDto: RegisterServiceDto = {
             token: this.generateToken(createdUser),
             account: createdUser.account,
@@ -56,7 +64,10 @@ export class AuthService {
     }
 
     async Login(loginDto: LoginDto): Promise<LoginServiceDto> {
-        const user = await this.userRepository.FindUser(loginDto.account);
+        const user =
+            await this.userRepositoryManager.FindOneByAccountWithProfile(
+                loginDto.account,
+            );
         if (!user) {
             throw new UnauthorizedException('帳號或密碼錯誤');
         }
@@ -78,8 +89,9 @@ export class AuthService {
 
     //TODO: 第二版預定實作refresh token
     private generateToken(user: User): string {
-        const payload = {
-            username: user.account,
+        const payload: JwtPayload = {
+            account: user.account,
+            nickname: user.profile.nickname,
             id: user.id,
         };
 
@@ -97,3 +109,4 @@ export class AuthService {
         return bcrypt.hashSync(password, 10);
     }
 }
+
