@@ -18,10 +18,10 @@ import { userProfileRepository } from '../../repositories/userProfile.repository
         JwtModule.registerAsync({
             inject: [ConfigService],
 
-            useFactory: (ConfigService: ConfigService) => ({
-                secret: ConfigService.get('JWT_SECRET'),
+            useFactory: (configService: ConfigService) => ({
+                secret: configService.get('JWT_SECRET'),
                 signOptions: {
-                    expiresIn: ConfigService.get('JWT_EXPIRES_IN'),
+                    expiresIn: configService.get('JWT_EXPIRES_IN'),
                 },
             }),
         }),

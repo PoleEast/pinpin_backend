@@ -36,7 +36,9 @@ export class User {
     @DeleteDateColumn()
     deleted_at?: Date;
 
-    @OneToOne(() => UserProfile, (userProfile) => userProfile.user)
+    @OneToOne(() => UserProfile, (userProfile) => userProfile.user, {
+        cascade: true,
+    })
     profile!: Relation<UserProfile>;
 }
 

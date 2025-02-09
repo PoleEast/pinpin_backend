@@ -41,7 +41,6 @@ export class UserProfile {
     deleted_at?: Date;
 
     @OneToOne(() => User, (user) => user.profile, {
-        cascade: true,
         eager: false,
     })
     @JoinColumn({ name: 'user_id' })

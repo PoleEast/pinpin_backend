@@ -77,8 +77,8 @@ export class AuthController {
     @UseGuards(JwtGuard)
     @ApiOperation({ summary: '驗證token' })
     @ApiCommonResponses(HttpStatus.OK, '授權成功')
-    @Get('chackauth')
-    async ChackAuth(
+    @Get('check-auth')
+    async CheckAuth(
         @GetUser() user: User,
     ): Promise<ApiResponseDTO<AuthResponseDTO>> {
         return {

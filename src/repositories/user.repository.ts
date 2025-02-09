@@ -48,6 +48,18 @@ export class UserRepositoryManager {
         });
     }
 
+    /**
+     * 依據 id 取得一位用戶，包含profile
+     * @param id 用戶id
+     * @returns User | null
+     */
+    async FindOneByIdWithProfile(id: number): Promise<User | null> {
+        return await this.userRepository.findOne({
+            where: { id: id },
+            relations: ['profile'],
+        });
+    }
+
     //#endregion
 
     //#region 建立
