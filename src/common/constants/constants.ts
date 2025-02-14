@@ -1,0 +1,4 @@
+export const INJECTION_TOKEN = {
+    CLOUDINARY_CONFIG: 'CLOUDINARY_CONFIG',
+} as const;
+

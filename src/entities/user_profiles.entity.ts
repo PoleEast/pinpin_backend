@@ -1,11 +1,13 @@
 import {
     Column,
+    CreateDateColumn,
     DeleteDateColumn,
     Entity,
     JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,
     Relation,
+    UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity.js';
 
@@ -36,6 +38,12 @@ export class UserProfile {
 
     @Column({ type: 'nvarchar', length: 100, nullable: true })
     address?: string;
+
+    @CreateDateColumn({ type: 'datetime', nullable: false, update: false })
+    create_at!: Date;
+
+    @UpdateDateColumn({ type: 'datetime', nullable: true })
+    update_at?: Date;
 
     @DeleteDateColumn({ type: 'datetime', nullable: true })
     deleted_at?: Date;

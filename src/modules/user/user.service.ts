@@ -2,7 +2,6 @@ import {
     ConflictException,
     Injectable,
     UnauthorizedException,
-    Logger,
 } from '@nestjs/common';
 import {
     LoginDto,
@@ -18,7 +17,7 @@ import { JwtPayload } from '../../interfaces/jwt.interface.js';
 import { UserProfileRepository } from '../../repositories/userProfile.repository.js';
 
 @Injectable()
-export class AuthService {
+export class UserService {
     constructor(
         private readonly userRepositoryManager: UserRepositoryManager,
         private readonly userprofileRepositoryManager: UserProfileRepository,
@@ -42,20 +41,18 @@ export class AuthService {
 
         //整理使用者資料
 
-        // const userProfile = this.userprofileRepositoryManager.New(
-        //     registerDto.nickname,
-        // );
+        const userProfile = this.userprofileRepositoryManager.New(
+            registerDto.nickname,
+        );
 
-        // const user = this.userRepositoryManager.New(
-        //     registerDto.account,
-        //     this.getHashPassword(registerDto.password),
-        //     userProfile,
-        // );
+        const user = this.userRepositoryManager.New(
+            registerDto.account,
+            this.getHashPassword(registerDto.password),
+            userProfile,
+        );
 
         // 建立用戶
-        // const createdUser = await this.userRepositoryManager.Save(user);
-
-
+        const createdUser = await this.userRepositoryManager.Save(user);
         const registerServiceDto: RegisterServiceDto = {
             token: this.generateToken(createdUser),
             account: createdUser.account,

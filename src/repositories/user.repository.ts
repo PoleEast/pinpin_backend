@@ -62,12 +62,12 @@ export class UserRepositoryManager {
 
     //#endregion
 
-    //#region 建立
+    //#region 更新
 
     /**
-     * 建立用戶
+     * 更新用戶
      * @param user 會包含user的profile
-     * @returns 建立的用戶
+     * @returns 更新的用戶
      */
     async Save(user: User): Promise<User> {
         try {
@@ -82,6 +82,7 @@ export class UserRepositoryManager {
     }
 
     //#endregion
+
     New(account: string, password_hash: string, profile: UserProfile): User {
         return this.userRepository.create({
             account: account,

@@ -34,6 +34,11 @@ async function bootstrap() {
     const config = new DocumentBuilder()
         .setTitle('PinPin API')
         .setVersion('1.0')
+        .addCookieAuth('access_token', {
+            type: 'apiKey',
+            name: 'access_token',
+            in: 'cookie',
+        })
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document, {

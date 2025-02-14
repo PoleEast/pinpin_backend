@@ -4,14 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class userProfileRepository {
+export class UserProfileRepository {
     constructor(
         @InjectRepository(UserProfile)
-        private userRepository: Repository<UserProfile>,
+        private userProfileRepository: Repository<UserProfile>,
     ) {}
 
     New(nickname: string): UserProfile {
-        return this.userRepository.create({
+        return this.userProfileRepository.create({
             nickname: nickname,
         });
     }

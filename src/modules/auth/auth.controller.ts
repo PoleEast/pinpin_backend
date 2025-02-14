@@ -74,6 +74,20 @@ export class AuthController {
         };
     }
 
+    @Get('logout')
+    @HttpCode(HttpStatus.OK)
+    @ApiCommonResponses(HttpStatus.OK, '登出成功')
+    @ApiOperation({ summary: '登出用戶', description: '清除token' })
+    async logout(
+        @Res({ passthrough: true }) response: Response,
+    ): Promise<ApiResponseDTO> {
+        response.clearCookie('access_token');
+        return {
+            statusCode: HttpStatus.OK,
+            message: '登出成功',
+        };
+    }
+
     @UseGuards(JwtGuard)
     @ApiOperation({ summary: '驗證token' })
     @ApiCommonResponses(HttpStatus.OK, '授權成功')

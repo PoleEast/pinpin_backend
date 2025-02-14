@@ -6,6 +6,7 @@ import {
     OneToOne,
     PrimaryGeneratedColumn,
     Relation,
+    UpdateDateColumn,
 } from 'typeorm';
 import { UserProfile } from './user_profiles.entity.js';
 
@@ -32,6 +33,9 @@ export class User {
 
     @Column({ type: 'boolean', default: true })
     is_active!: boolean;
+
+    @UpdateDateColumn({ type: 'datetime', nullable: true })
+    update_at?: Date;
 
     @DeleteDateColumn()
     deleted_at?: Date;
