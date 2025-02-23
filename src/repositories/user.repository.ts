@@ -33,7 +33,9 @@ export class UserRepositoryManager {
   async FindOneByAccountWithProfile(account: string): Promise<User | null> {
     return await this.userRepository.findOne({
       where: { account: account },
-      relations: ["profile"],
+      relations: {
+        profile: true,
+      },
     });
   }
 
@@ -56,7 +58,9 @@ export class UserRepositoryManager {
   async FindOneByIdWithProfile(id: number): Promise<User | null> {
     return await this.userRepository.findOne({
       where: { id: id },
-      relations: ["profile"],
+      relations: {
+        profile: true,
+      },
     });
   }
 

@@ -3,6 +3,12 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserModule } from "./modules/user/user.module.js";
 import { UserProfileModule } from "./modules/userProfile/userProfile.module.js";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+//直接使用new URL("./entities/*.entity{.ts,.js}", import.meta.url).pathname會有前置的斜線
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 @Module({
   imports: [
@@ -21,7 +27,7 @@ import { UserProfileModule } from "./modules/userProfile/userProfile.module.js";
         database: configService.get("DB_DATABASE"),
         synchronize: true,
         logging: true,
-        autoLoadEntities: true,
+        entities: [join(__dirname, "entities", "*.entity{.ts,.js}")],
       }),
       inject: [ConfigService],
     }),

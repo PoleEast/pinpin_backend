@@ -1,9 +1,10 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
 import { User } from "./user.entity.js";
-import { Country } from "./conutry.entity.js";
+import { Country } from "./country.entity.js";
 import { Language } from "./language.entity.js";
 import { Currency } from "./currency.entity.js";
 import { TravelInterest } from "./travel_interest.entity.js";
+import { TravelStyle } from "./travel_style.entity.js";
 
 @Entity("user_profiles")
 export class UserProfile {
@@ -19,18 +20,20 @@ export class UserProfile {
   @Column({ type: "varchar", length: 16, nullable: false })
   nickname!: string;
 
-  @Column({ type: "boolean", default: false, nullable: true })
-  is_full_name_visible?: boolean;
+  @Column({ type: "boolean", default: false, nullable: false })
+  is_full_name_visible!: boolean;
 
-  @Column({ type: "varchar", length: 100, nullable: false })
-  avatar!: string;
+  @Column({ type: "varchar", length: 100, nullable: true })
+  avatar?: string;
+
+  @Column({ type: "varchar", length: 100, nullable: true })
+  coverPhoto?: string;
 
   @Column({ type: "datetime", nullable: true })
   birthday?: Date;
 
   @Column({
     type: "int",
-    default: 2,
     comment: "0:男 1:女 2:不公開",
     nullable: true,
   })
@@ -39,8 +42,8 @@ export class UserProfile {
   @Column({ type: "varchar", length: 50, nullable: true })
   email?: string;
 
-  @Column({ type: "varchar", length: 20, nullable: true })
-  phone?: string;
+  @Column({ type: "int", length: 20, nullable: true })
+  phone?: number;
 
   @Column({ type: "varchar", length: 100, nullable: true })
   address?: string;
@@ -62,7 +65,11 @@ export class UserProfile {
 
   @ManyToMany(() => TravelInterest, (travelInterest) => travelInterest.user_profiles, { eager: false })
   @JoinTable()
-  travel_interests?: Relation<[TravelInterest]>;
+  travel_interests?: Relation<TravelInterest[]>;
+
+  @ManyToMany(() => TravelStyle, (travelStyle) => travelStyle.user_profiles, { eager: false })
+  @JoinTable()
+  travel_styles?: Relation<TravelStyle[]>;
 
   @OneToOne(() => User, (user) => user.profile, {
     eager: false,

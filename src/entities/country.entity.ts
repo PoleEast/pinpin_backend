@@ -3,7 +3,7 @@ import { Language } from "./language.entity.js";
 import { Currency } from "./currency.entity.js";
 import { UserProfile } from "./user_profile.entity.js";
 
-@Entity("Country")
+@Entity("country")
 export class Country {
   @PrimaryGeneratedColumn()
   id!: number;

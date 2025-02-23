@@ -1,17 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import {
-  IsNotEmpty,
-  IsString,
-  Matches,
-  MaxLength,
-  MinLength,
-} from "class-validator";
-import {
-  LOGIN_REQUSER_VALIDATION,
-  LoginRequestDTO,
-  REGISTER_REQUSER_VALIDATION,
-  RegisterRequestDTO,
-} from "pinpin_library";
+import { IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { LOGIN_REQUSER_VALIDATION, LoginRequestDTO, REGISTER_REQUSER_VALIDATION, RegisterRequestDTO } from "pinpin_library";
 
 class RegisterDto implements RegisterRequestDTO {
   @ApiProperty({
@@ -30,14 +19,14 @@ class RegisterDto implements RegisterRequestDTO {
   })
   account: string;
 
-  @ApiProperty({ description: "密碼", example: "123456" })
+  @ApiProperty({ description: "密碼", example: "123456", minLength: REGISTER_REQUSER_VALIDATION.PASSWORD.MIN_LENGTH, maxLength: REGISTER_REQUSER_VALIDATION.PASSWORD.MAX_LENGTH, required: true })
   @IsString()
   @IsNotEmpty()
   @MinLength(REGISTER_REQUSER_VALIDATION.PASSWORD.MIN_LENGTH)
   @MaxLength(REGISTER_REQUSER_VALIDATION.PASSWORD.MAX_LENGTH)
   password: string;
 
-  @ApiProperty({ description: "暱稱", example: "超人" })
+  @ApiProperty({ description: "暱稱", example: "超人", minLength: REGISTER_REQUSER_VALIDATION.NICKNAME.MIN_LENGTH, maxLength: REGISTER_REQUSER_VALIDATION.NICKNAME.MAX_LENGTH, required: true })
   @IsString()
   @IsNotEmpty()
   @MinLength(REGISTER_REQUSER_VALIDATION.NICKNAME.MIN_LENGTH)
@@ -52,7 +41,7 @@ class RegisterDto implements RegisterRequestDTO {
 }
 
 class LoginDto implements LoginRequestDTO {
-  @ApiProperty({ description: "帳號", example: "superman" })
+  @ApiProperty({ description: "帳號", example: "superman", minLength: LOGIN_REQUSER_VALIDATION.ACCOUNT.MIN_LENGTH, maxLength: LOGIN_REQUSER_VALIDATION.ACCOUNT.MAX_LENGTH, required: true })
   @IsString()
   @IsNotEmpty()
   @MinLength(LOGIN_REQUSER_VALIDATION.ACCOUNT.MIN_LENGTH)
@@ -62,7 +51,7 @@ class LoginDto implements LoginRequestDTO {
   })
   account: string;
 
-  @ApiProperty({ description: "密碼", example: "123456" })
+  @ApiProperty({ description: "密碼", example: "123456", minLength: LOGIN_REQUSER_VALIDATION.PASSWORD.MIN_LENGTH, maxLength: LOGIN_REQUSER_VALIDATION.PASSWORD.MAX_LENGTH, required: true })
   @IsString()
   @IsNotEmpty()
   @MinLength(LOGIN_REQUSER_VALIDATION.PASSWORD.MIN_LENGTH)

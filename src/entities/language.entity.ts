@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
-import { Country } from "./conutry.entity.js";
+import { Country } from "./country.entity.js";
 import { UserProfile } from "./user_profile.entity.js";
 
 @Entity("language")
