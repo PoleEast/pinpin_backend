@@ -42,8 +42,8 @@ export class UserProfile {
   @Column({ type: "varchar", length: 50, nullable: true })
   email?: string;
 
-  @Column({ type: "int", length: 20, nullable: true })
-  phone?: number;
+  @Column({ type: "varchar", length: 20, nullable: true })
+  phone?: string;
 
   @Column({ type: "varchar", length: 100, nullable: true })
   address?: string;

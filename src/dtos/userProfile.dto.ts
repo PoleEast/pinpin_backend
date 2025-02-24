@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsDate, IsIn, IsNumber, IsString, MaxLength, MinLength } from "class-validator";
-import { USERPROFILE_REQUSER_VALIDATION, userProfileRequestDTO } from "pinpin_library";
+import { Type } from "class-transformer";
+import { IsArray, IsBoolean, IsDate, IsEmail, IsIn, IsNumber, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { USERPROFILE_REQUSER_VALIDATION, UserProfileRequestDTO } from "pinpin_library";
 
-class userProfileSettingDto implements userProfileRequestDTO {
+class UserProfileSettingDto implements UserProfileRequestDTO {
   @ApiProperty({
     description: "自我介紹",
     example: "我是超人",
@@ -13,7 +14,8 @@ class userProfileSettingDto implements userProfileRequestDTO {
   @IsString()
   @MinLength(USERPROFILE_REQUSER_VALIDATION.BIO.MIN_LENGTH)
   @MaxLength(USERPROFILE_REQUSER_VALIDATION.BIO.MAX_LENGTH)
-  bio: string;
+  @IsOptional()
+  bio?: string;
 
   @ApiProperty({
     description: "真實姓名",
@@ -25,7 +27,8 @@ class userProfileSettingDto implements userProfileRequestDTO {
   @IsString()
   @MinLength(USERPROFILE_REQUSER_VALIDATION.FULLNAME.MIN_LENGTH)
   @MaxLength(USERPROFILE_REQUSER_VALIDATION.FULLNAME.MAX_LENGTH)
-  fullname: string;
+  @IsOptional()
+  fullname?: string;
 
   @ApiProperty({
     description: "暱稱",
@@ -37,14 +40,16 @@ class userProfileSettingDto implements userProfileRequestDTO {
   @IsString()
   @MinLength(USERPROFILE_REQUSER_VALIDATION.NICKNAME.MIN_LENGTH)
   @MaxLength(USERPROFILE_REQUSER_VALIDATION.NICKNAME.MAX_LENGTH)
-  nickname: string;
+  nickname!: string;
 
   @ApiProperty({
     description: "是否顯示姓名",
     example: true,
     required: false,
   })
-  isFullNameVisible: boolean;
+  @IsOptional()
+  @IsBoolean()
+  isFullNameVisible?: boolean;
 
   @ApiProperty({
     description: "頭像id",
@@ -56,7 +61,8 @@ class userProfileSettingDto implements userProfileRequestDTO {
   @IsString()
   @MinLength(USERPROFILE_REQUSER_VALIDATION.AVATAR.MIN_LENGTH)
   @MaxLength(USERPROFILE_REQUSER_VALIDATION.AVATAR.MAX_LENGTH)
-  avatar: string;
+  @IsOptional()
+  avatar?: string;
 
   @ApiProperty({
     description: "封面照id",
@@ -68,15 +74,18 @@ class userProfileSettingDto implements userProfileRequestDTO {
   @IsString()
   @MinLength(USERPROFILE_REQUSER_VALIDATION.COVERPHOTO.MIN_LENGTH)
   @MaxLength(USERPROFILE_REQUSER_VALIDATION.COVERPHOTO.MAX_LENGTH)
-  coverPhoto: string;
+  @IsOptional()
+  coverPhoto?: string;
 
   @ApiProperty({
     description: "生日",
     example: "1990-01-01",
     required: false,
   })
+  @Type(() => Date)
   @IsDate()
-  birthday: Date;
+  @IsOptional()
+  birthday?: Date;
 
   @ApiProperty({
     description: "性別",
@@ -84,17 +93,19 @@ class userProfileSettingDto implements userProfileRequestDTO {
     required: false,
   })
   @IsIn(USERPROFILE_REQUSER_VALIDATION.GENDER.VALUES)
-  gender: number;
+  @IsOptional()
+  gender?: number;
 
   @ApiProperty({
     description: "手機號碼",
     example: "0912345678",
     required: false,
   })
-  @IsNumber()
+  @IsString()
   @MinLength(USERPROFILE_REQUSER_VALIDATION.PHONE.MIN_LENGTH)
   @MaxLength(USERPROFILE_REQUSER_VALIDATION.PHONE.MAX_LENGTH)
-  phone: number;
+  @IsOptional()
+  phone?: string;
 
   @ApiProperty({
     description: "電子郵件",
@@ -104,7 +115,9 @@ class userProfileSettingDto implements userProfileRequestDTO {
   @IsString()
   @MinLength(USERPROFILE_REQUSER_VALIDATION.EMAIL.MIN_LENGTH)
   @MaxLength(USERPROFILE_REQUSER_VALIDATION.EMAIL.MAX_LENGTH)
-  email: string;
+  @IsOptional()
+  @IsEmail()
+  email?: string;
 
   @ApiProperty({
     description: "地址",
@@ -116,7 +129,8 @@ class userProfileSettingDto implements userProfileRequestDTO {
   @IsString()
   @MinLength(USERPROFILE_REQUSER_VALIDATION.ADDRESS.MIN_LENGTH)
   @MaxLength(USERPROFILE_REQUSER_VALIDATION.ADDRESS.MAX_LENGTH)
-  address: string;
+  @IsOptional()
+  address?: string;
 
   @ApiProperty({
     description: "出生地",
@@ -124,7 +138,8 @@ class userProfileSettingDto implements userProfileRequestDTO {
     example: 1,
   })
   @IsNumber()
-  originCountry: number;
+  @IsOptional()
+  originCountry?: number;
 
   @ApiProperty({
     description: "訪問過的國家",
@@ -133,7 +148,8 @@ class userProfileSettingDto implements userProfileRequestDTO {
   })
   @IsArray({ message: "訪問過的國家必須為陣列" })
   @IsNumber({}, { each: true, message: "訪問過的國家必須為數字" })
-  visited_countries: number[];
+  @IsOptional()
+  visitedCountries?: number[];
 
   @ApiProperty({
     description: "語言",
@@ -142,7 +158,8 @@ class userProfileSettingDto implements userProfileRequestDTO {
   })
   @IsArray({ message: "語言必須為陣列" })
   @IsNumber({}, { each: true, message: "語言必須為數字" })
-  language: number[];
+  @IsOptional()
+  language?: number[];
 
   @ApiProperty({
     description: "貨幣",
@@ -151,7 +168,8 @@ class userProfileSettingDto implements userProfileRequestDTO {
   })
   @IsArray({ message: "貨幣必須為陣列" })
   @IsNumber({}, { each: true, message: "貨幣必須為數字" })
-  currency: number[];
+  @IsOptional()
+  currency?: number[];
 
   @ApiProperty({
     description: "旅遊興趣",
@@ -160,7 +178,8 @@ class userProfileSettingDto implements userProfileRequestDTO {
   })
   @IsArray({ message: "旅遊興趣必須為陣列" })
   @IsNumber({}, { each: true, message: "旅遊興趣必須為數字" })
-  travelInterests: number[];
+  @IsOptional()
+  travelInterest?: number[];
 
   @ApiProperty({
     description: "旅遊風格",
@@ -169,7 +188,8 @@ class userProfileSettingDto implements userProfileRequestDTO {
   })
   @IsArray({ message: "旅遊風格必須為陣列" })
   @IsNumber({}, { each: true, message: "旅遊風格必須為數字" })
-  travelStyles: number[];
+  @IsOptional()
+  travelStyle?: number[];
 }
 
-//TODO:將所有參考的關聯物件改為傳入ID
+export { UserProfileSettingDto };

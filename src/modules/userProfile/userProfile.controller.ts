@@ -3,9 +3,9 @@ import { ApiCookieAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { UserProfileService } from "./userProfile.service.js";
 import ApiCommonResponses from "../../common/decorators/api_responses.decorator.js";
 import { JwtGuard } from "../../common/guards/jwt.guard.js";
-import GetUser from "@/common/decorators/get-user.decorator.js";
-import { User } from "@/entities/user.entity.js";
-import { ApiResponseDTO, userProfileRequestDTO } from "pinpin_library";
+import GetUser from "../../common/decorators/get-user.decorator.js";
+import { User } from "../../entities/user.entity.js";
+import { ApiResponseDTO, UserProfileRequestDTO } from "pinpin_library";
 
 @ApiTags("用戶個人資料")
 @Controller("userProfile")
@@ -18,8 +18,16 @@ export class UserProfileController {
   @ApiCookieAuth()
   @UseGuards(JwtGuard)
   @Post("getUserProfile")
-  async getUserProfile(@GetUser() user: User): Promise<ApiResponseDTO<userProfileRequestDTO>> {
-    return await this.userProfileService.getUserProfile(user.id);
+  async getUserProfile(@GetUser() user: User): Promise<ApiResponseDTO<UserProfileRequestDTO>> {
+    const result = await this.userProfileService.getUserProfile(user.id);
+
+    const ApiResponse: ApiResponseDTO<UserProfileRequestDTO> = {
+      statusCode: HttpStatus.OK,
+      message: "用戶個人資料查詢成功",
+      data: result,
+    };
+
+    return ApiResponse;
   }
 
   @HttpCode(HttpStatus.OK)
