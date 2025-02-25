@@ -22,7 +22,11 @@ import { UserProfileController } from "./userProfile.controller.js";
     }),
   ],
   controllers: [UserProfileController],
-  providers: [UserProfileService, UserRepositoryManager, UserProfileRepositoryManager],
+  providers: [
+    UserProfileService,
+    UserRepositoryManager,
+    UserProfileRepositoryManager,
+  ],
   exports: [UserRepositoryManager, UserProfileRepositoryManager],
 })
 export class UserProfileModule {}

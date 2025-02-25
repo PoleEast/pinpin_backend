@@ -1,4 +1,17 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
+} from "typeorm";
 import { User } from "./user.entity.js";
 import { Country } from "./country.entity.js";
 import { Language } from "./language.entity.js";
@@ -48,26 +61,42 @@ export class UserProfile {
   @Column({ type: "varchar", length: 100, nullable: true })
   address?: string;
 
-  @ManyToOne(() => Country, (country) => country.user_profiles_originCountry, { eager: false })
+  @ManyToOne(() => Country, (country) => country.user_profiles_originCountry, {
+    eager: false,
+  })
   origin_country?: Relation<Country>;
 
-  @ManyToMany(() => Country, (country) => country.user_profiles_visited_countries, { eager: false })
+  @ManyToMany(
+    () => Country,
+    (country) => country.user_profiles_visited_countries,
+    { eager: false },
+  )
   @JoinTable()
   visited_countries?: Relation<Country[]>;
 
-  @ManyToMany(() => Language, (language) => language.user_profiles, { eager: false })
+  @ManyToMany(() => Language, (language) => language.user_profiles, {
+    eager: false,
+  })
   @JoinTable()
   languages?: Relation<Language[]>;
 
-  @ManyToMany(() => Currency, (currency) => currency.user_profiles, { eager: false })
+  @ManyToMany(() => Currency, (currency) => currency.user_profiles, {
+    eager: false,
+  })
   @JoinTable()
   currencies?: Relation<Currency[]>;
 
-  @ManyToMany(() => TravelInterest, (travelInterest) => travelInterest.user_profiles, { eager: false })
+  @ManyToMany(
+    () => TravelInterest,
+    (travelInterest) => travelInterest.user_profiles,
+    { eager: false },
+  )
   @JoinTable()
   travel_interests?: Relation<TravelInterest[]>;
 
-  @ManyToMany(() => TravelStyle, (travelStyle) => travelStyle.user_profiles, { eager: false })
+  @ManyToMany(() => TravelStyle, (travelStyle) => travelStyle.user_profiles, {
+    eager: false,
+  })
   @JoinTable()
   travel_styles?: Relation<TravelStyle[]>;
 

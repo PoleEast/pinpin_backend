@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
+} from "typeorm";
 import { UserProfile } from "./user_profile.entity.js";
 
 @Entity("travel_style")
@@ -18,7 +27,9 @@ export class TravelStyle {
   @Column({ type: "varchar", length: 50, nullable: false })
   color!: string;
 
-  @ManyToMany(() => UserProfile, (userProfile) => userProfile.travel_styles, { eager: false })
+  @ManyToMany(() => UserProfile, (userProfile) => userProfile.travel_styles, {
+    eager: false,
+  })
   user_profiles?: Relation<UserProfile>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })

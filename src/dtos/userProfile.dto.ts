@@ -1,9 +1,23 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsBoolean, IsDate, IsEmail, IsIn, IsNumber, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
-import { USERPROFILE_REQUSER_VALIDATION, UserProfileRequestDTO } from "pinpin_library";
+import {
+  IsArray,
+  IsBoolean,
+  IsDate,
+  IsEmail,
+  IsIn,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from "class-validator";
+import {
+  USERPROFILE_REQUSER_VALIDATION,
+  UserProfileRequestDTO,
+} from "pinpin_library";
 
-class UserProfileSettingDto implements UserProfileRequestDTO {
+class UserProfileDto implements UserProfileRequestDTO {
   @ApiProperty({
     description: "自我介紹",
     example: "我是超人",
@@ -192,4 +206,4 @@ class UserProfileSettingDto implements UserProfileRequestDTO {
   travelStyle?: number[];
 }
 
-export { UserProfileSettingDto };
+export { UserProfileDto };

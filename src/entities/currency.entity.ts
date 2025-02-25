@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
+} from "typeorm";
 import { Country } from "./country.entity.js";
 import { UserProfile } from "./user_profile.entity.js";
 
@@ -16,7 +25,9 @@ export class Currency {
   @ManyToMany(() => Country, (country) => country.currency, { eager: false })
   countries?: Relation<Country[]>;
 
-  @ManyToMany(() => UserProfile, (userProfile) => userProfile.currencies, { eager: false })
+  @ManyToMany(() => UserProfile, (userProfile) => userProfile.currencies, {
+    eager: false,
+  })
   user_profiles?: Relation<UserProfile[]>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })

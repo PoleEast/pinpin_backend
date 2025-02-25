@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
+} from "typeorm";
 import { Country } from "./country.entity.js";
 import { UserProfile } from "./user_profile.entity.js";
 
@@ -7,16 +16,30 @@ export class Language {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: "varchar", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", length: 50, nullable: false })
+  @Column({
+    type: "varchar",
+    charset: "utf8mb4",
+    collation: "utf8mb4_unicode_ci",
+    length: 50,
+    nullable: false,
+  })
   english_name!: string;
 
-  @Column({ type: "varchar", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", length: 50, nullable: false })
+  @Column({
+    type: "varchar",
+    charset: "utf8mb4",
+    collation: "utf8mb4_unicode_ci",
+    length: 50,
+    nullable: false,
+  })
   local_name!: string;
 
   @ManyToMany(() => Country, (country) => country.language, { eager: false })
   countries?: Relation<Country[]>;
 
-  @ManyToMany(() => UserProfile, (userProfile) => userProfile.languages, { eager: false })
+  @ManyToMany(() => UserProfile, (userProfile) => userProfile.languages, {
+    eager: false,
+  })
   user_profiles?: Relation<UserProfile[]>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })
