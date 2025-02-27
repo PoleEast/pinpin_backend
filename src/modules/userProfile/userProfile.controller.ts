@@ -1,10 +1,4 @@
-import {
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  UseGuards,
-} from "@nestjs/common";
+import { Controller, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
 import { ApiCookieAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { UserProfileService } from "./userProfile.service.js";
 import ApiCommonResponses from "../../common/decorators/api_responses.decorator.js";
@@ -25,9 +19,7 @@ export class UserProfileController {
   @ApiCookieAuth()
   @UseGuards(JwtGuard)
   @Post("getUserProfile")
-  async getUserProfile(
-    @GetUser() user: User,
-  ): Promise<ApiResponseDTO<UserProfileRequestDTO>> {
+  async getUserProfile(@GetUser() user: User): Promise<ApiResponseDTO<UserProfileRequestDTO>> {
     const result = await this.userProfileService.getUserProfile(user.id);
 
     const ApiResponse: ApiResponseDTO<UserProfileDto> = {

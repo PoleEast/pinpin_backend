@@ -1,13 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  OneToOne,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
 import { UserProfile } from "./user_profile.entity.js";
 
 @Entity("user")
@@ -24,6 +15,9 @@ export class User {
     nullable: false,
   })
   password_hash!: string;
+
+  @Column({ type: "varchar", length: 50, nullable: true })
+  email?: string;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })
   create_at!: Date;

@@ -63,11 +63,7 @@ export class Country {
   })
   user_profiles_originCountry?: Relation<UserProfile[]>;
 
-  @ManyToMany(
-    () => UserProfile,
-    (userProfile) => userProfile.visited_countries,
-    { eager: false },
-  )
+  @ManyToMany(() => UserProfile, (userProfile) => userProfile.visited_countries, { eager: false })
   user_profiles_visited_countries?: Relation<UserProfile[]>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })

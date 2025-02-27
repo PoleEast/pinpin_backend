@@ -23,18 +23,10 @@ export class TravelInterest {
   @Column({ type: "varchar", length: 50, nullable: false })
   icon!: string;
 
-  @ManyToOne(
-    () => TravelInterestType,
-    (travelInterestType) => travelInterestType.travel_interests,
-    { eager: false },
-  )
+  @ManyToOne(() => TravelInterestType, (travelInterestType) => travelInterestType.travel_interests, { eager: false })
   travel_interest_type!: TravelInterestType;
 
-  @ManyToMany(
-    () => UserProfile,
-    (userProfile) => userProfile.travel_interests,
-    { eager: false },
-  )
+  @ManyToMany(() => UserProfile, (userProfile) => userProfile.travel_interests, { eager: false })
   user_profiles!: Relation<UserProfile>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })

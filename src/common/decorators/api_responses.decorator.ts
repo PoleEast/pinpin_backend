@@ -1,10 +1,5 @@
 import { HttpStatus, Type, applyDecorators } from "@nestjs/common";
-import {
-  ApiProperty,
-  ApiResponse,
-  ApiExtraModels,
-  getSchemaPath,
-} from "@nestjs/swagger";
+import { ApiProperty, ApiResponse, ApiExtraModels, getSchemaPath } from "@nestjs/swagger";
 
 export class ApiResponseDTO<T = unknown> implements ApiResponseDTO<T> {
   @ApiProperty({ example: 200 })

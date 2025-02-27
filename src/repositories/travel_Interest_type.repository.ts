@@ -4,9 +4,7 @@ import { Repository } from "typeorm";
 
 @Injectable()
 export class TravelInterestTypeRepository {
-  constructor(
-    private readonly travelInterestTypeRepository: Repository<TravelInterestType>,
-  ) {}
+  constructor(private readonly travelInterestTypeRepository: Repository<TravelInterestType>) {}
 
   //#region 查詢
 

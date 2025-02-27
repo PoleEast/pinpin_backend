@@ -8,9 +8,7 @@ interface CloudinaryConfig {
 }
 
 interface CloudinaryAsyncConfig {
-  useFactory: (
-    configService: ConfigService,
-  ) => Promise<CloudinaryConfig> | CloudinaryConfig;
+  useFactory: (configService: ConfigService) => Promise<CloudinaryConfig> | CloudinaryConfig;
   inject?: InjectionToken[];
 }
 

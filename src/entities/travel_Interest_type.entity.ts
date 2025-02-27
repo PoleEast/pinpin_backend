@@ -1,13 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
 import { TravelInterest } from "./travel_interest.entity.js";
 
 @Entity("travel_interest_type")
@@ -21,11 +12,7 @@ export class TravelInterestType {
   @Column({ type: "varchar", length: 50, nullable: false })
   color!: string;
 
-  @OneToMany(
-    () => TravelInterest,
-    (travelInterest) => travelInterest.travel_interest_type,
-    { eager: false },
-  )
+  @OneToMany(() => TravelInterest, (travelInterest) => travelInterest.travel_interest_type, { eager: false })
   travel_interests?: Relation<TravelInterest[]>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })

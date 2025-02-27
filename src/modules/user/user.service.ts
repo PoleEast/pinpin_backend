@@ -1,14 +1,5 @@
-import {
-  ConflictException,
-  Injectable,
-  UnauthorizedException,
-} from "@nestjs/common";
-import {
-  LoginDto,
-  LoginServiceDto,
-  RegisterDto,
-  RegisterServiceDto,
-} from "../../dtos/user.dto.js";
+import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { LoginDto, LoginServiceDto, RegisterDto, RegisterServiceDto } from "../../dtos/user.dto.js";
 import { User } from "../../entities/user.entity.js";
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
@@ -31,23 +22,15 @@ export class UserService {
    */
   async Register(registerDto: RegisterDto): Promise<RegisterServiceDto> {
     // 檢查帳號是否已經存在
-    if (
-      await this.userRepositoryManager.FindOneByAccount(registerDto.account)
-    ) {
+    if (await this.userRepositoryManager.FindOneByAccount(registerDto.account)) {
       throw new ConflictException("帳號已經存在");
     }
 
     //整理使用者資料
 
-    const userProfile = this.userprofileRepositoryManager.New(
-      registerDto.nickname,
-    );
+    const userProfile = this.userprofileRepositoryManager.New(registerDto.nickname);
 
-    const user = this.userRepositoryManager.New(
-      registerDto.account,
-      this.getHashPassword(registerDto.password),
-      userProfile,
-    );
+    const user = this.userRepositoryManager.New(registerDto.account, this.getHashPassword(registerDto.password), userProfile);
 
     // 建立用戶
     const createdUser = await this.userRepositoryManager.Save(user);
@@ -69,9 +52,7 @@ export class UserService {
    * @throws UnauthorizedException 帳號或密碼錯誤
    */
   async Login(loginDto: LoginDto): Promise<LoginServiceDto> {
-    const user = await this.userRepositoryManager.FindOneByAccountWithProfile(
-      loginDto.account,
-    );
+    const user = await this.userRepositoryManager.FindOneByAccountWithProfile(loginDto.account);
     if (!user) {
       throw new UnauthorizedException("帳號或密碼錯誤");
     }

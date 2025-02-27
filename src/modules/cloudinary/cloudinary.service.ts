@@ -9,11 +9,7 @@ export class CloudinaryService {
     @Inject(INJECTION_TOKEN.CLOUDINARY_CONFIG)
     private readonly config: CloudinaryConfig,
   ) {
-    if (
-      !this.config.cloud_name ||
-      !this.config.api_key ||
-      !this.config.api_secret
-    ) {
+    if (!this.config.cloud_name || !this.config.api_key || !this.config.api_secret) {
       throw new Error("Cloudinary config is missing");
     }
 

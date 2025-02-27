@@ -52,9 +52,6 @@ export class UserProfile {
   })
   gender?: number;
 
-  @Column({ type: "varchar", length: 50, nullable: true })
-  email?: string;
-
   @Column({ type: "varchar", length: 20, nullable: true })
   phone?: string;
 
@@ -66,11 +63,7 @@ export class UserProfile {
   })
   origin_country?: Relation<Country>;
 
-  @ManyToMany(
-    () => Country,
-    (country) => country.user_profiles_visited_countries,
-    { eager: false },
-  )
+  @ManyToMany(() => Country, (country) => country.user_profiles_visited_countries, { eager: false })
   @JoinTable()
   visited_countries?: Relation<Country[]>;
 
@@ -86,11 +79,7 @@ export class UserProfile {
   @JoinTable()
   currencies?: Relation<Currency[]>;
 
-  @ManyToMany(
-    () => TravelInterest,
-    (travelInterest) => travelInterest.user_profiles,
-    { eager: false },
-  )
+  @ManyToMany(() => TravelInterest, (travelInterest) => travelInterest.user_profiles, { eager: false })
   @JoinTable()
   travel_interests?: Relation<TravelInterest[]>;
 

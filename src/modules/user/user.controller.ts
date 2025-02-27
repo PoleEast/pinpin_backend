@@ -1,23 +1,9 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Res,
-  UseGuards,
-} from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from "@nestjs/common";
 import { LoginDto, RegisterDto } from "../../dtos/user.dto.js";
 import { UserService } from "./user.service.js";
-import {
-  ApiCookieAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import ApiCommonResponses from "../../common/decorators/api_responses.decorator.js";
-import { ApiResponseDTO, UserResponseDTO } from "pinpin_library";
+import { ApiResponseDTO, LoginResponseDTO } from "pinpin_library";
 import { Response } from "express";
 import { JwtGuard } from "../../common/guards/jwt.guard.js";
 import GetUser from "../../common/decorators/get-user.decorator.js";
@@ -36,10 +22,7 @@ export class UserController {
   })
   @ApiCommonResponses(HttpStatus.CREATED, "註冊成功")
   @Post("register")
-  async register(
-    @Body() registerDto: RegisterDto,
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<ApiResponseDTO<UserResponseDTO>> {
+  async register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) response: Response): Promise<ApiResponseDTO<LoginResponseDTO>> {
     const result = await this.userService.Register(registerDto);
 
     //設定cookie
@@ -62,10 +45,7 @@ export class UserController {
     description: "帳號或密碼錯誤",
   })
   @Post("login")
-  async Login(
-    @Body() loginDto: LoginDto,
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<ApiResponseDTO<UserResponseDTO>> {
+  async Login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) response: Response): Promise<ApiResponseDTO<LoginResponseDTO>> {
     const result = await this.userService.Login(loginDto);
 
     //設定cookie
@@ -84,9 +64,7 @@ export class UserController {
   @ApiOperation({ summary: "登出用戶", description: "清除token" })
   @ApiCommonResponses(HttpStatus.OK, "登出成功")
   @Get("logout")
-  async logout(
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<ApiResponseDTO> {
+  async logout(@Res({ passthrough: true }) response: Response): Promise<ApiResponseDTO> {
     response.clearCookie("access_token");
     return {
       statusCode: HttpStatus.OK,
@@ -99,9 +77,7 @@ export class UserController {
   @ApiCookieAuth()
   @UseGuards(JwtGuard)
   @Get("check-auth")
-  async CheckAuth(
-    @GetUser() user: User,
-  ): Promise<ApiResponseDTO<UserResponseDTO>> {
+  async CheckAuth(@GetUser() user: User): Promise<ApiResponseDTO<LoginResponseDTO>> {
     return {
       statusCode: HttpStatus.OK,
       message: "授權成功",

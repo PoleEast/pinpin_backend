@@ -1,21 +1,54 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import {
-  IsArray,
-  IsBoolean,
-  IsDate,
-  IsEmail,
-  IsIn,
-  IsNumber,
-  IsOptional,
-  IsString,
-  MaxLength,
-  MinLength,
-} from "class-validator";
-import {
-  USERPROFILE_REQUSER_VALIDATION,
-  UserProfileRequestDTO,
-} from "pinpin_library";
+import { IsArray, IsBoolean, IsDate, IsEmail, IsIn, IsNumber, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
+import { AccountRequestDTO, ACCOUNTSETTING_REQUSER_VALIDATION, USERPROFILE_REQUSER_VALIDATION, UserProfileRequestDTO } from "pinpin_library";
+
+class AccountDTO implements AccountRequestDTO {
+  @ApiProperty({
+    description: "帳號",
+    example: "superman",
+    minLength: ACCOUNTSETTING_REQUSER_VALIDATION.ACCOUNT.MIN_LENGTH,
+    maxLength: ACCOUNTSETTING_REQUSER_VALIDATION.ACCOUNT.MAX_LENGTH,
+    required: false,
+  })
+  @IsString()
+  @MinLength(ACCOUNTSETTING_REQUSER_VALIDATION.ACCOUNT.MIN_LENGTH)
+  @MaxLength(ACCOUNTSETTING_REQUSER_VALIDATION.ACCOUNT.MAX_LENGTH)
+  account?: string;
+
+  @ApiProperty({
+    description: "密碼",
+    example: "123456",
+    minLength: ACCOUNTSETTING_REQUSER_VALIDATION.PASSWORD.MIN_LENGTH,
+    maxLength: ACCOUNTSETTING_REQUSER_VALIDATION.PASSWORD.MAX_LENGTH,
+    required: false,
+  })
+  @IsString()
+  @MinLength(ACCOUNTSETTING_REQUSER_VALIDATION.PASSWORD.MIN_LENGTH)
+  @MaxLength(ACCOUNTSETTING_REQUSER_VALIDATION.PASSWORD.MAX_LENGTH)
+  password?: string;
+
+  @ApiProperty({
+    description: "電子郵件",
+    example: "M9TlM@example.com",
+    required: false,
+  })
+  @IsString()
+  @MinLength(USERPROFILE_REQUSER_VALIDATION.EMAIL.MIN_LENGTH)
+  @MaxLength(USERPROFILE_REQUSER_VALIDATION.EMAIL.MAX_LENGTH)
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @ApiProperty({
+    description: "建立時間",
+    required: false,
+  })
+  @Type(() => Date)
+  @IsDate()
+  @IsOptional()
+  createAt?: Date;
+}
 
 class UserProfileDto implements UserProfileRequestDTO {
   @ApiProperty({
@@ -122,18 +155,6 @@ class UserProfileDto implements UserProfileRequestDTO {
   phone?: string;
 
   @ApiProperty({
-    description: "電子郵件",
-    example: "M9TlM@example.com",
-    required: false,
-  })
-  @IsString()
-  @MinLength(USERPROFILE_REQUSER_VALIDATION.EMAIL.MIN_LENGTH)
-  @MaxLength(USERPROFILE_REQUSER_VALIDATION.EMAIL.MAX_LENGTH)
-  @IsOptional()
-  @IsEmail()
-  email?: string;
-
-  @ApiProperty({
     description: "地址",
     example: "台北市",
     minLength: USERPROFILE_REQUSER_VALIDATION.ADDRESS.MIN_LENGTH,
@@ -204,6 +225,15 @@ class UserProfileDto implements UserProfileRequestDTO {
   @IsNumber({}, { each: true, message: "旅遊風格必須為數字" })
   @IsOptional()
   travelStyle?: number[];
+
+  @ApiProperty({
+    description: "帳戶資料",
+    required: false,
+  })
+  @ValidateNested()
+  @Type(() => AccountDTO)
+  @IsOptional()
+  user?: AccountDTO;
 }
 
 export { UserProfileDto };
