@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsArray, IsBoolean, IsDate, IsEmail, IsIn, IsNumber, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
-import { AccountRequestDTO, ACCOUNTSETTING_REQUSER_VALIDATION, USERPROFILE_REQUSER_VALIDATION, UserProfileRequestDTO } from "pinpin_library";
+import { AccountRequestDTO, ACCOUNTSETTING_REQUSER_VALIDATION, USERPROFILE_REQUSER_VALIDATION, UserProfileResponseDTO } from "pinpin_library";
 
 class AccountDTO implements AccountRequestDTO {
   @ApiProperty({
@@ -50,7 +50,7 @@ class AccountDTO implements AccountRequestDTO {
   createAt?: Date;
 }
 
-class UserProfileDto implements UserProfileRequestDTO {
+class UserProfileDto implements UserProfileResponseDTO {
   @ApiProperty({
     description: "自我介紹",
     example: "我是超人",

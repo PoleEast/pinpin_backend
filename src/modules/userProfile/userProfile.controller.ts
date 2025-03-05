@@ -1,11 +1,11 @@
-import { Controller, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
 import { ApiCookieAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { UserProfileService } from "./userProfile.service.js";
 import ApiCommonResponses from "../../common/decorators/api_responses.decorator.js";
 import { JwtGuard } from "../../common/guards/jwt.guard.js";
 import GetUser from "../../common/decorators/get-user.decorator.js";
 import { User } from "../../entities/user.entity.js";
-import { ApiResponseDTO, UserProfileRequestDTO } from "pinpin_library";
+import { ApiResponseDTO, UserProfileResponseDTO } from "pinpin_library";
 import { UserProfileDto } from "../../dtos/userProfile.dto.js";
 
 @ApiTags("用戶個人資料")
@@ -18,8 +18,8 @@ export class UserProfileController {
   @ApiCommonResponses(HttpStatus.OK, "用戶個人資料查詢成功", UserProfileDto)
   @ApiCookieAuth()
   @UseGuards(JwtGuard)
-  @Post("getUserProfile")
-  async getUserProfile(@GetUser() user: User): Promise<ApiResponseDTO<UserProfileRequestDTO>> {
+  @Get("getUserProfile")
+  async getUserProfile(@GetUser() user: User): Promise<ApiResponseDTO<UserProfileResponseDTO>> {
     const result = await this.userProfileService.getUserProfile(user.id);
 
     const ApiResponse: ApiResponseDTO<UserProfileDto> = {

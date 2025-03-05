@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 
 @Injectable()
-export class TravelStylesRepository {
+export class TravelStylesRepositoryManager {
   constructor(private readonly travelStylesRepository: Repository<TravelStyle>) {}
 
   //#region 查詢

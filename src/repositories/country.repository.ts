@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 
 @Injectable()
-export class CountryRepository {
+export class CountryRepositoryManager {
   constructor(private readonly countryRepository: Repository<Country>) {}
 
   //#region 查詢

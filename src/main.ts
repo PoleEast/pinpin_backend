@@ -22,7 +22,7 @@ async function bootstrap() {
 
   //設定CORS
   app.enableCors({
-    origin: "http://localhost:5173",
+    origin: /http:\/\/localhost(:\d+)?$/,
     credentials: true,
   });
 
