@@ -10,7 +10,7 @@ export class TravelStyle {
   name!: string;
 
   @Column({ type: "varchar", length: 100, nullable: false })
-  description?: string;
+  description!: string;
 
   @Column({ type: "varchar", length: 50, nullable: false })
   icon!: string;

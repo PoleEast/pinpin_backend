@@ -1,10 +1,14 @@
-import { Language } from "@/entities/language.entity.js";
+import { Language } from "../entities/language.entity.js";
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
 @Injectable()
 export class LanguageRepositoryManager {
-  constructor(private readonly languageRepository: Repository<Language>) {}
+  constructor(
+    @InjectRepository(Language)
+    private readonly languageRepository: Repository<Language>,
+  ) {}
 
   //#region 查詢
 

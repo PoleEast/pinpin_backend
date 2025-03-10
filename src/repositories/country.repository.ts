@@ -1,10 +1,14 @@
-import { Country } from "@/entities/country.entity.js";
+import { Country } from "../entities/country.entity.js";
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
 @Injectable()
 export class CountryRepositoryManager {
-  constructor(private readonly countryRepository: Repository<Country>) {}
+  constructor(
+    @InjectRepository(Country)
+    private readonly countryRepository: Repository<Country>,
+  ) {}
 
   //#region 查詢
 

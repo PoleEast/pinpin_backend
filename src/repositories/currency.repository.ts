@@ -1,10 +1,14 @@
-import { Currency } from "@/entities/currency.entity.js";
+import { Currency } from "../entities/currency.entity.js";
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
 @Injectable()
 export class CurrencyRepositoryManager {
-  constructor(private readonly currencyRepository: Repository<Currency>) {}
+  constructor(
+    @InjectRepository(Currency)
+    private readonly currencyRepository: Repository<Currency>,
+  ) {}
 
   //#region 查詢
 

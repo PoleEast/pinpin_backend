@@ -1,10 +1,14 @@
-import { TravelInterestType } from "@/entities/travel_Interest_type.entity.js";
+import { TravelInterestType } from "../entities/travel_Interest_type.entity.js";
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
 @Injectable()
 export class TravelInterestTypeRepositoryManager {
-  constructor(private readonly travelInterestTypeRepository: Repository<TravelInterestType>) {}
+  constructor(
+    @InjectRepository(TravelInterestType)
+    private readonly travelInterestTypeRepository: Repository<TravelInterestType>,
+  ) {}
 
   //#region 查詢
 

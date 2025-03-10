@@ -22,13 +22,13 @@ export class UserProfileController {
   async getUserProfile(@GetUser() user: User): Promise<ApiResponseDTO<UserProfileResponseDTO>> {
     const result = await this.userProfileService.getUserProfile(user.id);
 
-    const ApiResponse: ApiResponseDTO<UserProfileDto> = {
+    const apiResponse: ApiResponseDTO<UserProfileDto> = {
       statusCode: HttpStatus.OK,
       message: "用戶個人資料查詢成功",
       data: result,
     };
 
-    return ApiResponse;
+    return apiResponse;
   }
 
   @HttpCode(HttpStatus.OK)
