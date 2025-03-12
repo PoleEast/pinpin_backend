@@ -1,9 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from "@nestjs/common";
-import { LoginDto, RegisterDto } from "../../dtos/user.dto.js";
+import { Body, Controller, Get, HttpCode, HttpStatus, Patch, Post, Res, UseGuards } from "@nestjs/common";
+
+import { AccountDTO, LoginDto, RegisterDto } from "../../dtos/user.dto.js";
 import { UserService } from "./user.service.js";
 import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import ApiCommonResponses from "../../common/decorators/api_responses.decorator.js";
-import { ApiResponseDTO, LoginResponseDTO } from "pinpin_library";
+import { AccountRequestDTO, ApiResponseDTO, LoginResponseDTO } from "pinpin_library";
 import { Response } from "express";
 import { JwtGuard } from "../../common/guards/jwt.guard.js";
 import GetUser from "../../common/decorators/get-user.decorator.js";
@@ -84,6 +85,22 @@ export class UserController {
       data: {
         nickname: user.profile.nickname,
       },
+    };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "用戶個人資料修改" })
+  @ApiCommonResponses(HttpStatus.OK, "用戶個人資料修改成功")
+  @ApiCookieAuth()
+  @UseGuards(JwtGuard)
+  @Patch("updateUser")
+  async updateUserProfile(@GetUser() user: User, @Body() accountDTO: AccountDTO): Promise<ApiResponseDTO<AccountRequestDTO>> {
+    const result = await this.userService.updateUser(user, accountDTO);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: "用戶個人資料修改成功",
+      data: result,
     };
   }
 

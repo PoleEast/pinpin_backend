@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { LoginDto, LoginServiceDto, RegisterDto, RegisterServiceDto } from "../../dtos/user.dto.js";
+import { AccountDTO, LoginDto, LoginServiceDto, RegisterDto, RegisterServiceDto } from "../../dtos/user.dto.js";
 import { User } from "../../entities/user.entity.js";
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
@@ -74,6 +74,30 @@ export class UserService {
     await this.userRepositoryManager.Save(user);
 
     return loginServiceDto;
+  }
+
+  /**
+   * 依據使用者資料和AccountRequestDTO更新使用者資料
+   *
+   * @param user 使用者資料
+   * @param accountRequestDTO 要更新的資料
+   * @returns AccountRequestDTO
+   * @throws UnauthorizedException 使用者授權失效
+   */
+  async updateUser(user: User, accountDTO: AccountDTO): Promise<AccountDTO> {
+    if (!user) {
+      throw new UnauthorizedException("使用者授權失效");
+    }
+
+    user.email = accountDTO.email ?? user.email;
+    user.password_hash = accountDTO.password ? this.getHashPassword(accountDTO.password) : user.password_hash;
+
+    const updatedUser = await this.userRepositoryManager.Save(user);
+
+    accountDTO.account = updatedUser.account;
+    accountDTO.email = updatedUser.email;
+
+    return accountDTO;
   }
 
   //TODO: 第二版預定實作refresh token

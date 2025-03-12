@@ -1,54 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsBoolean, IsDate, IsEmail, IsIn, IsNumber, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
-import { AccountRequestDTO, ACCOUNTSETTING_REQUSER_VALIDATION, USERPROFILE_REQUSER_VALIDATION, UserProfileResponseDTO } from "pinpin_library";
-
-class AccountDTO implements AccountRequestDTO {
-  @ApiProperty({
-    description: "帳號",
-    example: "superman",
-    minLength: ACCOUNTSETTING_REQUSER_VALIDATION.ACCOUNT.MIN_LENGTH,
-    maxLength: ACCOUNTSETTING_REQUSER_VALIDATION.ACCOUNT.MAX_LENGTH,
-    required: false,
-  })
-  @IsString()
-  @MinLength(ACCOUNTSETTING_REQUSER_VALIDATION.ACCOUNT.MIN_LENGTH)
-  @MaxLength(ACCOUNTSETTING_REQUSER_VALIDATION.ACCOUNT.MAX_LENGTH)
-  account?: string;
-
-  @ApiProperty({
-    description: "密碼",
-    example: "123456",
-    minLength: ACCOUNTSETTING_REQUSER_VALIDATION.PASSWORD.MIN_LENGTH,
-    maxLength: ACCOUNTSETTING_REQUSER_VALIDATION.PASSWORD.MAX_LENGTH,
-    required: false,
-  })
-  @IsString()
-  @MinLength(ACCOUNTSETTING_REQUSER_VALIDATION.PASSWORD.MIN_LENGTH)
-  @MaxLength(ACCOUNTSETTING_REQUSER_VALIDATION.PASSWORD.MAX_LENGTH)
-  password?: string;
-
-  @ApiProperty({
-    description: "電子郵件",
-    example: "M9TlM@example.com",
-    required: false,
-  })
-  @IsString()
-  @MinLength(USERPROFILE_REQUSER_VALIDATION.EMAIL.MIN_LENGTH)
-  @MaxLength(USERPROFILE_REQUSER_VALIDATION.EMAIL.MAX_LENGTH)
-  @IsOptional()
-  @IsEmail()
-  email?: string;
-
-  @ApiProperty({
-    description: "建立時間",
-    required: false,
-  })
-  @Type(() => Date)
-  @IsDate()
-  @IsOptional()
-  createAt?: Date;
-}
+import { IsArray, IsBoolean, IsDate, IsIn, IsNumber, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
+import { USERPROFILE_REQUSER_VALIDATION, UserProfileResponseDTO } from "pinpin_library";
+import { AccountDTO } from "./user.dto.js";
 
 class UserProfileDto implements UserProfileResponseDTO {
   @ApiProperty({

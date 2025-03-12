@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpCode, HttpStatus, UseGuards } from "@nestjs/common";
 import { ApiCookieAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { UserProfileService } from "./userProfile.service.js";
 import ApiCommonResponses from "../../common/decorators/api_responses.decorator.js";
@@ -30,12 +30,4 @@ export class UserProfileController {
 
     return apiResponse;
   }
-
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: "用戶個人資料修改" })
-  @ApiCommonResponses(HttpStatus.OK, "用戶個人資料修改成功")
-  @ApiCookieAuth()
-  @UseGuards(JwtGuard)
-  @Post("updateUserProfile")
-  async updateUserProfile() {}
 }
