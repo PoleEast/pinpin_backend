@@ -24,6 +24,9 @@ export class UserProfile {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ type: "varchar", length: 50, nullable: true })
+  motto?: string;
+
   @Column({ type: "varchar", length: 200, nullable: true })
   bio?: string;
 

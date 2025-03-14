@@ -17,6 +17,7 @@ export class UserProfileService {
     if (userProfile === null) throw new NotFoundException("用戶個人資料查詢失敗");
 
     const userProfileSettingDto: UserProfileDto = {
+      motto: userProfile.motto,
       bio: userProfile.bio,
       fullname: userProfile.fullname,
       nickname: userProfile.nickname,
@@ -24,6 +25,7 @@ export class UserProfileService {
       avatar: userProfile.avatar,
       coverPhoto: userProfile.coverPhoto,
       birthday: userProfile.birthday,
+      phone: userProfile.phone,
       gender: userProfile.gender,
       address: userProfile.address,
       originCountry: userProfile.origin_country?.id,

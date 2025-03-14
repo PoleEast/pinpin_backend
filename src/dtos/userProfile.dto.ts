@@ -6,6 +6,19 @@ import { AccountDTO } from "./user.dto.js";
 
 class UserProfileDto implements UserProfileResponseDTO {
   @ApiProperty({
+    description: "座右銘",
+    example: "我是超人",
+    minLength: USERPROFILE_REQUSER_VALIDATION.MOTTO.MIN_LENGTH,
+    maxLength: USERPROFILE_REQUSER_VALIDATION.MOTTO.MAX_LENGTH,
+    required: false,
+  })
+  @IsString()
+  @MinLength(USERPROFILE_REQUSER_VALIDATION.MOTTO.MIN_LENGTH)
+  @MaxLength(USERPROFILE_REQUSER_VALIDATION.MOTTO.MAX_LENGTH)
+  @IsOptional()
+  motto?: string;
+
+  @ApiProperty({
     description: "自我介紹",
     example: "我是超人",
     minLength: USERPROFILE_REQUSER_VALIDATION.BIO.MIN_LENGTH,
