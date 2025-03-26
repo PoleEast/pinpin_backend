@@ -161,7 +161,7 @@ class UserProfileDto implements UserProfileResponseDTO {
   @IsArray({ message: "語言必須為陣列" })
   @IsNumber({}, { each: true, message: "語言必須為數字" })
   @IsOptional()
-  language?: number[];
+  languages?: number[];
 
   @ApiProperty({
     description: "貨幣",
@@ -171,7 +171,7 @@ class UserProfileDto implements UserProfileResponseDTO {
   @IsArray({ message: "貨幣必須為陣列" })
   @IsNumber({}, { each: true, message: "貨幣必須為數字" })
   @IsOptional()
-  currency?: number[];
+  currencies?: number[];
 
   @ApiProperty({
     description: "旅遊興趣",
@@ -181,7 +181,7 @@ class UserProfileDto implements UserProfileResponseDTO {
   @IsArray({ message: "旅遊興趣必須為陣列" })
   @IsNumber({}, { each: true, message: "旅遊興趣必須為數字" })
   @IsOptional()
-  travelInterest?: number[];
+  travelInterests?: number[];
 
   @ApiProperty({
     description: "旅遊風格",
@@ -191,7 +191,7 @@ class UserProfileDto implements UserProfileResponseDTO {
   @IsArray({ message: "旅遊風格必須為陣列" })
   @IsNumber({}, { each: true, message: "旅遊風格必須為數字" })
   @IsOptional()
-  travelStyle?: number[];
+  travelStyles?: number[];
 
   @ApiProperty({
     description: "帳戶資料",

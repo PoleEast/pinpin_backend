@@ -31,7 +31,7 @@ export class CategoryService {
    * @returns {Promise<CountryDTO[]>} 包含所有國家資訊的陣列
    */
   async getCountry(): Promise<CountryDTO[]> {
-    const countries: Country[] = await this.countryRepositoryManager.FindAll();
+    const countries: Country[] = await this.countryRepositoryManager.FindAllWithIconType();
 
     const countryDTOs: CountryDTO[] = countries.map((country) => ({
       id: country.id,
@@ -40,6 +40,7 @@ export class CategoryService {
       english_name: country.english_name,
       local_name: country.local_name,
       icon: country.icon,
+      icon_type: country.icon_type.name,
     }));
 
     return countryDTOs;
@@ -51,12 +52,13 @@ export class CategoryService {
    * @returns {Promise<CurrencyDTO[]>} 包含所有幣別資訊的陣列
    */
   async getCurrency(): Promise<CurrencyDTO[]> {
-    const countries: Currency[] = await this.currencyRepositoryManager.FindAll();
+    const countries: Currency[] = await this.currencyRepositoryManager.FindAllWithIconType();
 
     const currencyDTOs: CurrencyDTO[] = countries.map((currency) => ({
       id: currency.id,
       code: currency.code,
       icon: currency.icon,
+      icon_type: currency.icon_type.name,
     }));
 
     return currencyDTOs;
@@ -103,12 +105,13 @@ export class CategoryService {
    * @returns {Promise<travelInterestDTO[]>} 包含所有旅遊興趣資訊的陣列
    */
   async getTravelInterest(): Promise<travelInterestDTO[]> {
-    const result: TravelInterest[] = await this.travelInterestRepositoryManager.FindAll();
+    const result: TravelInterest[] = await this.travelInterestRepositoryManager.FindAllWithIconType();
 
     const travelInterestDTOs: travelInterestDTO[] = result.map((travelInterest) => ({
       id: travelInterest.id,
       name: travelInterest.name,
       icon: travelInterest.icon,
+      icon_type: travelInterest.icon_type.name,
     }));
 
     return travelInterestDTOs;
@@ -120,7 +123,7 @@ export class CategoryService {
    * @returns {Promise<TravelStyleDTO[]>} 包含所有旅遊風格資訊的陣列
    */
   async getTravelStyles(): Promise<TravelStyleDTO[]> {
-    const result: TravelStyle[] = await this.travelStylesRepositoryManager.FindAll();
+    const result: TravelStyle[] = await this.travelStylesRepositoryManager.FindAllWithIconType();
 
     const travelStylesDTOs: TravelStyleDTO[] = result.map((travelStyle) => ({
       id: travelStyle.id,
@@ -128,6 +131,7 @@ export class CategoryService {
       description: travelStyle.description,
       icon: travelStyle.icon,
       color: travelStyle.color,
+      icon_type: travelStyle.icon_type.name,
     }));
 
     return travelStylesDTOs;

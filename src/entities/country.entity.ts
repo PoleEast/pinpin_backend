@@ -5,6 +5,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
@@ -13,6 +14,7 @@ import {
 import { Language } from "./language.entity.js";
 import { Currency } from "./currency.entity.js";
 import { UserProfile } from "./user_profile.entity.js";
+import { IconType } from "./icon_type.entity.js";
 
 @Entity("country")
 export class Country {
@@ -45,6 +47,9 @@ export class Country {
 
   @Column({ type: "varchar", length: 50, nullable: false })
   icon!: string;
+
+  @ManyToOne(() => IconType, { eager: false, nullable: false })
+  icon_type!: IconType;
 
   @ManyToMany(() => Language, (language) => language.countries, {
     eager: false,

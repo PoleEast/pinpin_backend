@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import { TravelInterestType } from "./travel_Interest_type.entity.js";
 import { UserProfile } from "./user_profile.entity.js";
+import { IconType } from "./icon_type.entity.js";
 
 @Entity("travel_interest")
 export class TravelInterest {
@@ -22,6 +23,9 @@ export class TravelInterest {
 
   @Column({ type: "varchar", length: 50, nullable: false })
   icon!: string;
+
+  @ManyToOne(() => IconType, { eager: false, nullable: false })
+  icon_type!: IconType;
 
   @ManyToOne(() => TravelInterestType, (travelInterestType) => travelInterestType.travel_interests, { eager: false })
   travel_interest_type!: TravelInterestType;

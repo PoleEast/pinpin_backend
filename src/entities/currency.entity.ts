@@ -1,6 +1,17 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
+} from "typeorm";
 import { Country } from "./country.entity.js";
 import { UserProfile } from "./user_profile.entity.js";
+import { IconType } from "./icon_type.entity.js";
 
 @Entity("currency")
 export class Currency {
@@ -12,6 +23,9 @@ export class Currency {
 
   @Column({ type: "varchar", length: 50, nullable: false })
   icon!: string;
+
+  @ManyToOne(() => IconType, { eager: false, nullable: false })
+  icon_type!: IconType;
 
   @ManyToMany(() => Country, (country) => country.currency, { eager: false })
   countries?: Relation<Country[]>;

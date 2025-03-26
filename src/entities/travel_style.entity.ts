@@ -1,5 +1,16 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
+} from "typeorm";
 import { UserProfile } from "./user_profile.entity.js";
+import { IconType } from "./icon_type.entity.js";
 
 @Entity("travel_style")
 export class TravelStyle {
@@ -14,6 +25,9 @@ export class TravelStyle {
 
   @Column({ type: "varchar", length: 50, nullable: false })
   icon!: string;
+
+  @ManyToOne(() => IconType, { eager: false, nullable: false })
+  icon_type!: IconType;
 
   @Column({ type: "varchar", length: 50, nullable: false })
   color!: string;

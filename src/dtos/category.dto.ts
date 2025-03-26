@@ -52,6 +52,13 @@ class CountryDTO implements CountryResponseDTO {
   })
   icon: string;
 
+  @ApiProperty({
+    description: "圖示類型",
+    example: "fontawesome",
+    required: true,
+  })
+  icon_type: string;
+
   constructor(data: CountryResponseDTO) {
     this.id = data.id;
     this.code = data.code;
@@ -59,6 +66,7 @@ class CountryDTO implements CountryResponseDTO {
     this.english_name = data.english_name;
     this.local_name = data.local_name;
     this.icon = data.icon;
+    this.icon_type = data.icon_type;
   }
 }
 
@@ -84,10 +92,18 @@ class CurrencyDTO implements CurrencyResponseDTO {
   })
   icon: string;
 
+  @ApiProperty({
+    description: "圖示類型",
+    example: "fontawesome",
+    required: true,
+  })
+  icon_type: string;
+
   constructor(data: CurrencyResponseDTO) {
     this.id = data.id;
     this.code = data.code;
     this.icon = data.icon;
+    this.icon_type = data.icon_type;
   }
 }
 
@@ -179,10 +195,18 @@ class travelInterestDTO implements TravelInterestsResponseDTO {
   })
   icon: string;
 
+  @ApiProperty({
+    description: "圖示類型",
+    example: "fontawesome",
+    required: true,
+  })
+  icon_type: string;
+
   constructor(data: TravelInterestsResponseDTO) {
     this.id = data.id;
     this.name = data.name;
     this.icon = data.icon;
+    this.icon_type = data.icon_type;
   }
 }
 
@@ -216,6 +240,13 @@ class TravelStyleDTO implements TravelStyleResponseDTO {
   icon: string;
 
   @ApiProperty({
+    description: "圖示類型",
+    example: "fontawesome",
+    required: true,
+  })
+  icon_type: string;
+
+  @ApiProperty({
     description: "顏色",
     example: "amber",
     required: true,
@@ -227,6 +258,7 @@ class TravelStyleDTO implements TravelStyleResponseDTO {
     this.name = data.name;
     this.description = data.description;
     this.icon = data.icon;
+    this.icon_type = data.icon_type;
     this.color = data.color;
   }
 }

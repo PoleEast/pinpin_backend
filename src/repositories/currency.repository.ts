@@ -20,5 +20,17 @@ export class CurrencyRepositoryManager {
     return await this.currencyRepository.find();
   }
 
+  /**
+   * 取得所有幣別，並且包括每個幣別的 icon_type
+   * @returns 包含所有幣別的陣列
+   */
+  async FindAllWithIconType(): Promise<Currency[]> {
+    return await this.currencyRepository.find({
+      relations: {
+        icon_type: true,
+      },
+    });
+  }
+
   //#endregion
 }

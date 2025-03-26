@@ -21,5 +21,17 @@ export class CountryRepositoryManager {
     return await this.countryRepository.find();
   }
 
+  /**
+   * 獲取所有國家資料，並且包括每個國家的icon_type
+   * @returns 包含所有國家資訊的陣列
+   */
+  async FindAllWithIconType(): Promise<Country[]> {
+    return await this.countryRepository.find({
+      relations: {
+        icon_type: true,
+      },
+    });
+  }
+
   //#endregion
 }

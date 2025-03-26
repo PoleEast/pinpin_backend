@@ -20,5 +20,18 @@ export class TravelInterestRepositoryManager {
     return await this.travelInterestRepository.find();
   }
 
+  /**
+   * 取得所有旅遊興趣，
+   * 並且包括每個旅遊興趣的圖示類型
+   * @returns {Promise<TravelInterest[]>} 包含所有旅遊興趣的陣列
+   */
+  async FindAllWithIconType(): Promise<TravelInterest[]> {
+    return await this.travelInterestRepository.find({
+      relations: {
+        icon_type: true,
+      },
+    });
+  }
+
   //#endregion
 }
