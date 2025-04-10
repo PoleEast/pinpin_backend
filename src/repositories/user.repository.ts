@@ -90,7 +90,7 @@ export class UserRepositoryManager {
   New(account: string, password_hash: string, profile: UserProfile): User {
     return this.userRepository.create({
       account: account,
-      password_hash: password_hash,
+      passwordHash: password_hash,
       profile: profile,
     });
   }

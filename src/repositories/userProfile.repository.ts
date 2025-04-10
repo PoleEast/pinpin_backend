@@ -1,7 +1,8 @@
+import { DatabaseException } from "../common/exception/database.exception.js";
 import { UserProfile } from "../entities/user_profile.entity.js";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, TypeORMError } from "typeorm";
 
 @Injectable()
 export class UserProfileRepositoryManager {
@@ -21,15 +22,39 @@ export class UserProfileRepositoryManager {
     return await this.userProfileRepository.findOne({
       where: { id: id },
       relations: {
-        origin_country: true,
-        visited_countries: true,
+        originCountry: true,
+        visitedCountries: true,
         languages: true,
         currencies: true,
-        travel_interests: true,
-        travel_styles: true,
+        travelInterests: true,
+        travelStyles: true,
         user: true,
       },
     });
+  }
+
+  //#endregion
+
+  //#region 新增
+
+  /**
+   * 將用戶資料儲存到資料庫。
+   *
+   * @param userProfile - 要儲存的用戶資料實體。
+   * @returns 一個 Promise，解析為已儲存的用戶資料實體。
+   * @throws DatabaseException - 如果在儲存操作期間發生資料庫錯誤。
+   * @throws Error - 如果發生意外錯誤。
+   */
+  async Save(userProfile: UserProfile): Promise<UserProfile> {
+    try {
+      return await this.userProfileRepository.save(userProfile);
+    } catch (error) {
+      if (error instanceof TypeORMError) {
+        throw new DatabaseException("資料庫錯誤", error);
+      } else {
+        throw error;
+      }
+    }
   }
 
   //#endregion

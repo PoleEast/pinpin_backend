@@ -28,7 +28,7 @@ export class CountryRepositoryManager {
   async FindAllWithIconType(): Promise<Country[]> {
     return await this.countryRepository.find({
       relations: {
-        icon_type: true,
+        iconType: true,
       },
     });
   }

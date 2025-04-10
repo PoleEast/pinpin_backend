@@ -25,20 +25,20 @@ export class TravelInterest {
   icon!: string;
 
   @ManyToOne(() => IconType, { eager: false, nullable: false })
-  icon_type!: IconType;
+  iconType!: IconType;
 
-  @ManyToOne(() => TravelInterestType, (travelInterestType) => travelInterestType.travel_interests, { eager: false })
-  travel_interest_type!: TravelInterestType;
+  @ManyToOne(() => TravelInterestType, (travelInterestType) => travelInterestType.travelInterests, { eager: false })
+  travelInterestType!: TravelInterestType;
 
-  @ManyToMany(() => UserProfile, (userProfile) => userProfile.travel_interests, { eager: false })
-  user_profiles!: Relation<UserProfile>;
+  @ManyToMany(() => UserProfile, (userProfile) => userProfile.travelInterests, { eager: false })
+  userProfiles!: Relation<UserProfile>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })
-  create_at!: Date;
+  createAt!: Date;
 
   @UpdateDateColumn({ type: "datetime", nullable: true })
-  update_at?: Date;
+  updateAt?: Date;
 
   @DeleteDateColumn({ type: "datetime", nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 }

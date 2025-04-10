@@ -28,7 +28,7 @@ export class TravelInterestTypeRepositoryManager {
   async FindAllWithTravelInterest(): Promise<TravelInterestType[]> {
     return this.travelInterestTypeRepository.find({
       relations: {
-        travel_interests: true,
+        travelInterests: true,
       },
     });
   }

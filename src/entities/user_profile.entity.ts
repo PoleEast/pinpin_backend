@@ -37,7 +37,7 @@ export class UserProfile {
   nickname!: string;
 
   @Column({ type: "boolean", default: false, nullable: false })
-  is_full_name_visible!: boolean;
+  isFullNameVisible!: boolean;
 
   @Column({ type: "varchar", length: 100, nullable: true })
   avatar?: string;
@@ -61,36 +61,36 @@ export class UserProfile {
   @Column({ type: "varchar", length: 100, nullable: true })
   address?: string;
 
-  @ManyToOne(() => Country, (country) => country.user_profiles_originCountry, {
+  @ManyToOne(() => Country, (country) => country.userProfilesOriginCountry, {
     eager: false,
   })
-  origin_country?: Relation<Country>;
+  originCountry?: Relation<Country>;
 
-  @ManyToMany(() => Country, (country) => country.user_profiles_visited_countries, { eager: false })
+  @ManyToMany(() => Country, (country) => country.userProfilesVisitedCountries, { eager: false })
   @JoinTable()
-  visited_countries?: Relation<Country[]>;
+  visitedCountries?: Relation<Country[]>;
 
-  @ManyToMany(() => Language, (language) => language.user_profiles, {
+  @ManyToMany(() => Language, (language) => language.userProfiles, {
     eager: false,
   })
   @JoinTable()
   languages?: Relation<Language[]>;
 
-  @ManyToMany(() => Currency, (currency) => currency.user_profiles, {
+  @ManyToMany(() => Currency, (currency) => currency.userProfiles, {
     eager: false,
   })
   @JoinTable()
   currencies?: Relation<Currency[]>;
 
-  @ManyToMany(() => TravelInterest, (travelInterest) => travelInterest.user_profiles, { eager: false })
+  @ManyToMany(() => TravelInterest, (travelInterest) => travelInterest.userProfiles, { eager: false })
   @JoinTable()
-  travel_interests?: Relation<TravelInterest[]>;
+  travelInterests?: Relation<TravelInterest[]>;
 
-  @ManyToMany(() => TravelStyle, (travelStyle) => travelStyle.user_profiles, {
+  @ManyToMany(() => TravelStyle, (travelStyle) => travelStyle.userProfiles, {
     eager: false,
   })
   @JoinTable()
-  travel_styles?: Relation<TravelStyle[]>;
+  travelStyles?: Relation<TravelStyle[]>;
 
   @OneToOne(() => User, (user) => user.profile, {
     eager: false,
@@ -99,11 +99,11 @@ export class UserProfile {
   user!: Relation<User>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })
-  create_at!: Date;
+  createAt!: Date;
 
   @UpdateDateColumn({ type: "datetime", nullable: true })
-  update_at?: Date;
+  updateAt?: Date;
 
   @DeleteDateColumn({ type: "datetime", nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 }

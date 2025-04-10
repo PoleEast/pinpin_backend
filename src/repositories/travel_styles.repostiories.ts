@@ -23,7 +23,7 @@ export class TravelStylesRepositoryManager {
   async FindAllWithIconType(): Promise<TravelStyle[]> {
     return await this.travelStylesRepository.find({
       relations: {
-        icon_type: true,
+        iconType: true,
       },
     });
   }

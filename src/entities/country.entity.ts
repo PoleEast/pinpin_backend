@@ -25,7 +25,7 @@ export class Country {
   code!: string;
 
   @Column({ type: "int", nullable: false })
-  dial_code!: number;
+  dialCode!: number;
 
   @Column({
     type: "varchar",
@@ -34,7 +34,7 @@ export class Country {
     length: 50,
     nullable: false,
   })
-  english_name!: string;
+  englishName!: string;
 
   @Column({
     type: "varchar",
@@ -43,13 +43,13 @@ export class Country {
     length: 50,
     nullable: false,
   })
-  local_name!: string;
+  localName!: string;
 
   @Column({ type: "varchar", length: 50, nullable: false })
   icon!: string;
 
   @ManyToOne(() => IconType, { eager: false, nullable: false })
-  icon_type!: IconType;
+  iconType!: IconType;
 
   @ManyToMany(() => Language, (language) => language.countries, {
     eager: false,
@@ -63,20 +63,20 @@ export class Country {
   @JoinTable()
   currency?: Relation<Currency[]>;
 
-  @OneToMany(() => UserProfile, (userProfile) => userProfile.origin_country, {
+  @OneToMany(() => UserProfile, (userProfile) => userProfile.originCountry, {
     eager: false,
   })
-  user_profiles_originCountry?: Relation<UserProfile[]>;
+  userProfilesOriginCountry?: Relation<UserProfile[]>;
 
-  @ManyToMany(() => UserProfile, (userProfile) => userProfile.visited_countries, { eager: false })
-  user_profiles_visited_countries?: Relation<UserProfile[]>;
+  @ManyToMany(() => UserProfile, (userProfile) => userProfile.visitedCountries, { eager: false })
+  userProfilesVisitedCountries?: Relation<UserProfile[]>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })
-  create_at!: Date;
+  createAt!: Date;
 
   @UpdateDateColumn({ type: "datetime", nullable: true })
-  update_at?: Date;
+  updateAt?: Date;
 
   @DeleteDateColumn({ type: "datetime", nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 }

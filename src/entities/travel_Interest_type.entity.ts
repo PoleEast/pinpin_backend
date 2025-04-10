@@ -12,15 +12,15 @@ export class TravelInterestType {
   @Column({ type: "varchar", length: 50, nullable: false })
   color!: string;
 
-  @OneToMany(() => TravelInterest, (travelInterest) => travelInterest.travel_interest_type, { eager: false })
-  travel_interests?: Relation<TravelInterest[]>;
+  @OneToMany(() => TravelInterest, (travelInterest) => travelInterest.travelInterestType, { eager: false })
+  travelInterests?: Relation<TravelInterest[]>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })
-  create_at!: Date;
+  createAt!: Date;
 
   @UpdateDateColumn({ type: "datetime", nullable: true })
-  update_at?: Date;
+  updateAt?: Date;
 
   @DeleteDateColumn({ type: "datetime", nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 }

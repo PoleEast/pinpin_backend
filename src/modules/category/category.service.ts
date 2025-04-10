@@ -36,11 +36,11 @@ export class CategoryService {
     const countryDTOs: CountryDTO[] = countries.map((country) => ({
       id: country.id,
       code: country.code,
-      dial_code: country.dial_code,
-      english_name: country.english_name,
-      local_name: country.local_name,
+      dial_code: country.dialCode,
+      english_name: country.englishName,
+      local_name: country.localName,
       icon: country.icon,
-      icon_type: country.icon_type.name,
+      icon_type: country.iconType.name,
     }));
 
     return countryDTOs;
@@ -58,7 +58,7 @@ export class CategoryService {
       id: currency.id,
       code: currency.code,
       icon: currency.icon,
-      icon_type: currency.icon_type.name,
+      icon_type: currency.iconType.name,
     }));
 
     return currencyDTOs;
@@ -74,8 +74,8 @@ export class CategoryService {
 
     const languageDTOs: LanguageDTO[] = languages.map((language) => ({
       id: language.id,
-      english_name: language.english_name,
-      local_name: language.local_name,
+      english_name: language.englishName,
+      local_name: language.localName,
     }));
 
     return languageDTOs;
@@ -93,7 +93,7 @@ export class CategoryService {
       id: travelInterestType.id,
       name: travelInterestType.name,
       color: travelInterestType.color,
-      travel_interests: travelInterestType.travel_interests?.map((travelInterest) => travelInterest.id) ?? [],
+      travel_interests: travelInterestType.travelInterests?.map((travelInterest) => travelInterest.id) ?? [],
     }));
 
     return travelInterestTypeDTOs;
@@ -111,7 +111,7 @@ export class CategoryService {
       id: travelInterest.id,
       name: travelInterest.name,
       icon: travelInterest.icon,
-      icon_type: travelInterest.icon_type.name,
+      icon_type: travelInterest.iconType.name,
     }));
 
     return travelInterestDTOs;
@@ -131,7 +131,7 @@ export class CategoryService {
       description: travelStyle.description,
       icon: travelStyle.icon,
       color: travelStyle.color,
-      icon_type: travelStyle.icon_type.name,
+      icon_type: travelStyle.iconType.name,
     }));
 
     return travelStylesDTOs;

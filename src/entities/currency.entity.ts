@@ -25,7 +25,7 @@ export class Currency {
   icon!: string;
 
   @ManyToOne(() => IconType, { eager: false, nullable: false })
-  icon_type!: IconType;
+  iconType!: IconType;
 
   @ManyToMany(() => Country, (country) => country.currency, { eager: false })
   countries?: Relation<Country[]>;
@@ -33,14 +33,14 @@ export class Currency {
   @ManyToMany(() => UserProfile, (userProfile) => userProfile.currencies, {
     eager: false,
   })
-  user_profiles?: Relation<UserProfile[]>;
+  userProfiles?: Relation<UserProfile[]>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })
-  create_at!: Date;
+  createAt!: Date;
 
   @UpdateDateColumn({ type: "datetime", nullable: true })
-  update_at?: Date;
+  updateAt?: Date;
 
   @DeleteDateColumn({ type: "datetime", nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 }

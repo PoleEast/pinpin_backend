@@ -27,7 +27,7 @@ export class CurrencyRepositoryManager {
   async FindAllWithIconType(): Promise<Currency[]> {
     return await this.currencyRepository.find({
       relations: {
-        icon_type: true,
+        iconType: true,
       },
     });
   }

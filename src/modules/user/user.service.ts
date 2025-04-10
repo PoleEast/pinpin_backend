@@ -58,7 +58,7 @@ export class UserService {
     }
 
     //比對密碼是否正確(compareSync會將第一個參數加密後和第二個參數進行比對)
-    if (!bcrypt.compareSync(loginDto.password, user.password_hash)) {
+    if (!bcrypt.compareSync(loginDto.password, user.passwordHash)) {
       throw new UnauthorizedException("帳號或密碼錯誤");
     }
 
@@ -70,7 +70,7 @@ export class UserService {
     };
 
     //設定最後登入時間
-    user.last_login_at = new Date();
+    user.lastLoginAt = new Date();
     await this.userRepositoryManager.Save(user);
 
     return loginServiceDto;
@@ -90,7 +90,7 @@ export class UserService {
     }
 
     user.email = accountDTO.email ?? user.email;
-    user.password_hash = accountDTO.password ? this.getHashPassword(accountDTO.password) : user.password_hash;
+    user.passwordHash = accountDTO.password ? this.getHashPassword(accountDTO.password) : user.passwordHash;
 
     const updatedUser = await this.userRepositoryManager.Save(user);
 

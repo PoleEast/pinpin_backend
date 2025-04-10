@@ -14,25 +14,25 @@ export class User {
     length: 100,
     nullable: false,
   })
-  password_hash!: string;
+  passwordHash!: string;
 
-  @Column({ type: "varchar", length: 50, nullable: true })
+  @Column({ type: "varchar", length: 100, nullable: true })
   email?: string;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })
-  create_at!: Date;
+  createAt!: Date;
 
   @Column({ type: "datetime", nullable: true })
-  last_login_at?: Date;
+  lastLoginAt?: Date;
 
   @Column({ type: "boolean", default: true })
-  is_active!: boolean;
+  isActive!: boolean;
 
   @UpdateDateColumn({ type: "datetime", nullable: true })
-  update_at?: Date;
+  updateAt?: Date;
 
   @DeleteDateColumn()
-  deleted_at?: Date;
+  deletedAt?: Date;
 
   @OneToOne(() => UserProfile, (userProfile) => userProfile.user, {
     cascade: true,

@@ -27,22 +27,22 @@ export class TravelStyle {
   icon!: string;
 
   @ManyToOne(() => IconType, { eager: false, nullable: false })
-  icon_type!: IconType;
+  iconType!: IconType;
 
   @Column({ type: "varchar", length: 50, nullable: false })
   color!: string;
 
-  @ManyToMany(() => UserProfile, (userProfile) => userProfile.travel_styles, {
+  @ManyToMany(() => UserProfile, (userProfile) => userProfile.travelStyles, {
     eager: false,
   })
-  user_profiles?: Relation<UserProfile>;
+  userProfiles?: Relation<UserProfile>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })
-  create_at!: Date;
+  createAt!: Date;
 
   @UpdateDateColumn({ type: "datetime", nullable: true })
-  update_at?: Date;
+  updateAt?: Date;
 
   @DeleteDateColumn({ type: "datetime", nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 }

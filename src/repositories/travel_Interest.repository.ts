@@ -28,7 +28,7 @@ export class TravelInterestRepositoryManager {
   async FindAllWithIconType(): Promise<TravelInterest[]> {
     return await this.travelInterestRepository.find({
       relations: {
-        icon_type: true,
+        iconType: true,
       },
     });
   }

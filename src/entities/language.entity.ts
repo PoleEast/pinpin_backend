@@ -14,7 +14,7 @@ export class Language {
     length: 50,
     nullable: false,
   })
-  english_name!: string;
+  englishName!: string;
 
   @Column({
     type: "varchar",
@@ -23,7 +23,7 @@ export class Language {
     length: 50,
     nullable: false,
   })
-  local_name!: string;
+  localName!: string;
 
   @ManyToMany(() => Country, (country) => country.language, { eager: false })
   countries?: Relation<Country[]>;
@@ -31,14 +31,14 @@ export class Language {
   @ManyToMany(() => UserProfile, (userProfile) => userProfile.languages, {
     eager: false,
   })
-  user_profiles?: Relation<UserProfile[]>;
+  userProfiles?: Relation<UserProfile[]>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })
-  create_at!: Date;
+  createAt!: Date;
 
   @UpdateDateColumn({ type: "datetime", nullable: true })
-  update_at?: Date;
+  updateAt?: Date;
 
   @DeleteDateColumn({ type: "datetime", nullable: true })
-  deleted_at?: Date;
+  deletedAt?: Date;
 }

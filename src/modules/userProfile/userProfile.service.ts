@@ -21,26 +21,34 @@ export class UserProfileService {
       bio: userProfile.bio,
       fullname: userProfile.fullname,
       nickname: userProfile.nickname,
-      isFullNameVisible: userProfile.is_full_name_visible,
+      isFullNameVisible: userProfile.isFullNameVisible,
       avatar: userProfile.avatar,
       coverPhoto: userProfile.coverPhoto,
       birthday: userProfile.birthday,
       phone: userProfile.phone,
       gender: userProfile.gender,
       address: userProfile.address,
-      originCountry: userProfile.origin_country?.id,
-      visitedCountries: userProfile.visited_countries?.map((country) => country.id),
+      originCountry: userProfile.originCountry?.id,
+      visitedCountries: userProfile.visitedCountries?.map((country) => country.id),
       languages: userProfile.languages?.map((language) => language.id),
       currencies: userProfile.currencies?.map((currency) => currency.id),
-      travelInterests: userProfile.travel_interests?.map((interest) => interest.id),
-      travelStyles: userProfile.travel_styles?.map((style) => style.id),
+      travelInterests: userProfile.travelInterests?.map((interest) => interest.id),
+      travelStyles: userProfile.travelStyles?.map((style) => style.id),
       user: {
         account: userProfile.user.account,
         email: userProfile.user.email,
-        createAt: userProfile.user.create_at,
+        createAt: userProfile.user.createAt,
       },
     };
 
     return userProfileSettingDto;
+  }
+
+  async updateUserProfile(id: number, userProfileDto: UserProfileDto) {
+    const userProfile: UserProfile | null = await this.userProfileRepositoryManager.FindOneByIdwhitAll(id);
+
+    if (userProfile === null) throw new NotFoundException(`用戶:${id}個人資料查詢失敗`);
+
+    return this.userProfileRepositoryManager.Save(userProfile);
   }
 }
