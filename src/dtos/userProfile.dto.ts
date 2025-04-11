@@ -61,9 +61,8 @@ class UserProfileDto implements UserProfileResponseDTO {
     example: true,
     required: false,
   })
-  @IsOptional()
   @IsBoolean()
-  isFullNameVisible?: boolean;
+  isFullNameVisible!: boolean;
 
   @ApiProperty({
     description: "頭像id",

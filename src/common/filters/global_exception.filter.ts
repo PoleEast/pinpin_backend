@@ -28,7 +28,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       this.logger.error(exception.originalError);
     }
 
-    this.logger.debug(exception);
+    this.logger.debug((exception as Error).stack);
 
     response.status(errorResponse.statusCode).json(errorResponse);
   }

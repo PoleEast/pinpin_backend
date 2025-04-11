@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsDate, IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsDate, IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength, ValidateIf } from "class-validator";
 import { AccountRequestDTO, LoginRequestDTO, RegisterRequestDTO, USERPROFILE_REQUSER_VALIDATION, USER_VALIDATION } from "pinpin_library";
 
 class RegisterDto implements RegisterRequestDTO {
@@ -107,6 +107,7 @@ class AccountDTO implements AccountRequestDTO {
     required: false,
   })
   @IsString()
+  @ValidateIf((o) => o.password !== "")
   @MinLength(USER_VALIDATION.PASSWORD.MIN_LENGTH)
   @MaxLength(USER_VALIDATION.PASSWORD.MAX_LENGTH)
   @IsOptional()
@@ -118,10 +119,11 @@ class AccountDTO implements AccountRequestDTO {
     required: false,
   })
   @IsString()
+  @ValidateIf((o) => o.email !== "")
   @MinLength(USERPROFILE_REQUSER_VALIDATION.EMAIL.MIN_LENGTH)
   @MaxLength(USERPROFILE_REQUSER_VALIDATION.EMAIL.MAX_LENGTH)
   @IsOptional()
-  @IsEmail()
+  @IsEmail({}, { message: "電子郵件格式錯誤" })
   email?: string;
 
   @ApiProperty({

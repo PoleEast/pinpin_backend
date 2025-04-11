@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Patch, UseGuards } from "@nestjs/common";
 import { ApiCookieAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { UserProfileService } from "./userProfile.service.js";
 import ApiCommonResponses from "../../common/decorators/api_responses.decorator.js";
@@ -31,13 +31,19 @@ export class UserProfileController {
     return apiResponse;
   }
 
-  //   async updateUserProfile(@GetUser() user: User, @Body() UserProfileDto: UserProfileDto): Promise<ApiResponseDTO<UserProfileResponseDTO>> {
-  //     const result = await this.userProfileService.updateUserProfile(user.id, UserProfileDto);
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "用戶個人資料更新" })
+  @ApiCommonResponses(HttpStatus.OK, "用戶個人資料更新成功", UserProfileDto)
+  @ApiCookieAuth()
+  @UseGuards(JwtGuard)
+  @Patch("updateUserProfile")
+  async updateUserProfile(@GetUser() user: User, @Body() UserProfileDto: UserProfileDto): Promise<ApiResponseDTO<UserProfileResponseDTO>> {
+    const result = await this.userProfileService.updateUserProfile(user.id, UserProfileDto);
 
-  //     return {
-  //       statusCode: HttpStatus.OK,
-  //       message: "用戶個人資料更新成功",
-  //       data: result,
-  //     };
-  //   }
+    return {
+      statusCode: HttpStatus.OK,
+      message: "用戶個人資料更新成功",
+      data: result,
+    };
+  }
 }
