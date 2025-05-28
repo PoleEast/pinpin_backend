@@ -1,28 +1,18 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { UserRepositoryManager } from "../../repositories/user.repository.js";
 import { UserProfileRepositoryManager } from "../../repositories/userProfile.repository.js";
 import { Module } from "@nestjs/common";
 import { UserProfile } from "../../entities/user_profile.entity.js";
 import { User } from "../../entities/user.entity.js";
-import { CloudinaryModule } from "../cloudinary/cloudinary.module.js";
 import { UserProfileService } from "./userProfile.service.js";
-import { ConfigService } from "@nestjs/config";
 import { UserProfileController } from "./userProfile.controller.js";
+import { Avatar } from "../../entities/avatar.entity.js";
+import { AvatarChangeHistoryRepositoryManager } from "../../repositories/avatar_change_history.repository.js";
+import { AvatarChangeHistory } from "../../entities/avatar_change_history.entity.js";
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User, UserProfile]),
-    CloudinaryModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
-        cloud_name: configService.get("CLOUDINARY_NAME"),
-        api_key: configService.get("CLOUDINARY_API_KEY"),
-        api_secret: configService.get("CLOUDINARY_API_SECRET"),
-      }),
-      inject: [ConfigService],
-    }),
-  ],
+  imports: [TypeOrmModule.forFeature([User, UserProfile, Avatar, AvatarChangeHistory])],
   controllers: [UserProfileController],
-  providers: [UserProfileService, UserRepositoryManager, UserProfileRepositoryManager],
-  exports: [UserRepositoryManager, UserProfileRepositoryManager],
+  providers: [UserProfileService, UserProfileRepositoryManager, AvatarChangeHistoryRepositoryManager],
+  exports: [UserProfileService],
 })
 export class UserProfileModule {}

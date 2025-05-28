@@ -3,6 +3,7 @@ import { Type } from "class-transformer";
 import { IsArray, IsBoolean, IsDate, IsIn, IsNumber, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
 import { USERPROFILE_REQUSER_VALIDATION, UserProfileResponseDTO } from "pinpin_library";
 import { AccountDTO } from "./user.dto.js";
+import AvatarDTO from "./avatar.dto.js";
 
 class UserProfileDto implements UserProfileResponseDTO {
   @ApiProperty({
@@ -65,17 +66,12 @@ class UserProfileDto implements UserProfileResponseDTO {
   isFullNameVisible!: boolean;
 
   @ApiProperty({
-    description: "頭像id",
-    example: "superman",
-    minLength: USERPROFILE_REQUSER_VALIDATION.AVATAR.MIN_LENGTH,
-    maxLength: USERPROFILE_REQUSER_VALIDATION.AVATAR.MAX_LENGTH,
-    required: false,
+    description: "頭像資料",
   })
-  @IsString()
-  @MinLength(USERPROFILE_REQUSER_VALIDATION.AVATAR.MIN_LENGTH)
-  @MaxLength(USERPROFILE_REQUSER_VALIDATION.AVATAR.MAX_LENGTH)
+  @ValidateNested()
+  @Type(() => AvatarDTO)
   @IsOptional()
-  avatar?: string;
+  avatar!: AvatarDTO;
 
   @ApiProperty({
     description: "封面照id",

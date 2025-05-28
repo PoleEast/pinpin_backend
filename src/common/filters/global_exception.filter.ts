@@ -10,6 +10,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+    this.logger.error("發生錯誤", (exception as Error).stack);
+
     const errorResponse: ApiErrorResponseDTO = {
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       message: "發生預期之外的錯誤",
@@ -24,11 +26,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       errorResponse.statusCode = HttpStatus.SERVICE_UNAVAILABLE;
       errorResponse.message = exception.message || errorResponse.message;
       errorResponse.error = exception.name || errorResponse.error;
-
-      this.logger.error(exception.originalError);
     }
-
-    this.logger.debug((exception as Error).stack);
 
     response.status(errorResponse.statusCode).json(errorResponse);
   }

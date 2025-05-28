@@ -6,9 +6,13 @@ import { JwtModule } from "@nestjs/jwt";
 import { JwtStaregy } from "../../common/strategies/jwt.strategy.js";
 import { ConfigService } from "@nestjs/config";
 import { UserProfileModule } from "../userProfile/userProfile.module.js";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { User } from "../../entities/user.entity.js";
+import { UserRepositoryManager } from "../../repositories/user.repository.js";
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([User]),
     UserProfileModule,
     PassportModule,
     JwtModule.registerAsync({
@@ -22,6 +26,6 @@ import { UserProfileModule } from "../userProfile/userProfile.module.js";
     }),
   ],
   controllers: [UserController],
-  providers: [UserService, JwtStaregy],
+  providers: [UserService, JwtStaregy, UserRepositoryManager],
 })
 export class UserModule {}

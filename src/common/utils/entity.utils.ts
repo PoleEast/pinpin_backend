@@ -9,9 +9,9 @@
  * - 如果 `ids` 是 `undefined` 或 `null`，返回 `undefined`。
  * - 如果 `ids` 包含無效數字（例如 `NaN`），這些數字會被過濾掉。
  */
-export function mapIdsToEntities<T extends { id: number }>(ids?: number[]): T[] | undefined;
-export function mapIdsToEntities<T extends { id: number }>(ids?: number): T | undefined;
-export function mapIdsToEntities<T extends { id: number }>(ids?: number[] | number): T[] | T | undefined {
+function mapIdsToEntities<T extends { id: number }>(ids?: number[]): T[] | undefined;
+function mapIdsToEntities<T extends { id: number }>(ids?: number): T | undefined;
+function mapIdsToEntities<T extends { id: number }>(ids?: number[] | number): T[] | T | undefined {
   if (ids === undefined || ids === null) return undefined;
 
   if (typeof ids === "number") {
@@ -20,3 +20,5 @@ export function mapIdsToEntities<T extends { id: number }>(ids?: number[] | numb
 
   return ids.filter((id): id is number => id !== null && id !== undefined && !isNaN(Number(id))).map((id) => ({ id }) as unknown as T);
 }
+
+export { mapIdsToEntities };

@@ -1,0 +1,79 @@
+import { Injectable } from "@nestjs/common";
+import { CloudinaryService } from "../cloudinary/cloudinary.service.js";
+import { AvatarRepositoryManager } from "../../repositories/avatar.repository.js";
+import { UploadApiResponse } from "cloudinary";
+import AvatarDTO from "@/dtos/avatar.dto.js";
+import { User } from "@/entities/user.entity.js";
+import { Avatar } from "@/entities/avatar.entity.js";
+
+@Injectable()
+export class AvatarService {
+  constructor(
+    private readonly cloudinaryService: CloudinaryService,
+    private readonly avatorRepositoryManager: AvatarRepositoryManager,
+  ) {}
+
+  /**
+   * 上傳用戶頭像。
+   *
+   * @param file - Express.Multer.File 格式的頭像文件。
+   * @param user - 當前用戶的實體。
+   * @returns 一個 Promise，解析為包含上傳頭像詳細信息的 `AvatarDTO`。
+   *
+   * 將用戶上傳的頭像文件轉換為 Base64 字符串，並上傳到 Cloudinary。
+   * 然後創建並儲存一個新的頭像實體，最終返回頭像的數據傳輸對象。
+   */
+  async uploadAvatar(file: Express.Multer.File, user: User): Promise<AvatarDTO> {
+    const fileBase64 = `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+    const response: UploadApiResponse = await this.cloudinaryService.uploadImage(fileBase64);
+
+    const avatar = this.avatorRepositoryManager.New({
+      public_id: response.public_id,
+      user: user,
+      type: 0,
+    });
+    const saveAvatar = await this.avatorRepositoryManager.Save(avatar);
+    const avatarDTO: AvatarDTO = this.mapAvatarToDto(saveAvatar);
+
+    return avatarDTO;
+  }
+
+  /**
+   * 獲取預設頭像列表
+   *
+   * @returns 一個 Promise，解析為包含預設頭像列表的 `AvatarDTO` 陣列
+   *
+   * 從資料庫中獲取所有預設頭像，並將其轉換為 `AvatarDTO` 陣列
+   */
+  async getDefaultAvatar(): Promise<AvatarDTO[]> {
+    const avatars = await this.avatorRepositoryManager.FindAllDefault();
+
+    return avatars.map((avatar) => this.mapAvatarToDto(avatar));
+  }
+
+  /**
+   * 獲取用戶的所有頭像
+   *
+   * @param user - 當前用戶的實體
+   * @returns 一個 Promise，解析為包含用戶頭像列表的 `AvatarDTO` 陣列
+   *
+   * 從資料庫中獲取用戶的所有頭像，並將其轉換為 `AvatarDTO` 陣列
+   * 並按照頭像的建立時間排序
+   */
+  async getUserAvatar(user: User): Promise<AvatarDTO[]> {
+    const avatars = await this.avatorRepositoryManager.FindManyByUserId(user.id);
+
+    return avatars.map((avatar) => this.mapAvatarToDto(avatar)).sort((a, b) => b.create_at.getTime() - a.create_at.getTime());
+  }
+
+  private mapAvatarToDto(entity: Avatar): AvatarDTO {
+    return {
+      id: entity.id,
+      public_id: entity.public_id,
+      type: entity.type,
+      create_at: entity.createAt,
+    };
+  }
+}
+
+export default AvatarService;

@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { CategoryModule } from "./modules/category/category.module.js";
+import { AvatarModule } from "./modules/avatar/avatar.module.js";
 
 //直接使用new URL("./entities/*.entity{.ts,.js}", import.meta.url).pathname會有前置的斜線
 const __filename = fileURLToPath(import.meta.url);
@@ -37,6 +38,7 @@ const __dirname = dirname(__filename);
     UserModule,
     UserProfileModule,
     CategoryModule,
+    AvatarModule,
   ],
 })
 export class AppModule {}

@@ -18,6 +18,7 @@ import { Language } from "./language.entity.js";
 import { Currency } from "./currency.entity.js";
 import { TravelInterest } from "./travel_interest.entity.js";
 import { TravelStyle } from "./travel_style.entity.js";
+import { Avatar } from "./avatar.entity.js";
 
 @Entity("user_profiles")
 export class UserProfile {
@@ -40,9 +41,6 @@ export class UserProfile {
   isFullNameVisible!: boolean;
 
   @Column({ type: "varchar", length: 100, nullable: true })
-  avatar?: string;
-
-  @Column({ type: "varchar", length: 100, nullable: true })
   coverPhoto?: string;
 
   @Column({ type: "datetime", nullable: true })
@@ -60,6 +58,13 @@ export class UserProfile {
 
   @Column({ type: "varchar", length: 100, nullable: true })
   address?: string;
+
+  @OneToOne(() => Avatar, (avatar) => avatar.userProfile, {
+    eager: false,
+    nullable: false,
+  })
+  @JoinColumn({ name: "avatar_id", referencedColumnName: "id" })
+  avatar!: Relation<Avatar>;
 
   @ManyToOne(() => Country, (country) => country.userProfilesOriginCountry, {
     eager: false,

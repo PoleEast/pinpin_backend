@@ -1,6 +1,5 @@
 import { UserProfileRepositoryManager } from "../../repositories/userProfile.repository.js";
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { CloudinaryService } from "../cloudinary/cloudinary.service.js";
 import { UserProfileDto } from "@/dtos/userProfile.dto.js";
 import { UserProfile } from "@/entities/user_profile.entity.js";
 import { Country } from "@/entities/country.entity.js";
@@ -10,14 +9,20 @@ import { TravelInterest } from "@/entities/travel_interest.entity.js";
 import { TravelStyle } from "@/entities/travel_style.entity.js";
 import { DataSource } from "typeorm";
 import { mapIdsToEntities } from "../../common/utils/entity.utils.js";
+import { Avatar } from "@/entities/avatar.entity.js";
+import { AvatarChangeHistoryRepositoryManager } from "../../repositories/avatar_change_history.repository.js";
 
 @Injectable()
 export class UserProfileService {
   constructor(
     private readonly userProfileRepositoryManager: UserProfileRepositoryManager,
-    private readonly cloudinaryService: CloudinaryService,
+    private readonly avatarChangeHistoryRepositoryManager: AvatarChangeHistoryRepositoryManager,
     private readonly dataSource: DataSource,
   ) {}
+
+  New(nickname: string): UserProfile {
+    return this.userProfileRepositoryManager.New(nickname);
+  }
 
   /**
    * 根據用戶 ID 獲取用戶個人資料。
@@ -37,7 +42,12 @@ export class UserProfileService {
       fullname: userProfile.fullname,
       nickname: userProfile.nickname,
       isFullNameVisible: userProfile.isFullNameVisible,
-      avatar: userProfile.avatar,
+      avatar: {
+        id: userProfile.avatar.id,
+        public_id: userProfile.avatar.public_id,
+        type: userProfile.avatar.type,
+        create_at: userProfile.avatar.createAt,
+      },
       coverPhoto: userProfile.coverPhoto,
       birthday: userProfile.birthday,
       phone: userProfile.phone,
@@ -85,7 +95,18 @@ export class UserProfileService {
       userProfile.fullname = userProfileDto.fullname;
       userProfile.nickname = userProfileDto.nickname;
       userProfile.isFullNameVisible = userProfileDto.isFullNameVisible ?? false;
-      userProfile.avatar = userProfileDto.avatar;
+
+      // 更新頭像
+      const avatarEntity = mapIdsToEntities<Avatar>(userProfileDto.avatar.id);
+      if (!avatarEntity) throw new NotFoundException("找不到對應的頭像");
+      if (userProfile.avatar.id !== avatarEntity.id) {
+        await this.avatarChangeHistoryRepositoryManager.SaveInTransaction(
+          this.avatarChangeHistoryRepositoryManager.New(userProfile.user.id, userProfile.avatar.id),
+          manager,
+        );
+      }
+      userProfile.avatar = avatarEntity;
+
       userProfile.coverPhoto = userProfileDto.coverPhoto;
       userProfile.birthday = userProfileDto.birthday;
       userProfile.gender = userProfileDto.gender;
@@ -112,7 +133,12 @@ export class UserProfileService {
       fullname: entity.fullname,
       nickname: entity.nickname,
       isFullNameVisible: entity.isFullNameVisible,
-      avatar: entity.avatar,
+      avatar: {
+        id: entity.avatar.id,
+        public_id: entity.avatar.public_id,
+        type: entity.avatar.type,
+        create_at: entity.avatar.createAt,
+      },
       coverPhoto: entity.coverPhoto,
       birthday: entity.birthday,
       phone: entity.phone,

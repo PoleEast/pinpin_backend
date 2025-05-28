@@ -29,6 +29,7 @@ export class UserProfileRepositoryManager {
         travelInterests: true,
         travelStyles: true,
         user: true,
+        avatar: true,
       },
     });
   }

@@ -5,13 +5,13 @@ import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { UserRepositoryManager } from "../../repositories/user.repository.js";
 import { JwtPayload } from "../../interfaces/jwt.interface.js";
-import { UserProfileRepositoryManager } from "../../repositories/userProfile.repository.js";
+import { UserProfileService } from "../userProfile/userProfile.service.js";
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepositoryManager: UserRepositoryManager,
-    private readonly userprofileRepositoryManager: UserProfileRepositoryManager,
+    private readonly userProfileService: UserProfileService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -28,7 +28,7 @@ export class UserService {
 
     //整理使用者資料
 
-    const userProfile = this.userprofileRepositoryManager.New(registerDto.nickname);
+    const userProfile = this.userProfileService.New(registerDto.nickname);
 
     const user = this.userRepositoryManager.New(registerDto.account, this.getHashPassword(registerDto.password), userProfile);
 

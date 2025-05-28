@@ -1,15 +1,10 @@
 import { InjectionToken } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-
-interface CloudinaryConfig {
-  cloud_name?: string;
-  api_key?: string;
-  api_secret?: string;
-}
+import { ConfigOptions } from "cloudinary";
 
 interface CloudinaryAsyncConfig {
-  useFactory: (configService: ConfigService) => Promise<CloudinaryConfig> | CloudinaryConfig;
+  useFactory: (configService: ConfigService) => Promise<ConfigOptions> | ConfigOptions;
   inject?: InjectionToken[];
 }
 
-export type { CloudinaryConfig, CloudinaryAsyncConfig };
+export type { CloudinaryAsyncConfig };

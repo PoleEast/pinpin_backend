@@ -1,6 +1,6 @@
 ROLLBACK;
 
-USE PinPinSql;
+USE pinpinsql;
 
 SET autocommit = 0;
 
@@ -146,9 +146,9 @@ VALUES
   -- 冒險體驗類別 (travel_interest_type_id = 4)
   ('高空彈跳', 'fa-parachute-box', 1, 4, NOW()),
   ('激流泛舟', 'fa-water', 1, 4, NOW()),
-  ('攀岩體驗', 'fa-person-climbing', 1, 4, NOW()),
+  ('攀岩體驗', 'climbing', 2, 4, NOW()),
   ('越野車探險', 'fa-car', 1, 4, NOW()),
-  ('熱氣球飛行', 'fa-hotairballoon', 1, 4, NOW()),
+  ('熱氣球飛行', 'airballoon', 2, 4, NOW()),
   
     -- 歷史古蹟類別 (travel_interest_type_id = 5)
   ('古蹟參訪', 'fa-landmark', 1, 5, NOW()),
@@ -198,5 +198,11 @@ VALUES
   ('團體旅行', '組織性強的團體出遊，共享行程和體驗', 'fa-people-group', 1, 'purple'),
   ('自助規劃', '根據個人興趣自訂行程，強調自主規劃', 'fa-map-marker-alt', 1, 'teal'),
   ('隨性旅行', '隨意即興，沒有固定計劃，享受變化與驚喜', 'fa-random', 1, 'pink');
+
+INSERT INTO avatar (public_id, type)
+VALUES
+  ('xqmtjf1uinu2w8cszqf0',1),
+  ('r7bctuoecpfoa2su1qdj',1),
+  ('ynnewwosoyeuifgewxdn',1);
 
 COMMIT;

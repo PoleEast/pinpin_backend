@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
 import { UserProfile } from "./user_profile.entity.js";
+import { Avatar } from "./avatar.entity.js";
 
 @Entity("user")
 export class User {
@@ -38,4 +39,9 @@ export class User {
     cascade: true,
   })
   profile!: Relation<UserProfile>;
+
+  @OneToMany(() => Avatar, (avatar) => avatar.id, {
+    eager: false,
+  })
+  avatars: Avatar[];
 }
