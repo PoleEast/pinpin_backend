@@ -139,12 +139,14 @@ class AccountDTO implements AccountRequestDTO {
 interface RegisterServiceDto {
   nickname: string;
   account: string;
+  avatar_public_id: string;
   token: string;
 }
 
 interface LoginServiceDto {
   nickname: string;
   account: string;
+  avatar_public_id: string;
   token: string;
 }
 

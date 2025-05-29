@@ -6,12 +6,16 @@ import { JwtService } from "@nestjs/jwt";
 import { UserRepositoryManager } from "../../repositories/user.repository.js";
 import { JwtPayload } from "../../interfaces/jwt.interface.js";
 import { UserProfileService } from "../userProfile/userProfile.service.js";
+import AvatarService from "../avatar/avatar.service.js";
+import { mapIdsToEntities } from "../../common/utils/entity.utils.js";
+import { Avatar } from "../../entities/avatar.entity.js";
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepositoryManager: UserRepositoryManager,
     private readonly userProfileService: UserProfileService,
+    private readonly avatarService: AvatarService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -30,6 +34,13 @@ export class UserService {
 
     const userProfile = this.userProfileService.New(registerDto.nickname);
 
+    const defaultAvatarId = (await this.avatarService.getRandomDefaultAvatar()).id;
+    const avatarEntity: Avatar | undefined = mapIdsToEntities(defaultAvatarId);
+    if (!avatarEntity) {
+      throw new Error("找不到預設頭像");
+    }
+    userProfile.avatar = avatarEntity;
+
     const user = this.userRepositoryManager.New(registerDto.account, this.getHashPassword(registerDto.password), userProfile);
 
     // 建立用戶
@@ -39,6 +50,7 @@ export class UserService {
       token: this.generateToken(createdUser),
       account: createdUser.account,
       nickname: createdUser.profile.nickname,
+      avatar_public_id: createdUser.profile.avatar.public_id,
     };
 
     return registerServiceDto;
@@ -67,6 +79,7 @@ export class UserService {
       token: this.generateToken(user),
       account: user.account,
       nickname: user.profile.nickname,
+      avatar_public_id: user.profile.avatar.public_id,
     };
 
     //設定最後登入時間

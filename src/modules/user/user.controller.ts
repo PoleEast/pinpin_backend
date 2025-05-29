@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Patch, Post, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Patch, Post, Res, UseGuards } from "@nestjs/common";
 
 import { AccountDTO, LoginDto, RegisterDto } from "../../dtos/user.dto.js";
 import { UserService } from "./user.service.js";
@@ -34,6 +34,7 @@ export class UserController {
       message: "註冊成功",
       data: {
         nickname: result.nickname,
+        avatar_public_id: result.avatar_public_id,
       },
     };
   }
@@ -57,6 +58,7 @@ export class UserController {
       message: "登入成功",
       data: {
         nickname: result.nickname,
+        avatar_public_id: result.avatar_public_id,
       },
     };
   }
@@ -84,6 +86,7 @@ export class UserController {
       message: "授權成功",
       data: {
         nickname: user.profile.nickname,
+        avatar_public_id: user.profile.avatar.public_id,
       },
     };
   }

@@ -25,6 +25,6 @@ export class JwtStaregy extends PassportStrategy(Strategy) {
 
   async validate(payload: JwtPayload): Promise<User | null> {
     const { id } = payload;
-    return await this.userRepositoryManager.FindOneByIdWithProfile(id);
+    return await this.userRepositoryManager.FindOneByIdWithProfileWhitAvatar(id);
   }
 }

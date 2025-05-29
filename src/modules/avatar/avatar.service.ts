@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CloudinaryService } from "../cloudinary/cloudinary.service.js";
 import { AvatarRepositoryManager } from "../../repositories/avatar.repository.js";
 import { UploadApiResponse } from "cloudinary";
@@ -64,6 +64,27 @@ export class AvatarService {
     const avatars = await this.avatorRepositoryManager.FindManyByUserId(user.id);
 
     return avatars.map((avatar) => this.mapAvatarToDto(avatar)).sort((a, b) => b.create_at.getTime() - a.create_at.getTime());
+  }
+
+  /**
+   * 獲取隨機的預設頭像
+   *
+   * @returns 一個 Promise，解析為隨機的預設頭像的 `AvatarDTO` 實體
+   *
+   * 從資料庫中隨機獲取一個預設頭像，並將其轉換為 `AvatarDTO` 實體
+   * 如果沒有預設頭像，則輸出警告訊息
+   */
+  async getRandomDefaultAvatar(): Promise<AvatarDTO> {
+    const avatars = await this.avatorRepositoryManager.FindAllDefault();
+
+    if (avatars.length === 0) {
+      throw new NotFoundException("找不到預設頭像");
+    }
+
+    const randomIndex = Math.floor(Math.random() * avatars.length);
+    const randomAvatar = avatars[randomIndex];
+
+    return this.mapAvatarToDto(randomAvatar);
   }
 
   private mapAvatarToDto(entity: Avatar): AvatarDTO {

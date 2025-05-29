@@ -203,6 +203,9 @@ INSERT INTO avatar (public_id, type)
 VALUES
   ('xqmtjf1uinu2w8cszqf0',1),
   ('r7bctuoecpfoa2su1qdj',1),
-  ('ynnewwosoyeuifgewxdn',1);
+  ('ynnewwosoyeuifgewxdn',1),
+  ('kwvabhibrl3kxnd3x2bi',1),
+  ('tkzdxrmivhu8qcdkdehq',1),
+  ('nlpxaf0o1lobfckx6urd',1);
 
 COMMIT;

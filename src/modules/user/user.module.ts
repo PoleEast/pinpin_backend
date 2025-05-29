@@ -9,10 +9,12 @@ import { UserProfileModule } from "../userProfile/userProfile.module.js";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "../../entities/user.entity.js";
 import { UserRepositoryManager } from "../../repositories/user.repository.js";
+import { AvatarModule } from "../avatar/avatar.module.js";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
+    AvatarModule,
     UserProfileModule,
     PassportModule,
     JwtModule.registerAsync({
