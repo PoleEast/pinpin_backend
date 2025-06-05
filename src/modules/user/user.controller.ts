@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Patch, Post, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Patch, Post, Res, UseGuards } from "@nestjs/common";
 
 import { AccountDTO, LoginDto, RegisterDto } from "../../dtos/user.dto.js";
 import { UserService } from "./user.service.js";
@@ -97,7 +97,7 @@ export class UserController {
   @ApiCookieAuth()
   @UseGuards(JwtGuard)
   @Patch("updateUser")
-  async updateUserProfile(@GetUser() user: User, @Body() accountDTO: AccountDTO): Promise<ApiResponseDTO<AccountRequestDTO>> {
+  async updateUser(@GetUser() user: User, @Body() accountDTO: AccountDTO): Promise<ApiResponseDTO<AccountRequestDTO>> {
     const result = await this.userService.updateUser(user, accountDTO);
 
     return {
@@ -116,7 +116,7 @@ export class UserController {
     response.cookie("access_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
   }

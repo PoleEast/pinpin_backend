@@ -14,13 +14,14 @@ export class UserProfileRepositoryManager {
   //#region 查詢
 
   /**
-   * 依據 id 取得一位用戶，包含所有資料
-   * @param id 用戶id
+   * 依據用戶 ID 取得用戶個人資料
+   * @param userId - 用戶 ID
    * @returns UserProfile | null
+   * @throws {DatabaseException} - 如果出現資料庫錯誤
    */
-  async FindOneByIdwhitAll(id: number): Promise<UserProfile | null> {
+  async FindOneByUserIdwhitAll(userId: number): Promise<UserProfile | null> {
     return await this.userProfileRepository.findOne({
-      where: { id: id },
+      where: { user: { id: userId } },
       relations: {
         originCountry: true,
         visitedCountries: true,
@@ -35,15 +36,14 @@ export class UserProfileRepositoryManager {
   }
 
   /**
-   * 在交易中根據 ID 獲取 `UserProfile` 實體，包括所有相關的實體。
-   *
-   * @param id - 要獲取的 `UserProfile` 的 ID。
-   * @param manager - 用於在交易中執行資料庫操作的 `EntityManager` 實例。
-   * @returns 一個 Promise，解析為包含所有指定關聯的 `UserProfile` 實體，或者如果未找到則為 `null`。
+   * 在交易中根據 userId 取得用戶，包含所有資料
+   * @param userId - 用戶id
+   * @param manager - 用於在交易中執行資料庫操作的 `EntityManager` 實例
+   * @returns UserProfile | null
    */
-  async FindOneByIdwhitAllInTransaction(id: number, manager: EntityManager) {
+  async FindOneByUserIdwithAllInTransaction(userId: number, manager: EntityManager) {
     return await manager.findOne(UserProfile, {
-      where: { id: id },
+      where: { user: { id: userId } },
       relations: {
         originCountry: true,
         visitedCountries: true,
@@ -51,6 +51,7 @@ export class UserProfileRepositoryManager {
         currencies: true,
         travelInterests: true,
         travelStyles: true,
+        avatar: true,
         user: true,
       },
     });
@@ -106,6 +107,7 @@ export class UserProfileRepositoryManager {
   New(nickname: string): UserProfile {
     return this.userProfileRepository.create({
       nickname: nickname,
+      avatar_changed_history: [],
     });
   }
 }

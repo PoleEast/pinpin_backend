@@ -8,9 +8,10 @@ import { UserProfileController } from "./userProfile.controller.js";
 import { Avatar } from "../../entities/avatar.entity.js";
 import { AvatarChangeHistoryRepositoryManager } from "../../repositories/avatar_change_history.repository.js";
 import { AvatarChangeHistory } from "../../entities/avatar_change_history.entity.js";
+import { AvatarModule } from "../avatar/avatar.module.js";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserProfile, Avatar, AvatarChangeHistory])],
+  imports: [TypeOrmModule.forFeature([User, UserProfile, Avatar, AvatarChangeHistory]), AvatarModule],
   controllers: [UserProfileController],
   providers: [UserProfileService, UserProfileRepositoryManager, AvatarChangeHistoryRepositoryManager],
   exports: [UserProfileService],

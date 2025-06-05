@@ -206,6 +206,18 @@ VALUES
   ('ynnewwosoyeuifgewxdn',1),
   ('kwvabhibrl3kxnd3x2bi',1),
   ('tkzdxrmivhu8qcdkdehq',1),
-  ('nlpxaf0o1lobfckx6urd',1);
+  ('nlpxaf0o1lobfckx6urd',1),
+  ('nn3vyvi0jbjncigmnh2v',1),
+  ('tq40szgvzplp161wsrq3',1),
+  ('wmtnqix8twhbotqnkqsr',1),
+  ('h57jhbywhg4t7x1db9nc',1),
+  ('ocz6bvwqosogfvcnjudn',1),
+  ('ijp67ji1xqbnofd1eyfc',1),
+  ('tbkqwawx1zqtwsqxg3nr',1),
+  ('urxtsq64fvdmmt8zb9hn',1),
+  ('tclmrb1onwhhlpxztujf',1),
+  ('zghnlbl2j4znd24j5vud',1),
+  ('yppqzczwggytwncdekyn',1),
+  ('msk1rbisuvlzcu8wsr3b',1),
 
 COMMIT;

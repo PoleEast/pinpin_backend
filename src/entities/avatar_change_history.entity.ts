@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Relation, UpdateDateColumn } from "typeorm";
 import { UserProfile } from "./user_profile.entity.js";
 import { Avatar } from "./avatar.entity.js";
 
@@ -8,10 +8,12 @@ export class AvatarChangeHistory {
   id: number;
 
   @ManyToOne(() => UserProfile, { eager: false, nullable: false })
-  user_profile_id: number;
+  @JoinColumn({ name: "user_profile_id" })
+  user_profile: Relation<UserProfile>;
 
   @ManyToOne(() => Avatar, { eager: false, nullable: false })
-  avatar_id: number;
+  @JoinColumn({ name: "avatar_id" })
+  avatar: Relation<Avatar>;
 
   @UpdateDateColumn({ type: "datetime", nullable: false })
   change_date: Date;

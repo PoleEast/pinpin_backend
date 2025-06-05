@@ -5,6 +5,7 @@ import { UploadApiResponse } from "cloudinary";
 import AvatarDTO from "@/dtos/avatar.dto.js";
 import { User } from "@/entities/user.entity.js";
 import { Avatar } from "@/entities/avatar.entity.js";
+import { EntityManager } from "typeorm";
 
 @Injectable()
 export class AvatarService {
@@ -85,6 +86,36 @@ export class AvatarService {
     const randomAvatar = avatars[randomIndex];
 
     return this.mapAvatarToDto(randomAvatar);
+  }
+
+  /**
+   * 依據頭像ID獲取頭像
+   *
+   * @param id - 頭像的唯一標識符
+   * @returns 一個 Promise，解析為頭像實體
+   * @throws {NotFoundException} 如果找不到具有指定ID的頭像
+   *
+   * 使用給定的ID從資料庫中獲取頭像，如果找不到則拋出異常
+   */
+
+  async getAvatarById(id: number): Promise<Avatar> {
+    const avatar = await this.avatorRepositoryManager.FindOneById(id);
+
+    if (!avatar) {
+      throw new NotFoundException("找不到頭像");
+    }
+
+    return avatar;
+  }
+
+  async getAvatarByIdInTransaction(id: number, manager: EntityManager): Promise<Avatar> {
+    const avatar = await this.avatorRepositoryManager.FindOneByIdInTransaction(id, manager);
+
+    if (!avatar) {
+      throw new NotFoundException("找不到頭像");
+    }
+
+    return avatar;
   }
 
   private mapAvatarToDto(entity: Avatar): AvatarDTO {

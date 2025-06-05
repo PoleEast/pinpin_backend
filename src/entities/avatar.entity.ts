@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, Relation } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation } from "typeorm";
 import { UserProfile } from "./user_profile.entity.js";
 import { User } from "./user.entity.js";
+import { AvatarChangeHistory } from "./avatar_change_history.entity.js";
 
 @Entity("avatar")
 export class Avatar {
@@ -19,11 +20,14 @@ export class Avatar {
   @DeleteDateColumn({ type: "datetime", nullable: true })
   deletedAt?: Date;
 
-  @OneToOne(() => UserProfile, (userProfile) => userProfile.avatar, {
+  @OneToMany(() => UserProfile, (userProfile) => userProfile.avatar, {
     eager: false,
     nullable: true,
   })
   userProfile?: Relation<UserProfile>;
+
+  @OneToMany(() => AvatarChangeHistory, (avatarChangeHistory) => avatarChangeHistory.avatar, { eager: false, nullable: true })
+  avatarChangeHistories?: Relation<AvatarChangeHistory[]>;
 
   @ManyToOne(() => User, (user) => user.avatars, {
     eager: false,

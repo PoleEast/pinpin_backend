@@ -12,18 +12,30 @@ export class AvatarChangeHistoryRepositoryManager {
   ) {}
 
   /**
-   * 依據用戶設定檔 id 取得多個頭像歷史
-   * @param userProfileId 用戶設定檔 id
-   * @returns AvatarChangeHistory[]
+   * 依據用戶設定檔 ID 獲取用戶頭像變更歷史
+   * @param userProfileId - 用戶設定檔 ID
+   * @returns 依據用戶設定檔 ID 獲得的頭像變更歷史
    *
-   * 從資料庫中獲取多個頭像歷史，並按照最後修改時間排序
+   * 使用 TypeORM 的 QueryBuilder 來查詢用戶頭像變更歷史
+   * 首先，它會使用 Left Join 來取得用戶頭像
+   * 接著，它會使用 Subquery 來取得每個頭像的最新變更日期
+   * 最後，它會使用 OrderBy 來將結果按照變更日期排序
    */
-  async FindManyByUserProfileId(userProfileId: number): Promise<AvatarChangeHistory[]> {
+  async FindManyByUserProfileIdWithAvatar(userProfileId: number): Promise<AvatarChangeHistory[]> {
     return await this.avatarChangeHistoryRepository
-      .find({
-        where: { user_profile_id: userProfileId },
-      })
-      .then((result) => result.sort((a, b) => b.change_date.getTime() - a.change_date.getTime()));
+      .createQueryBuilder("history")
+      .leftJoinAndSelect("history.avatar", "avatar")
+      .where("history.user_profile_id = :userProfileId", { userProfileId })
+      .andWhere(
+        `history.change_date = (
+      SELECT MAX(h2.change_date) 
+      FROM avatar_change_history h2 
+      WHERE h2.user_profile_id = history.user_profile_id 
+      AND h2.avatar_id = history.avatar_id
+    )`,
+      )
+      .orderBy("history.change_date", "DESC")
+      .getMany();
   }
 
   /**
@@ -74,6 +86,6 @@ export class AvatarChangeHistoryRepositoryManager {
    * @returns 創建的 `AvatarChangeHistory` 實體
    */
   New(userId: number, avatarId: number): AvatarChangeHistory {
-    return this.avatarChangeHistoryRepository.create({ user_profile_id: userId, avatar_id: avatarId });
+    return this.avatarChangeHistoryRepository.create({ user_profile: { id: userId }, avatar: { id: avatarId } });
   }
 }

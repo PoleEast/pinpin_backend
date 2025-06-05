@@ -1,17 +1,17 @@
 import { User } from "@/entities/user.entity.js";
-import { UserRepositoryManager } from "../../repositories/user.repository.js";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { Request } from "express";
 import { Strategy } from "passport-jwt";
 import { JwtPayload } from "../../interfaces/jwt.interface.js";
+import { UserService } from "../../modules/user/user.service.js";
 
 @Injectable()
-export class JwtStaregy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly configservice: ConfigService,
-    private userRepositoryManager: UserRepositoryManager,
+    private readonly userService: UserService,
   ) {
     super({
       jwtFromRequest: (req: Request) => {
@@ -25,6 +25,6 @@ export class JwtStaregy extends PassportStrategy(Strategy) {
 
   async validate(payload: JwtPayload): Promise<User | null> {
     const { id } = payload;
-    return await this.userRepositoryManager.FindOneByIdWithProfileWhitAvatar(id);
+    return await this.userService.getUserByIdWithProfileWhitAvatar(id);
   }
 }

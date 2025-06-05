@@ -1,5 +1,5 @@
 import { User } from "@/entities/user.entity.js";
-import { createParamDecorator, ExecutionContext, Logger } from "@nestjs/common";
+import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 
 //獲取User的屬性資料
 type UserKey = keyof User;
@@ -7,8 +7,6 @@ type UserKey = keyof User;
 const GetUser = createParamDecorator((data: UserKey | undefined, ctx: ExecutionContext) => {
   const request = ctx.switchToHttp().getRequest();
   const user: User = request.user;
-
-  Logger.debug(JSON.stringify(user, null, 2));
 
   if (!data) {
     return user;

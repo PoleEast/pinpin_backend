@@ -41,16 +41,25 @@ export class UserService {
     }
     userProfile.avatar = avatarEntity;
 
+    const avatarChangeHistory = this.userProfileService.NewAvatarChangeHistory(userProfile.id, userProfile.avatar.id);
+    userProfile.avatar_changed_history.push(avatarChangeHistory);
+
     const user = this.userRepositoryManager.New(registerDto.account, this.getHashPassword(registerDto.password), userProfile);
 
     // 建立用戶
     const createdUser = await this.userRepositoryManager.Save(user);
 
+    const loadUser = await this.userRepositoryManager.FindOneByIdWithProfileWhitAvatar(createdUser.id);
+
+    if (!loadUser) {
+      throw new Error("找不到用戶");
+    }
+
     const registerServiceDto: RegisterServiceDto = {
-      token: this.generateToken(createdUser),
-      account: createdUser.account,
-      nickname: createdUser.profile.nickname,
-      avatar_public_id: createdUser.profile.avatar.public_id,
+      token: this.generateToken(loadUser),
+      account: loadUser.account,
+      nickname: loadUser.profile.nickname,
+      avatar_public_id: loadUser.profile.avatar.public_id,
     };
 
     return registerServiceDto;
@@ -64,7 +73,7 @@ export class UserService {
    * @throws UnauthorizedException 帳號或密碼錯誤
    */
   async Login(loginDto: LoginDto): Promise<LoginServiceDto> {
-    const user = await this.userRepositoryManager.FindOneByAccountWithProfile(loginDto.account);
+    const user = await this.userRepositoryManager.FindOneByAccountWithProfileWhitAvatar(loginDto.account);
     if (!user) {
       throw new UnauthorizedException("帳號或密碼錯誤");
     }
@@ -111,6 +120,17 @@ export class UserService {
     accountDTO.email = updatedUser.email;
 
     return accountDTO;
+  }
+
+  /**
+   * 依據使用者 ID 獲取用戶資料
+   *
+   * @param id 使用者 ID
+   * @returns User | null
+   * @throws {NotFoundException} 如果找不到用戶
+   */
+  async getUserByIdWithProfileWhitAvatar(id: number): Promise<User | null> {
+    return await this.userRepositoryManager.FindOneByIdWithProfileWhitAvatar(id);
   }
 
   //TODO: 第二版預定實作refresh token

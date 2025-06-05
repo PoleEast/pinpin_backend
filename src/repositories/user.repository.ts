@@ -30,11 +30,13 @@ export class UserRepositoryManager {
    * @param account 帳號
    * @returns User | null
    */
-  async FindOneByAccountWithProfile(account: string): Promise<User | null> {
+  async FindOneByAccountWithProfileWhitAvatar(account: string): Promise<User | null> {
     return await this.userRepository.findOne({
       where: { account: account },
       relations: {
-        profile: true,
+        profile: {
+          avatar: true,
+        },
       },
     });
   }

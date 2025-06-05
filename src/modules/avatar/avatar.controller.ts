@@ -7,6 +7,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import GetUser from "../../common/decorators/get-user.decorator.js";
 import { User } from "../../entities/user.entity.js";
 import AvatarDTO from "../../dtos/avatar.dto.js";
+import { AvatarResponseDTO } from "pinpin_library";
 
 @ApiTags("頭像")
 @Controller("avatar")
@@ -45,7 +46,7 @@ export class AvatarController {
 
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "用戶頭像上傳" })
-  @ApiCommonResponses(HttpStatus.CREATED, "用戶頭像上傳成功")
+  @ApiCommonResponses(HttpStatus.CREATED, "用戶頭像上傳成功", AvatarDTO)
   @ApiCookieAuth()
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -77,7 +78,7 @@ export class AvatarController {
     }),
   )
   @Post("upload")
-  async uploadAvatar(@UploadedFile() file: Express.Multer.File, @GetUser() user: User): Promise<ApiResponseDTO<AvatarDTO>> {
+  async uploadAvatar(@UploadedFile() file: Express.Multer.File, @GetUser() user: User): Promise<ApiResponseDTO<AvatarResponseDTO>> {
     if (!file) {
       throw new BadRequestException("請上傳檔案");
     }

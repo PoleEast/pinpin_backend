@@ -9,14 +9,18 @@ import { TravelInterest } from "@/entities/travel_interest.entity.js";
 import { TravelStyle } from "@/entities/travel_style.entity.js";
 import { DataSource } from "typeorm";
 import { mapIdsToEntities } from "../../common/utils/entity.utils.js";
-import { Avatar } from "@/entities/avatar.entity.js";
 import { AvatarChangeHistoryRepositoryManager } from "../../repositories/avatar_change_history.repository.js";
+import { AvatarChangeHistory } from "@/entities/avatar_change_history.entity.js";
+import AvatarChangeHistoryDTO from "@/dtos/avatarChangeHistory.dto.js";
+import AvatarService from "../avatar/avatar.service.js";
+import AvatarDTO from "@/dtos/avatar.dto.js";
 
 @Injectable()
 export class UserProfileService {
   constructor(
     private readonly userProfileRepositoryManager: UserProfileRepositoryManager,
     private readonly avatarChangeHistoryRepositoryManager: AvatarChangeHistoryRepositoryManager,
+    private readonly avatarService: AvatarService,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -32,7 +36,7 @@ export class UserProfileService {
    * @throws {NotFoundException} 如果找不到用戶個人資料。
    */
   async getUserProfile(userId: number): Promise<UserProfileDto> {
-    const userProfile: UserProfile | null = await this.userProfileRepositoryManager.FindOneByIdwhitAll(userId);
+    const userProfile: UserProfile | null = await this.userProfileRepositoryManager.FindOneByUserIdwhitAll(userId);
 
     if (userProfile === null) throw new NotFoundException("用戶個人資料查詢失敗");
 
@@ -70,43 +74,24 @@ export class UserProfileService {
   }
 
   /**
-   * 使用提供的數據更新用戶個人資料。
+   * 依據用戶 ID 和 UserProfileDTO 更新用戶個人資料
    *
-   * @param id - 要更新的用戶個人資料的唯一標識符。
-   * @param userProfileDto - 包含更新後用戶個人資料數據的對象。
-   *
-   * @returns 一個 Promise，解析為更新後的用戶個人資料實體。
-   *
-   * @throws {NotFoundException} 如果找不到具有指定 ID 的用戶個人資料。
-   *
-   * @remarks
-   * 此方法在數據庫事務中執行更新操作，以確保數據一致性。
-   * 它更新用戶個人資料的各個字段，包括個人詳細信息、可見性設置，
-   * 以及與國家、語言、貨幣、旅行興趣和旅行風格等相關的實體。
+   * @param userId - 要更新的用戶唯一標識符
+   * @param userProfileDto - 要更新的用戶個人資料
+   * @returns 一個 Promise，解析為包含更新後用戶個人資料的 `UserProfileDto`
+   * @throws {NotFoundException} 如果找不到用戶個人資料
    */
-  async updateUserProfile(id: number, userProfileDto: UserProfileDto) {
+  async updateUserProfile(userId: number, userProfileDto: UserProfileDto) {
     return await this.dataSource.transaction(async (manager) => {
-      const userProfile: UserProfile | null = await this.userProfileRepositoryManager.FindOneByIdwhitAllInTransaction(id, manager);
+      const userProfile: UserProfile | null = await this.userProfileRepositoryManager.FindOneByUserIdwithAllInTransaction(userId, manager);
 
-      if (userProfile === null) throw new NotFoundException(`用戶:${id}個人資料查詢失敗`);
+      if (userProfile === null) throw new NotFoundException(`用戶:${userId}個人資料查詢失敗`);
 
       userProfile.motto = userProfileDto.motto;
       userProfile.bio = userProfileDto.bio;
       userProfile.fullname = userProfileDto.fullname;
       userProfile.nickname = userProfileDto.nickname;
       userProfile.isFullNameVisible = userProfileDto.isFullNameVisible ?? false;
-
-      // 更新頭像
-      const avatarEntity = mapIdsToEntities<Avatar>(userProfileDto.avatar.id);
-      if (!avatarEntity) throw new NotFoundException("找不到對應的頭像");
-      if (userProfile.avatar.id !== avatarEntity.id) {
-        await this.avatarChangeHistoryRepositoryManager.SaveInTransaction(
-          this.avatarChangeHistoryRepositoryManager.New(userProfile.user.id, userProfile.avatar.id),
-          manager,
-        );
-      }
-      userProfile.avatar = avatarEntity;
-
       userProfile.coverPhoto = userProfileDto.coverPhoto;
       userProfile.birthday = userProfileDto.birthday;
       userProfile.gender = userProfileDto.gender;
@@ -121,9 +106,95 @@ export class UserProfileService {
       userProfile.travelStyles = mapIdsToEntities<TravelStyle>(userProfileDto.travelStyles);
 
       await this.userProfileRepositoryManager.SaveInTransaction(userProfile, manager);
+      const userProfileAfterSave = await this.userProfileRepositoryManager.FindOneByUserIdwithAllInTransaction(userId, manager);
 
-      return this.mapUserProfileToDto(userProfile);
+      if (userProfileAfterSave === null) throw new NotFoundException(`用戶:${userId}個人資料查詢失敗`);
+
+      return this.mapUserProfileToDto(userProfileAfterSave);
     });
+  }
+
+  /**
+   * 更新用戶頭像
+   *
+   * @param userId - 要更新的用戶唯一標識符
+   * @param avatarId - 新的頭像 id
+   * @returns 一個 Promise，解析為包含更新後用戶頭像詳細信息的 `AvatarDTO`
+   *
+   * @throws {NotFoundException} 如果找不到用戶個人資料
+   * @throws {NotFoundException} 如果找不到用戶頭像
+   *
+   * @remarks
+   * 這個方法在數據庫事務中執行更新操作，以確保數據一致性
+   * 它首先檢查用戶是否存在，如果不存在則拋出異常
+   * 然後检查頭像是否存在，如果不存在則拋出異常
+   * 最後，它將用戶頭像更新為新的頭像，並將更新的頭像詳細信息返回
+   */
+  async updateAvatar(userId: number, avatarId: number): Promise<AvatarDTO> {
+    if (avatarId <= 0) throw new NotFoundException(`無效的頭像 ID`);
+
+    return await this.dataSource.transaction(async (manager) => {
+      const userProfile = await this.userProfileRepositoryManager.FindOneByUserIdwithAllInTransaction(userId, manager);
+      if (!userProfile) throw new NotFoundException(`用戶:${userId}個人資料查詢失敗`);
+      if (avatarId === userProfile.avatar?.id) {
+        return {
+          id: userProfile.avatar.id,
+          public_id: userProfile.avatar.public_id,
+          type: userProfile.avatar.type,
+          create_at: userProfile.avatar.createAt,
+        };
+      }
+
+      const avatar = await this.avatarService.getAvatarByIdInTransaction(avatarId, manager);
+      if (!avatar) {
+        throw new NotFoundException(`Avatar ${avatarId} 不存在`);
+      }
+
+      const avatarChangeHistory = this.NewAvatarChangeHistory(userId, avatarId);
+
+      userProfile.avatar = avatar;
+
+      await this.avatarChangeHistoryRepositoryManager.SaveInTransaction(avatarChangeHistory, manager);
+      await this.userProfileRepositoryManager.SaveInTransaction(userProfile, manager);
+
+      return {
+        id: avatar.id,
+        public_id: avatar.public_id,
+        type: avatar.type,
+        create_at: avatar.createAt,
+      };
+    });
+  }
+
+  /**
+   * 獲取用戶頭像變更歷史
+   * @param userId - 要查詢的用戶唯一標識符
+   * @returns 一個 Promise，解析為包含用戶頭像變更歷史的 `AvatarChangeHistoryDTO` 陣列
+   * @throws {NotFoundException} 如果找不到用戶個人資料
+   */
+  async getChangeHistoryAvatar(userId: number): Promise<AvatarChangeHistoryDTO[]> {
+    const userProfile = await this.userProfileRepositoryManager.FindOneByUserIdwhitAll(userId);
+    if (userProfile === null) throw new NotFoundException(`用戶:${userId}個人資料查詢失敗`);
+
+    const avatarChangeHistory = await this.avatarChangeHistoryRepositoryManager.FindManyByUserProfileIdWithAvatar(userProfile.id);
+    const avatars: AvatarChangeHistoryDTO[] = avatarChangeHistory.map((item) => {
+      return {
+        id: item.avatar.id,
+        avatar: {
+          id: item.avatar.id,
+          public_id: item.avatar.public_id,
+          type: item.avatar.type,
+          create_at: item.avatar.createAt,
+        },
+        change_date: item.change_date,
+      };
+    });
+
+    return avatars;
+  }
+
+  NewAvatarChangeHistory(userId: number, avatarId: number): AvatarChangeHistory {
+    return this.avatarChangeHistoryRepositoryManager.New(userId, avatarId);
   }
 
   private mapUserProfileToDto(entity: UserProfile): UserProfileDto {

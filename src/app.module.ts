@@ -8,6 +8,9 @@ import { dirname, join } from "path";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { CategoryModule } from "./modules/category/category.module.js";
 import { AvatarModule } from "./modules/avatar/avatar.module.js";
+import { JwtModule } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
+import { AuthModule } from "./modules/auth/auth.module.js";
 
 //直接使用new URL("./entities/*.entity{.ts,.js}", import.meta.url).pathname會有前置的斜線
 const __filename = fileURLToPath(import.meta.url);
@@ -35,10 +38,22 @@ const __dirname = dirname(__filename);
       }),
       inject: [ConfigService],
     }),
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      global: true,
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get("JWT_SECRET"),
+        signOptions: {
+          expiresIn: configService.get("JWT_EXPIRES_IN"),
+        },
+      }),
+    }),
+    PassportModule,
     UserModule,
     UserProfileModule,
     CategoryModule,
     AvatarModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

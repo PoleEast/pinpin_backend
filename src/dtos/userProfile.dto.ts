@@ -1,11 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsArray, IsBoolean, IsDate, IsIn, IsNumber, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
-import { USERPROFILE_REQUSER_VALIDATION, UserProfileResponseDTO } from "pinpin_library";
+import { USERPROFILE_REQUSER_VALIDATION, UserProfileRequestDTO, UserProfileResponseDTO } from "pinpin_library";
 import { AccountDTO } from "./user.dto.js";
 import AvatarDTO from "./avatar.dto.js";
 
-class UserProfileDto implements UserProfileResponseDTO {
+class UserProfileDto implements UserProfileResponseDTO, UserProfileRequestDTO {
   @ApiProperty({
     description: "座右銘",
     example: "我是超人",

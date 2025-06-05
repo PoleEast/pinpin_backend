@@ -7,6 +7,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Relation,
@@ -19,6 +20,7 @@ import { Currency } from "./currency.entity.js";
 import { TravelInterest } from "./travel_interest.entity.js";
 import { TravelStyle } from "./travel_style.entity.js";
 import { Avatar } from "./avatar.entity.js";
+import { AvatarChangeHistory } from "./avatar_change_history.entity.js";
 
 @Entity("user_profiles")
 export class UserProfile {
@@ -59,7 +61,7 @@ export class UserProfile {
   @Column({ type: "varchar", length: 100, nullable: true })
   address?: string;
 
-  @OneToOne(() => Avatar, (avatar) => avatar.userProfile, {
+  @ManyToOne(() => Avatar, (avatar) => avatar.userProfile, {
     eager: false,
     nullable: false,
   })
@@ -102,6 +104,9 @@ export class UserProfile {
   })
   @JoinColumn({ name: "user_id", referencedColumnName: "id" })
   user!: Relation<User>;
+
+  @OneToMany(() => AvatarChangeHistory, (avatar_change_history) => avatar_change_history.user_profile, { eager: false, cascade: true })
+  avatar_changed_history: Relation<AvatarChangeHistory[]>;
 
   @CreateDateColumn({ type: "datetime", nullable: false, update: false })
   createAt!: Date;
