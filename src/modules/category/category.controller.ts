@@ -8,7 +8,7 @@ import {
   TravelInterestTypeDTO,
   TravelStyleDTO,
 } from "../../dtos/category.dto.js";
-import { Controller, Get, HttpCode, HttpStatus } from "@nestjs/common";
+import { Controller, Get, HttpCode, HttpStatus, Logger } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { CategoryService } from "./category.service.js";
 import { ApiResponseDTO } from "pinpin_library";
@@ -46,6 +46,8 @@ export class CategoryController {
       message: "幣別資料查詢成功",
       data: result,
     };
+
+    Logger.log(`幣別資料查詢成功`);
 
     return apiResponse;
   }

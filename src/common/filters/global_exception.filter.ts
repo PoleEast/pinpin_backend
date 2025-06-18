@@ -22,6 +22,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       errorResponse.statusCode = exception.getStatus() || errorResponse.statusCode;
       errorResponse.message = exception.message || errorResponse.message;
       errorResponse.error = exception.name || errorResponse.error;
+
+      if (exception.cause) {
+        Logger.error("詳細錯誤訊息", exception.cause);
+      }
     } else if (exception instanceof DatabaseException) {
       errorResponse.statusCode = HttpStatus.SERVICE_UNAVAILABLE;
       errorResponse.message = exception.message || errorResponse.message;
