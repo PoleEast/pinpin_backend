@@ -11,3 +11,7 @@ export const CLOUDINARY_CONFIG = {
     AVATAR: "Avatar",
   },
 };
+
+export const GOOGLE_API_URL = {
+  TEXT_SEARCH: "https://places.googleapis.com/v1/places:searchText",
+};

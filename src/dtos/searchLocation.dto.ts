@@ -32,6 +32,16 @@ class autoCompleteDTO implements autoCompletResponseeDTO {
     },
   })
   text: string;
+
+  @ApiProperty({
+    description: "所在地",
+    example: "台北市",
+    externalDocs: {
+      description: "Google AutoComplete API",
+      url: "https://developers.google.com/maps/documentation/places/web-service/search#area",
+    },
+  })
+  location: string;
 }
 
 export { autoCompleteDTO };

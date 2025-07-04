@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Patch, Post, Res, UseGuards } from "@nestjs/common";
 
-import { AccountDTO, LoginDto, RegisterDto } from "../../dtos/user.dto.js";
+import { AccountDTO, LoginDTO, RegisterDTO } from "../../dtos/user.dto.js";
 import { UserService } from "./user.service.js";
 import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import ApiCommonResponses from "../../common/decorators/api_responses.decorator.js";
@@ -23,7 +23,7 @@ export class UserController {
   })
   @ApiCommonResponses(HttpStatus.CREATED, "註冊成功")
   @Post("register")
-  async register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) response: Response): Promise<ApiResponseDTO<LoginResponseDTO>> {
+  async register(@Body() registerDto: RegisterDTO, @Res({ passthrough: true }) response: Response): Promise<ApiResponseDTO<LoginResponseDTO>> {
     const result = await this.userService.Register(registerDto);
 
     //設定cookie
@@ -47,7 +47,7 @@ export class UserController {
     description: "帳號或密碼錯誤",
   })
   @Post("login")
-  async Login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) response: Response): Promise<ApiResponseDTO<LoginResponseDTO>> {
+  async Login(@Body() loginDto: LoginDTO, @Res({ passthrough: true }) response: Response): Promise<ApiResponseDTO<LoginResponseDTO>> {
     const result = await this.userService.Login(loginDto);
 
     //設定cookie

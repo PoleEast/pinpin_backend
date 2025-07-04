@@ -3,7 +3,7 @@ import { Type } from "class-transformer";
 import { IsDate, IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength, ValidateIf } from "class-validator";
 import { AccountRequestDTO, LoginRequestDTO, RegisterRequestDTO, USERPROFILE_REQUSER_VALIDATION, USER_VALIDATION } from "pinpin_library";
 
-class RegisterDto implements RegisterRequestDTO {
+class RegisterDTO implements RegisterRequestDTO {
   @ApiProperty({
     description: "帳號",
     example: "superman",
@@ -51,7 +51,7 @@ class RegisterDto implements RegisterRequestDTO {
   }
 }
 
-class LoginDto implements LoginRequestDTO {
+class LoginDTO implements LoginRequestDTO {
   @ApiProperty({
     description: "帳號",
     example: "superman",
@@ -136,19 +136,4 @@ class AccountDTO implements AccountRequestDTO {
   createAt?: Date;
 }
 
-interface RegisterServiceDto {
-  nickname: string;
-  account: string;
-  avatar_public_id: string;
-  token: string;
-}
-
-interface LoginServiceDto {
-  nickname: string;
-  account: string;
-  avatar_public_id: string;
-  token: string;
-}
-
-export type { RegisterServiceDto, LoginServiceDto };
-export { RegisterDto, LoginDto, AccountDTO };
+export { RegisterDTO, LoginDTO, AccountDTO };

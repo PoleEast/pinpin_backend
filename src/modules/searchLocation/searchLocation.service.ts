@@ -6,8 +6,12 @@ import { autoCompleteDTO } from "@/dtos/searchLocation.dto.js";
 export class SearchLocationService {
   constructor(private readonly googleService: GoogleService) {}
 
-  async getTextSearchLocation(keyword: string) {
-    return this.googleService.getTextSearch(keyword);
+  async getTextSearchLocation(keyword: string, primaryType: string = "", priceLevel?: string, nextPageToken: string = "", pageSize: number = 12) {
+    const result = await this.googleService.getTextSearch(keyword, primaryType, priceLevel, nextPageToken, pageSize);
+
+    const locations = result.places;
+
+    const textSearchLocationResult = 
   }
 
   /**
@@ -25,9 +29,16 @@ export class SearchLocationService {
       suggestions?.map((suggestion) => ({
         placeId: suggestion.placePrediction?.placeId ?? "",
         types: suggestion.placePrediction?.types ?? [],
-        text: suggestion.placePrediction?.text?.text ?? "",
+        text: suggestion.placePrediction?.structuredFormat?.mainText?.text ?? "",
+        location: suggestion.placePrediction?.structuredFormat?.secondaryText?.text ?? "",
       })) ?? [];
 
     return autoCompleteResult;
+  }
+
+  async getLocationById(placeID: string, sessionToken: string) {
+    const result = await this.googleService.getLocationById(placeID, sessionToken);
+
+    return result;
   }
 }

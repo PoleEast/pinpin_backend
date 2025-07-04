@@ -1,5 +1,6 @@
 import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { AccountDTO, LoginDto, LoginServiceDto, RegisterDto, RegisterServiceDto } from "../../dtos/user.dto.js";
+import { AccountDTO, LoginDTO, RegisterDTO } from "../../dtos/user.dto.js";
+import { RegisterServiceData, LoginServiceData } from "../../interfaces/user.interface.js";
 import { User } from "../../entities/user.entity.js";
 import * as bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
@@ -24,7 +25,7 @@ export class UserService {
    *
    * @param registerDto 註冊資訊
    */
-  async Register(registerDto: RegisterDto): Promise<RegisterServiceDto> {
+  async Register(registerDto: RegisterDTO): Promise<RegisterServiceData> {
     // 檢查帳號是否已經存在
     if (await this.userRepositoryManager.FindOneByAccount(registerDto.account)) {
       throw new ConflictException("帳號已經存在");
@@ -55,7 +56,7 @@ export class UserService {
       throw new Error("找不到用戶");
     }
 
-    const registerServiceDto: RegisterServiceDto = {
+    const registerServiceDto: RegisterServiceData = {
       token: this.generateToken(loadUser),
       account: loadUser.account,
       nickname: loadUser.profile.nickname,
@@ -72,7 +73,7 @@ export class UserService {
    * @returns 帳號和token
    * @throws UnauthorizedException 帳號或密碼錯誤
    */
-  async Login(loginDto: LoginDto): Promise<LoginServiceDto> {
+  async Login(loginDto: LoginDTO): Promise<LoginServiceData> {
     const user = await this.userRepositoryManager.FindOneByAccountWithProfileWhitAvatar(loginDto.account);
     if (!user) {
       throw new UnauthorizedException("帳號或密碼錯誤");
@@ -84,7 +85,7 @@ export class UserService {
     }
 
     //回傳token和使用者資料
-    const loginServiceDto: LoginServiceDto = {
+    const loginServiceDto: LoginServiceData = {
       token: this.generateToken(user),
       account: user.account,
       nickname: user.profile.nickname,

@@ -31,12 +31,11 @@ export class SearchLocationController {
     };
   }
 
-  //TODO:驗證主要標籤，API限制最多5個
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "關鍵字自動補全" })
   @ApiCommonResponses(HttpStatus.OK, "關鍵字自動補全成功", autoCompleteDTO)
   @UseGuards(ThrottlerGuard)
-  @Throttle({ default: { limit: 2, ttl: 1000 } })
+  @Throttle({ default: { limit: 3, ttl: 1000 } })
   @ApiQuery({ name: "primaryTypes", type: String, isArray: true, required: false })
   @Get("autoComplete/:keyword")
   async getAutoComplate(
@@ -56,7 +55,25 @@ export class SearchLocationController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: "地點搜尋成功",
+      message: "關鍵字自動補全成功",
+      data: result,
+    };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "取得地點詳細資料" })
+  @ApiCommonResponses(HttpStatus.OK, "取得地點詳細資料成功")
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(1000 * 60 * 30)
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 1, ttl: 1000 } })
+  @Get(":placeID")
+  async getLocationById(@Param("placeID") placeID: string, @Query("sessionToken", new ParseUUIDPipe({ version: "4" })) sessionToken: string) {
+    const result = await this.searchLocationService.getLocationById(placeID, sessionToken);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: "取得地點詳細資料成功",
       data: result,
     };
   }
