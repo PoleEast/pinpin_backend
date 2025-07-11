@@ -8,7 +8,7 @@ import { UserRepositoryManager } from "../../repositories/user.repository.js";
 import { JwtPayload } from "../../interfaces/jwt.interface.js";
 import { UserProfileService } from "../userProfile/userProfile.service.js";
 import AvatarService from "../avatar/avatar.service.js";
-import { mapIdsToEntities } from "../../common/utils/entity.utils.js";
+import { mapIdsToEntities } from "../../common/utils/entity.util.js";
 import { Avatar } from "../../entities/avatar.entity.js";
 
 @Injectable()

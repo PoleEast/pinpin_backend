@@ -8,12 +8,13 @@ import { Currency } from "@/entities/currency.entity.js";
 import { TravelInterest } from "@/entities/travel_interest.entity.js";
 import { TravelStyle } from "@/entities/travel_style.entity.js";
 import { DataSource } from "typeorm";
-import { mapIdsToEntities } from "../../common/utils/entity.utils.js";
+import { mapIdsToEntities } from "../../common/utils/entity.util.js";
 import { AvatarChangeHistoryRepositoryManager } from "../../repositories/avatar_change_history.repository.js";
 import { AvatarChangeHistory } from "@/entities/avatar_change_history.entity.js";
 import AvatarChangeHistoryDTO from "@/dtos/avatarChangeHistory.dto.js";
 import AvatarService from "../avatar/avatar.service.js";
 import AvatarDTO from "@/dtos/avatar.dto.js";
+import { mapUserProfileToDto } from "../../common/mappers/entityMapper.map.js";
 
 @Injectable()
 export class UserProfileService {
@@ -110,7 +111,7 @@ export class UserProfileService {
 
       if (userProfileAfterSave === null) throw new NotFoundException(`用戶:${userId}個人資料查詢失敗`);
 
-      return this.mapUserProfileToDto(userProfileAfterSave);
+      return mapUserProfileToDto(userProfileAfterSave);
     });
   }
 
@@ -195,37 +196,5 @@ export class UserProfileService {
 
   NewAvatarChangeHistory(userId: number, avatarId: number): AvatarChangeHistory {
     return this.avatarChangeHistoryRepositoryManager.New(userId, avatarId);
-  }
-
-  private mapUserProfileToDto(entity: UserProfile): UserProfileDto {
-    return {
-      motto: entity.motto,
-      bio: entity.bio,
-      fullname: entity.fullname,
-      nickname: entity.nickname,
-      isFullNameVisible: entity.isFullNameVisible,
-      avatar: {
-        id: entity.avatar.id,
-        public_id: entity.avatar.public_id,
-        type: entity.avatar.type,
-        create_at: entity.avatar.createAt,
-      },
-      coverPhoto: entity.coverPhoto,
-      birthday: entity.birthday,
-      phone: entity.phone,
-      gender: entity.gender,
-      address: entity.address,
-      originCountry: entity.originCountry?.id,
-      visitedCountries: entity.visitedCountries?.map((country) => country.id) || [],
-      languages: entity.languages?.map((language) => language.id) || [],
-      currencies: entity.currencies?.map((currency) => currency.id) || [],
-      travelInterests: entity.travelInterests?.map((interest) => interest.id) || [],
-      travelStyles: entity.travelStyles?.map((style) => style.id) || [],
-      user: {
-        account: entity.user.account,
-        email: entity.user.email,
-        createAt: entity.user.createAt,
-      },
-    };
   }
 }

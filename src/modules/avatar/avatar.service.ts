@@ -6,6 +6,7 @@ import AvatarDTO from "@/dtos/avatar.dto.js";
 import { User } from "@/entities/user.entity.js";
 import { Avatar } from "@/entities/avatar.entity.js";
 import { EntityManager } from "typeorm";
+import { mapAvatarToDto } from "../../common/mappers/entityMapper.map.js";
 
 @Injectable()
 export class AvatarService {
@@ -34,7 +35,7 @@ export class AvatarService {
       type: 0,
     });
     const saveAvatar = await this.avatorRepositoryManager.Save(avatar);
-    const avatarDTO: AvatarDTO = this.mapAvatarToDto(saveAvatar);
+    const avatarDTO: AvatarDTO = mapAvatarToDto(saveAvatar);
 
     return avatarDTO;
   }
@@ -49,7 +50,7 @@ export class AvatarService {
   async getDefaultAvatar(): Promise<AvatarDTO[]> {
     const avatars = await this.avatorRepositoryManager.FindAllDefault();
 
-    return avatars.map((avatar) => this.mapAvatarToDto(avatar));
+    return avatars.map((avatar) => mapAvatarToDto(avatar));
   }
 
   /**
@@ -64,7 +65,7 @@ export class AvatarService {
   async getUserAvatar(user: User): Promise<AvatarDTO[]> {
     const avatars = await this.avatorRepositoryManager.FindManyByUserId(user.id);
 
-    return avatars.map((avatar) => this.mapAvatarToDto(avatar)).sort((a, b) => b.create_at.getTime() - a.create_at.getTime());
+    return avatars.map((avatar) => mapAvatarToDto(avatar)).sort((a, b) => b.create_at.getTime() - a.create_at.getTime());
   }
 
   /**
@@ -85,7 +86,7 @@ export class AvatarService {
     const randomIndex = Math.floor(Math.random() * avatars.length);
     const randomAvatar = avatars[randomIndex];
 
-    return this.mapAvatarToDto(randomAvatar);
+    return mapAvatarToDto(randomAvatar);
   }
 
   /**
@@ -116,15 +117,6 @@ export class AvatarService {
     }
 
     return avatar;
-  }
-
-  private mapAvatarToDto(entity: Avatar): AvatarDTO {
-    return {
-      id: entity.id,
-      public_id: entity.public_id,
-      type: entity.type,
-      create_at: entity.createAt,
-    };
   }
 }
 
