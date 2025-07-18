@@ -3,9 +3,9 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Logger,
   Param,
   ParseArrayPipe,
-  ParseEnumPipe,
   ParseUUIDPipe,
   Query,
   UseGuards,
@@ -19,7 +19,6 @@ import { Throttle, ThrottlerGuard } from "@nestjs/throttler";
 import { autoCompleteDTO, searchLocationDTO } from "../../dtos/searchLocation.dto.js";
 import { ApiResponseDTO, GOOGLE_MAPS_PLACE_PRICE_LEVEL, GoogleMapsPlacePriceLevel, IsearchLocationResponseDTO } from "pinpin_library";
 import { LimitedArrayPipe } from "../../common/decorators/limitedArrayPipe.decorator.js";
-import { Type } from "class-transformer";
 
 @ApiTags("地點搜尋")
 @Controller("searchLocation")
@@ -43,15 +42,24 @@ export class SearchLocationController {
   @ApiQuery({ name: "primaryType", type: String, required: false })
   @ApiQuery({ name: "nextPageToken", type: String, required: false })
   @ApiQuery({ name: "pageSize", type: Number, required: false, default: 12 })
+  @ApiQuery({
+    name: "maxImageHeight",
+    type: Number,
+    required: false,
+    default: 200,
+    description: "最大圖片高度，預設為200px",
+    example: "200",
+  })
   @Get("textSearchLocation/:keyword")
   async getTextSearchLocation(
-    @Param("keyword") keyword: string,
+    @Query("keyword") keyword: string,
     @Query("priceLevel", new ParseArrayPipe({ items: String, separator: ",", optional: true })) priceLevel?: GoogleMapsPlacePriceLevel[],
     @Query("primaryType") primaryType: string = "",
     @Query("nextPageToken") nextPageToken: string = "",
     @Query("pageSize") pageSize: number = 12,
+    @Query("maxImageHeight") maxImageHeight: number = 200,
   ): Promise<ApiResponseDTO<IsearchLocationResponseDTO>> {
-    const result = await this.searchLocationService.getTextSearchLocation(keyword, primaryType, priceLevel, nextPageToken, pageSize);
+    const result = await this.searchLocationService.getTextSearchLocation(keyword, primaryType, priceLevel, nextPageToken, pageSize, maxImageHeight);
     return {
       statusCode: HttpStatus.OK,
       message: "地點搜尋成功",
@@ -67,7 +75,7 @@ export class SearchLocationController {
   @ApiQuery({ name: "primaryTypes", type: String, isArray: true, required: false })
   @Get("autoComplete/:keyword")
   async getAutoComplate(
-    @Param("keyword") keyword: string,
+    @Query("keyword") keyword: string,
     @Query("sessionToken", new ParseUUIDPipe({ version: "4" })) sessionToken: string,
     @Query(
       "primaryTypes",
@@ -94,8 +102,9 @@ export class SearchLocationController {
   @CacheTTL(1000 * 60 * 30)
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 1, ttl: 1000 } })
+  @ApiQuery({ name: "sessionToken", type: String, required: false })
   @Get(":placeID")
-  async getLocationById(@Param("placeID") placeID: string, @Query("sessionToken", new ParseUUIDPipe({ version: "4" })) sessionToken: string) {
+  async getLocationById(@Param("placeID") placeID: string, @Query("sessionToken", new ParseUUIDPipe({ version: "4" })) sessionToken?: string) {
     const result = await this.searchLocationService.getLocationById(placeID, sessionToken);
 
     return {

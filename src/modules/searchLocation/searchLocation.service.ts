@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { GoogleService } from "../google/google.service.js";
 import { autoCompletResponseeDTO, GoogleMapsPlacePriceLevel, IsearchLocationDTO, IsearchLocationResponseDTO } from "pinpin_library";
 import { googleBusinessStatusMapper, googlePriceLevelMapper, reversePriceLevelMapper } from "../../common/mappers/index.js";
@@ -15,12 +15,14 @@ export class SearchLocationService {
     priceLevel?: GoogleMapsPlacePriceLevel[],
     nextPageToken: string = "",
     pageSize: number = 12,
+    maxImageHeight: number = 200,
   ): Promise<IsearchLocationResponseDTO> {
     // 將 Google Maps 的價格等級轉換為原始的價格等級
     const originalPriceLevels: ConstObjectValues<typeof ORIGINAL_GOOGLE_MAPS_PLACE.PRICE_LEVEL>[] =
       priceLevel?.map((level) => reversePriceLevelMapper(level)) || [];
 
     const response = await this.googleService.getTextSearch(keyword, primaryType, originalPriceLevels, nextPageToken, pageSize);
+    // const response = await this.googleService.getTestSearchLocation(keyword, primaryType, originalPriceLevels, nextPageToken, pageSize);
     // 如果沒有找到任何地點，返回空的結果
     if (!response.places || response.places.length === 0) {
       return { locations: [], nextPageToken: "" };
@@ -28,28 +30,46 @@ export class SearchLocationService {
 
     // 將 Google Maps 的地點轉換為自定義的地點 DTO
     //TODO: 實作型別守衛
-    const locations: IsearchLocationDTO[] = response.places
-      .filter((place) => place.displayName?.text && place.id)
-      .map(
-        (place): IsearchLocationDTO => ({
-          phoneNumber: place.internationalPhoneNumber || "",
-          rating: place.rating || 0,
-          businessStatus: googleBusinessStatusMapper(place.businessStatus),
-          priceLevel: googlePriceLevelMapper(place.priceLevel),
-          userRatingCount: place.userRatingCount || 0,
-          name: place.displayName?.text || "",
-          primaryType: place.primaryType || "",
-          address: place.shortFormattedAddress || "",
-          id: place.id || "",
-          photo: place.photos?.[0]?.name || "",
-        }),
-      );
+    const locations: IsearchLocationDTO[] = await Promise.all(
+      response.places
+        .filter((place) => place.displayName?.text && place.id)
+        .map(
+          async (place): Promise<IsearchLocationDTO> => ({
+            phoneNumber: place.internationalPhoneNumber || "",
+            rating: place.rating || 0,
+            businessStatus: googleBusinessStatusMapper(place.businessStatus),
+            priceLevel: googlePriceLevelMapper(place.priceLevel),
+            userRatingCount: place.userRatingCount || 0,
+            name: place.displayName?.text || "",
+            primaryType: place.primaryType || "",
+            address: place.shortFormattedAddress || "",
+            id: place.id || "",
+            // photoURL: place.photos?.[0].name ? await this.getPhotoURL(place.photos[0].name, undefined, maxImageHeight) : "",
+            photoURL: this.getTestPhotoURL(),
+            IconMaskBaseURL: place.iconMaskBaseUri + ".svg" || "",
+          }),
+        ),
+    );
+
     const result: IsearchLocationResponseDTO = {
       locations: locations,
       nextPageToken: response.nextPageToken || "",
     };
 
     return result;
+  }
+
+  async getPhotoURL(photoName?: string, maxImageWidth?: number, maxImageHeight: number = 200): Promise<string> {
+    if (!photoName) {
+      return "";
+    }
+
+    const fullPhotoName = photoName.concat("/media");
+    return this.googleService.getPhoto(fullPhotoName, maxImageWidth, maxImageHeight);
+  }
+
+  getTestPhotoURL() {
+    return "https://res.cloudinary.com/duynzu6ez/image/upload/v1748940979/Avatar/noidvqinf5vzjryzor6t.png";
   }
 
   /**
@@ -78,7 +98,7 @@ export class SearchLocationService {
     return result;
   }
 
-  async getLocationById(placeID: string, sessionToken: string) {
+  async getLocationById(placeID: string, sessionToken?: string) {
     const result = await this.googleService.getLocationById(placeID, sessionToken);
 
     return result;

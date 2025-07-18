@@ -144,7 +144,17 @@ class locationDTO implements IsearchLocationDTO {
       url: "https://developers.google.com/maps/documentation/places/web-service/reference/rest/v1/places?hl=zh-tw#resource:-place",
     },
   })
-  photo: string;
+  photoURL: string;
+
+  @ApiProperty({
+    description: "Icon的URL",
+    example: "https://maps.gstatic.com/mapfiles/place_api/icons/v2/cafe_pinlet.png",
+    externalDocs: {
+      description: "REST Resource: places",
+      url: "https://developers.google.com/maps/documentation/places/web-service/icons?hl=zh_TW#places-api-new",
+    },
+  })
+  IconMaskBaseURL: string;
 }
 
 class searchLocationDTO implements IsearchLocationResponseDTO {
