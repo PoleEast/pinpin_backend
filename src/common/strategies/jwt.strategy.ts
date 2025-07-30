@@ -10,7 +10,7 @@ import { UserService } from "../../modules/user/user.service.js";
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly configservice: ConfigService,
+    private readonly configService: ConfigService,
     private readonly userService: UserService,
   ) {
     super({
@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         return req.cookies?.access_token || null;
       },
       ignoreExpiration: false,
-      secretOrKey: configservice.get("JWT_SECRET"),
+      secretOrKey: configService.get("JWT_SECRET"),
     });
   }
 

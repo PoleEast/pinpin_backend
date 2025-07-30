@@ -39,6 +39,7 @@ async function bootstrap() {
       in: "cookie",
     })
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document, {
     swaggerOptions: {
