@@ -151,7 +151,7 @@ export class UserProfileService {
         throw new NotFoundException(`Avatar ${avatarId} 不存在`);
       }
 
-      const avatarChangeHistory = this.NewAvatarChangeHistory(userId, avatarId);
+      const avatarChangeHistory = this.NewAvatarChangeHistory(userProfile.id, avatarId);
 
       userProfile.avatar = avatar;
 

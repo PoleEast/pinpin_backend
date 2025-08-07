@@ -8,7 +8,7 @@ import { EntityManager, Repository, TypeORMError } from "typeorm";
 export class UserProfileRepositoryManager {
   constructor(
     @InjectRepository(UserProfile)
-    private userProfileRepository: Repository<UserProfile>,
+    private readonly userProfileRepository: Repository<UserProfile>,
   ) {}
 
   //#region 查詢

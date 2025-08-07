@@ -42,13 +42,15 @@ export class UserService {
     }
     userProfile.avatar = avatarEntity;
 
-    const avatarChangeHistory = this.userProfileService.NewAvatarChangeHistory(userProfile.id, userProfile.avatar.id);
-    userProfile.avatar_changed_history.push(avatarChangeHistory);
-
     const user = this.userRepositoryManager.New(registerDto.account, this.getHashPassword(registerDto.password), userProfile);
 
     // 建立用戶
     const createdUser = await this.userRepositoryManager.Save(user);
+
+    const avatarChangeHistory = this.userProfileService.NewAvatarChangeHistory(createdUser.profile.id, createdUser.profile.avatar.id);
+    createdUser.profile.avatar_changed_history.push(avatarChangeHistory);
+
+    await this.userRepositoryManager.Save(createdUser);
 
     const loadUser = await this.userRepositoryManager.FindOneByIdWithProfileWhitAvatar(createdUser.id);
 
