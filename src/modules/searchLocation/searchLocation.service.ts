@@ -5,6 +5,9 @@ import { googleBusinessStatusMapper, googlePriceLevelMapper, reversePriceLevelMa
 import { ConstObjectValues } from "../../common/utils/type.util.js";
 import { ORIGINAL_GOOGLE_MAPS_PLACE } from "../../common/constants/constants.js";
 
+//TODO:將地圖服務抽象化，實現依賴反轉
+//TODO:將測試功能加入地圖服務的抽象層中
+
 @Injectable()
 export class SearchLocationService {
   constructor(private readonly googleService: GoogleService) {}

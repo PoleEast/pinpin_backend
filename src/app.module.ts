@@ -12,7 +12,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { AuthModule } from "./modules/auth/auth.module.js";
 import { SearchLocationModule } from "./modules/searchLocation/searchLocation.module.js";
-import { ThrottlerModule } from "@nestjs/throttler";
+import { WeatherModule } from "./modules/weather/weather.module.js";
 
 //直接使用new URL("./entities/*.entity{.ts,.js}", import.meta.url).pathname會有前置的斜線
 const __filename = fileURLToPath(import.meta.url);
@@ -57,6 +57,7 @@ const __dirname = dirname(__filename);
     AvatarModule,
     AuthModule,
     SearchLocationModule,
+    WeatherModule,
   ],
 })
 export class AppModule {}

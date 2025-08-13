@@ -20,6 +20,8 @@ import { autoCompleteDTO, searchLocationDTO } from "../../dtos/searchLocation.dt
 import { ApiResponseDTO, GOOGLE_MAPS_PLACE_PRICE_LEVEL, GoogleMapsPlacePriceLevel, IsearchLocationResponseDTO } from "pinpin_library";
 import { LimitedArrayPipe } from "../../common/decorators/limitedArrayPipe.decorator.js";
 
+//TODO:用戶驗證
+
 @ApiTags("地點搜尋")
 @Controller("searchLocation")
 export class SearchLocationController {

@@ -10,5 +10,4 @@ interface ConfigOptions {
   apiKey?: string;
 }
 
-export type { GoogleAsyncConfig };
-export type { ConfigOptions };
+export type { GoogleAsyncConfig, ConfigOptions };
