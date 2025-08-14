@@ -29,6 +29,28 @@ interface CurrentWeatherResponse {
   snow?: Snow;
 }
 
+interface WeatherForecastResponse {
+  cod: number;
+  message: number;
+  cnt: number;
+  list: WeatherForecastData[];
+  city: City;
+}
+
+interface WeatherForecastData {
+  dt: number;
+  main: MainWeatherData;
+  weather: WeatherCondition[];
+  clouds: Clouds;
+  wind: Wind;
+  visibility: number;
+  pop: number;
+  rain?: Rain;
+  snow?: Snow;
+  sys: { pod: "n" | "d" };
+  dt_txt: string;
+}
+
 interface WeatherCondition {
   id: number;
   main: string;
@@ -77,10 +99,22 @@ interface SystemData {
   sunset: number;
 }
 
+interface City {
+  id: number;
+  name: string;
+  coord: CoordinatesDTO;
+  country: string;
+  population: number;
+  timeZone: number;
+  sunrise: number;
+  sunset: number;
+}
+
 export type {
   ConfigOptions,
   OpenWeatherAsyncConfig,
   CurrentWeatherResponse,
+  WeatherForecastResponse,
   WeatherCondition,
   MainWeatherData,
   Wind,

@@ -1,5 +1,5 @@
-import { CurrentWeatherDTO } from "@/dtos/weather.dto.js";
-import { CurrentWeatherResponse } from "@/interfaces/openWeather.interface.js";
+import { CurrentWeatherDTO, WeatherForecastDataDTO, WeatherForecastDTO } from "@/dtos/weather.dto.js";
+import { CurrentWeatherResponse, WeatherForecastResponse } from "@/interfaces/openWeather.interface.js";
 
 function mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDTO(data: CurrentWeatherResponse): CurrentWeatherDTO {
   const result: CurrentWeatherDTO = {
@@ -25,4 +25,27 @@ function mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDTO(data: CurrentWe
   return result;
 }
 
-export { mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDTO };
+function mapOpenWeatherWeatherForecastResponseToWeatherForecastDTO(data: WeatherForecastResponse): WeatherForecastDTO {
+  const result: WeatherForecastDTO = {
+    country: data.city.country,
+    city: data.city.name,
+    data: data.list.map<WeatherForecastDataDTO>((weatherData) => ({
+      unixTimestamp: weatherData.dt,
+      temperature: weatherData.main.temp,
+      maxTemperature: weatherData.main.temp_max,
+      minTemperature: weatherData.main.temp_min,
+      feelsLikeTemperature: weatherData.main.feels_like,
+      PoP: weatherData.pop,
+      humidity: weatherData.main.humidity,
+      visibility: weatherData.visibility,
+      cloud: weatherData.clouds.all,
+      weather: weatherData.weather[0]?.description ?? "",
+      windSpeed: weatherData.wind.speed,
+      icon: weatherData.weather[0]?.icon ?? "",
+    })),
+  };
+
+  return result;
+}
+
+export { mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDTO, mapOpenWeatherWeatherForecastResponseToWeatherForecastDTO };

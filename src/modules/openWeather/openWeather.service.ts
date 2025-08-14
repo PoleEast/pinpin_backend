@@ -1,6 +1,6 @@
 import { CoordinatesDTO } from "@/dtos/weather.dto.js";
 import { INJECTION_TOKEN } from "../../common/constants/constants.js";
-import { ConfigOptions, CurrentWeatherResponse } from "@/interfaces/openWeather.interface.js";
+import { ConfigOptions, CurrentWeatherResponse, WeatherForecastResponse } from "@/interfaces/openWeather.interface.js";
 import { Inject, Injectable, ServiceUnavailableException } from "@nestjs/common";
 import { OPENWEATHER_CONFIG } from "pinpin_library";
 
@@ -8,7 +8,6 @@ import { OPENWEATHER_CONFIG } from "pinpin_library";
 export class OpenWeatherService {
   private readonly apikey: string;
 
-  private readonly currnetWeatherURL = `${OPENWEATHER_CONFIG.BASE_URL}/${OPENWEATHER_CONFIG.VERSION}/${OPENWEATHER_CONFIG.ENDPOINT.CURRENT_WEATHER}`;
   private readonly temperatureUnit: string = "metric";
   private readonly language: string = "zh_tw";
 
@@ -24,10 +23,10 @@ export class OpenWeatherService {
   }
 
   async getCurrentWeather(coordinatesDTO: CoordinatesDTO): Promise<CurrentWeatherResponse> {
-    const urlConfig = this.generateCurrentWeatherURL(coordinatesDTO);
+    const url = this.generateURL(coordinatesDTO, "CURRENT_WEATHER");
 
     try {
-      const response = await fetch(urlConfig);
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error(`http: ${response.status} ,statusText: ${response.statusText}`);
@@ -39,14 +38,32 @@ export class OpenWeatherService {
     }
   }
 
-  private generateCurrentWeatherURL(coordinatesDTO: CoordinatesDTO): URL {
-    const urlConfig = new URL(this.currnetWeatherURL);
-    urlConfig.searchParams.set("lat", coordinatesDTO.lat.toString());
-    urlConfig.searchParams.set("lon", coordinatesDTO.lng.toString());
-    urlConfig.searchParams.set("appid", this.apikey);
-    urlConfig.searchParams.set("units", this.temperatureUnit);
-    urlConfig.searchParams.set("lang", this.language);
+  async getWeatherForecast(coordinatesDTO: CoordinatesDTO): Promise<WeatherForecastResponse> {
+    const url = this.generateURL(coordinatesDTO, "FORECAST_5_DAY");
 
-    return urlConfig;
+    try {
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`http: ${response.status} ,statusText: ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      throw new ServiceUnavailableException(error, "Weather service is temporarily unavailable");
+    }
+  }
+
+  private generateURL(coordinatesDTO: CoordinatesDTO, resourceType: keyof typeof OPENWEATHER_CONFIG.RESOURCES): URL {
+    const baseUrl = `${OPENWEATHER_CONFIG.BASE_URL}/${OPENWEATHER_CONFIG.VERSION}/${OPENWEATHER_CONFIG.RESOURCES[resourceType]}`;
+
+    const url = new URL(baseUrl);
+    url.searchParams.set("lat", coordinatesDTO.lat.toString());
+    url.searchParams.set("lon", coordinatesDTO.lng.toString());
+    url.searchParams.set("appid", this.apikey);
+    url.searchParams.set("units", this.temperatureUnit);
+    url.searchParams.set("lang", this.language);
+
+    return url;
   }
 }
