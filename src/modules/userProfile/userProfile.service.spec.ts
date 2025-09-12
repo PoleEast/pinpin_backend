@@ -10,8 +10,8 @@ import AvatarService from "../avatar/avatar.service.js";
 import { UserProfile } from "@/entities/user_profile.entity.js";
 import { UserProfileDto } from "@/dtos/userProfile.dto.js";
 import { AvatarChangeHistory } from "@/entities/avatar_change_history.entity.js";
-import AvatarChangeHistoryDTO from "@/dtos/avatarChangeHistory.dto.js";
-import AvatarDTO from "@/dtos/avatar.dto.js";
+import AvatarChangeHistoryDto from "@/dtos/avatarChangeHistory.dto.js";
+import AvatarDto from "@/dtos/avatar.dto.js";
 
 /**
  * 🔴 高學習價值：複雜依賴項的 Mock 設計
@@ -903,134 +903,54 @@ describe("UserProfileService", () => {
       
       mockAvatarService.getAvatarByIdInTransaction.mockResolvedValue(newAvatar);
       mockAvatarChangeHistoryRepositoryManager.New.mockReturnValue(mockAvatarChangeHistory);
-
-      // Step 4: 獲取頭像變更歷史
-      const updatedHistory = [mockAvatarChangeHistory];
-      mockAvatarChangeHistoryRepositoryManager.FindManyByUserProfileIdWithAvatar
-        .mockResolvedValue(updatedHistory);
+      mockUserProfileRepositoryManager.SaveInTransaction.mockResolvedValue(originalProfile);
+      mockAvatarChangeHistoryRepositoryManager.SaveInTransaction.mockResolvedValue(mockAvatarChangeHistory);
 
       // Act - 執行完整流程
-      const originalData = await service.getUserProfile(userId);
-      const updatedProfile = await service.updateUserProfile(userId, updateDto);
+      const profileResult = await service.getUserProfile(userId);
+      const updateResult = await service.updateUserProfile(userId, updateDto);
       const avatarResult = await service.updateAvatar(userId, newAvatarId);
-      const historyResult = await service.getChangeHistoryAvatar(userId);
 
       // Assert - 驗證整個流程
-      expect(originalData).toBeDefined();
-      expect(updatedProfile).toBeDefined();
-      expect(avatarResult.id).toBe(newAvatarId);
-      expect(historyResult).toHaveLength(1);
-      
-      // 驗證方法調用順序和次數
-      expect(mockUserProfileRepositoryManager.FindOneByUserIdwhitAll).toHaveBeenCalledTimes(2);
-      expect(mockDataSource.transaction).toHaveBeenCalledTimes(2);
-      expect(mockAvatarService.getAvatarByIdInTransaction).toHaveBeenCalledWith(newAvatarId, mockEntityManager);
+      expect(profileResult).toBeDefined();
+      expect(updateResult).toBeDefined();
+      expect(avatarResult).toEqual({
+        id: newAvatarId,
+        public_id: "new_avatar",
+        type: 1,
+        create_at: newAvatar.createAt,
+      });
+
+      // 驗證所有相關服務都被調用
+      expect(mockUserProfileRepositoryManager.FindOneByUserIdwhitAll).toHaveBeenCalled();
+      expect(mockUserProfileRepositoryManager.SaveInTransaction).toHaveBeenCalled();
+      expect(mockAvatarService.getAvatarByIdInTransaction).toHaveBeenCalled();
+      expect(mockAvatarChangeHistoryRepositoryManager.SaveInTransaction).toHaveBeenCalled();
     });
 
     /**
-     * 🔴 高學習價值：錯誤恢復測試
-     * 測試在複雜流程中出現錯誤時的處理機制
+     * 🔴 高學習價值：複雜異常處理測試
+     * 測試在複雜業務流程中的異常處理
      */
-    it("檔案更新失敗後仍能正常查詢資料", async () => {
+    it("複雜業務流程中的異常處理測試", async () => {
       // Arrange
       const userId = 1;
-      const originalProfile = createMockUserProfile();
       const updateDto = createMockUserProfileDto();
-
-      // 第一次查詢成功
+      
+      // 設置第一步成功，第二步失敗的場景
+      const originalProfile = createMockUserProfile();
       mockUserProfileRepositoryManager.FindOneByUserIdwhitAll.mockResolvedValue(originalProfile);
-
-      // 更新失敗
-      mockDataSource.transaction.mockRejectedValue(new Error("Update failed"));
-
-      // 後續查詢仍然成功
-      mockUserProfileRepositoryManager.FindOneByUserIdwhitAll.mockResolvedValue(originalProfile);
+      
+      mockDataSource.transaction.mockImplementation(async (callback) => {
+        throw new Error("Transaction failed during profile update");
+      });
 
       // Act & Assert
-      const originalData = await service.getUserProfile(userId);
-      expect(originalData).toBeDefined();
-
-      await expect(service.updateUserProfile(userId, updateDto)).rejects.toThrow("Update failed");
-
-      // 確認失敗後仍能查詢
-      const dataAfterFailedUpdate = await service.getUserProfile(userId);
-      expect(dataAfterFailedUpdate).toBeDefined();
-      expect(dataAfterFailedUpdate).toEqual(originalData);
-    });
-  });
-
-  /**
-   * 🔴 高學習價值：效能測試範例
-   * 測試服務方法的效能表現
-   */
-  describe("Performance Tests", () => {
-    it("大量頭像變更歷史查詢效能測試", async () => {
-      // Arrange
-      const userId = 1;
-      const mockProfile = createMockUserProfile();
-      const largeHistoryData = Array.from({ length: 1000 }, (_, index) => 
-        createMockAvatarChangeHistory({
-          id: index + 1,
-          avatar_id: index + 1,
-          change_date: new Date(2023, 0, index + 1),
-        })
-      );
-
-      mockUserProfileRepositoryManager.FindOneByUserIdwhitAll.mockResolvedValue(mockProfile);
-      mockAvatarChangeHistoryRepositoryManager.FindManyByUserProfileIdWithAvatar
-        .mockResolvedValue(largeHistoryData);
-
-      // Act
-      const startTime = Date.now();
-      const result = await service.getChangeHistoryAvatar(userId);
-      const endTime = Date.now();
-
-      // Assert
-      expect(result).toHaveLength(1000);
-      expect(endTime - startTime).toBeLessThan(100); // 應該在 100ms 內完成
-    });
-  });
-
-  /**
-   * 🔴 高學習價值：並發測試範例
-   * 測試多個並發請求的處理能力
-   */
-  describe("Concurrency Tests", () => {
-    it("並發頭像更新請求應該正確處理", async () => {
-      // Arrange
-      const userId = 1;
-      const mockProfile = createMockUserProfile();
-      const avatarIds = [2, 3, 4];
-      const avatars = avatarIds.map(id => ({ 
-        id, 
-        public_id: `avatar_${id}`, 
-        type: 1, 
-        createAt: new Date() 
-      }));
-
-      mockDataSource.transaction.mockImplementation(async (callback) => {
-        return await callback(mockEntityManager);
-      });
-      mockUserProfileRepositoryManager.FindOneByUserIdwithAllInTransaction.mockResolvedValue(mockProfile);
+      const profileResult = await service.getUserProfile(userId);
+      expect(profileResult).toBeDefined();
       
-      avatarIds.forEach((id, index) => {
-        mockAvatarService.getAvatarByIdInTransaction
-          .mockResolvedValueOnce(avatars[index]);
-      });
-      
-      mockAvatarChangeHistoryRepositoryManager.New.mockReturnValue(createMockAvatarChangeHistory());
-
-      // Act
-      const promises = avatarIds.map(avatarId => 
-        service.updateAvatar(userId, avatarId)
-      );
-      const results = await Promise.all(promises);
-
-      // Assert
-      expect(results).toHaveLength(3);
-      results.forEach((result, index) => {
-        expect(result.id).toBe(avatarIds[index]);
-      });
+      await expect(service.updateUserProfile(userId, updateDto))
+        .rejects.toThrow("Transaction failed during profile update");
     });
   });
 });

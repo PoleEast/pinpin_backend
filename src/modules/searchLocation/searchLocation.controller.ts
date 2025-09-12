@@ -1,23 +1,18 @@
-import {
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Logger,
-  Param,
-  ParseArrayPipe,
-  ParseUUIDPipe,
-  Query,
-  UseGuards,
-  UseInterceptors,
-} from "@nestjs/common";
+import { Controller, Get, HttpCode, HttpStatus, Param, ParseArrayPipe, ParseUUIDPipe, Query, UseGuards, UseInterceptors } from "@nestjs/common";
 import { ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { SearchLocationService } from "./searchLocation.service.js";
 import ApiCommonResponses from "../../common/decorators/api_responses.decorator.js";
 import { CacheInterceptor, CacheTTL } from "@nestjs/cache-manager";
 import { Throttle, ThrottlerGuard } from "@nestjs/throttler";
-import { autoCompleteDTO, searchLocationDTO } from "../../dtos/searchLocation.dto.js";
-import { ApiResponseDTO, GOOGLE_MAPS_PLACE_PRICE_LEVEL, GoogleMapsPlacePriceLevel, IsearchLocationResponseDTO } from "pinpin_library";
+import { AutoCompleteDto, GetLocationByIdDto, LocationDto } from "../../dtos/searchLocation.dto.js";
+import {
+  ApiResponse,
+  AutoCompletResponse,
+  GetLocationByIdResponse,
+  GOOGLE_MAPS_PLACE_PRICE_LEVEL,
+  GoogleMapsPlacePriceLevel,
+  SearchLocationResponse,
+} from "pinpin_library";
 import { LimitedArrayPipe } from "../../common/decorators/limitedArrayPipe.decorator.js";
 
 //TODO:用戶驗證
@@ -29,7 +24,7 @@ export class SearchLocationController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "文字搜尋地點" })
-  @ApiCommonResponses(HttpStatus.OK, "地點搜尋成功", searchLocationDTO)
+  @ApiCommonResponses(HttpStatus.OK, "地點搜尋成功", LocationDto)
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(1000 * 60 * 30)
   @UseGuards(ThrottlerGuard)
@@ -60,7 +55,7 @@ export class SearchLocationController {
     @Query("nextPageToken") nextPageToken: string = "",
     @Query("pageSize") pageSize: number = 12,
     @Query("maxImageHeight") maxImageHeight: number = 200,
-  ): Promise<ApiResponseDTO<IsearchLocationResponseDTO>> {
+  ): Promise<ApiResponse<SearchLocationResponse>> {
     const result = await this.searchLocationService.getTextSearchLocation(keyword, primaryType, priceLevel, nextPageToken, pageSize, maxImageHeight);
     return {
       statusCode: HttpStatus.OK,
@@ -71,7 +66,7 @@ export class SearchLocationController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "關鍵字自動補全" })
-  @ApiCommonResponses(HttpStatus.OK, "關鍵字自動補全成功", autoCompleteDTO)
+  @ApiCommonResponses(HttpStatus.OK, "關鍵字自動補全成功", AutoCompleteDto)
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 3, ttl: 1000 } })
   @ApiQuery({ name: "primaryTypes", type: String, isArray: true, required: false })
@@ -88,7 +83,7 @@ export class SearchLocationController {
       }),
     )
     primaryTypes?: string[],
-  ) {
+  ): Promise<ApiResponse<AutoCompletResponse[]>> {
     const result = await this.searchLocationService.getAutoComplete(keyword, sessionToken, primaryTypes);
     return {
       statusCode: HttpStatus.OK,
@@ -99,14 +94,17 @@ export class SearchLocationController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "取得地點詳細資料" })
-  @ApiCommonResponses(HttpStatus.OK, "取得地點詳細資料成功")
+  @ApiCommonResponses(HttpStatus.OK, "取得地點詳細資料成功", GetLocationByIdDto)
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(1000 * 60 * 30)
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 1, ttl: 1000 } })
   @ApiQuery({ name: "sessionToken", type: String, required: false })
   @Get(":placeID")
-  async getLocationById(@Param("placeID") placeID: string, @Query("sessionToken", new ParseUUIDPipe({ version: "4" })) sessionToken?: string) {
+  async getLocationById(
+    @Param("placeID") placeID: string,
+    @Query("sessionToken", new ParseUUIDPipe({ version: "4" })) sessionToken?: string,
+  ): Promise<ApiResponse<GetLocationByIdResponse>> {
     const result = await this.searchLocationService.getLocationById(placeID, sessionToken);
 
     return {

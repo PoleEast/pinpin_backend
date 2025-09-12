@@ -1,4 +1,4 @@
-ROLLBACK;
+-- ROLLBACK;
 
 USE pinpinsql;
 
@@ -218,6 +218,6 @@ VALUES
   ('tclmrb1onwhhlpxztujf',1),
   ('zghnlbl2j4znd24j5vud',1),
   ('yppqzczwggytwncdekyn',1),
-  ('msk1rbisuvlzcu8wsr3b',1),
+  ('msk1rbisuvlzcu8wsr3b',1);
 
 COMMIT;

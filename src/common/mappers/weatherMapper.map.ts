@@ -1,8 +1,8 @@
-import { CurrentWeatherDTO, WeatherForecastDataDTO, WeatherForecastDTO } from "@/dtos/weather.dto.js";
+import { CurrentWeatherDto, WeatherForecastDataDto, WeatherForecastDto } from "@/dtos/weather.dto.js";
 import { CurrentWeatherResponse, WeatherForecastResponse } from "@/interfaces/openWeather.interface.js";
 
-function mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDTO(data: CurrentWeatherResponse): CurrentWeatherDTO {
-  const result: CurrentWeatherDTO = {
+function mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDto(data: CurrentWeatherResponse): CurrentWeatherDto {
+  const result: CurrentWeatherDto = {
     country: data.sys.country,
     city: data.name,
     data: {
@@ -16,8 +16,8 @@ function mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDTO(data: CurrentWe
       weather: data.weather[0]?.description ?? "",
       cloud: data.clouds.all,
       windSpeed: data.wind.speed,
-      rain: data.rain?.["1h"],
-      snow: data.snow?.["1h"],
+      rain: data.rain?.["1h"] ?? undefined,
+      snow: data.snow?.["1h"] ?? undefined,
       icon: data.weather[0]?.icon ?? "",
     },
   };
@@ -25,11 +25,11 @@ function mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDTO(data: CurrentWe
   return result;
 }
 
-function mapOpenWeatherWeatherForecastResponseToWeatherForecastDTO(data: WeatherForecastResponse): WeatherForecastDTO {
-  const result: WeatherForecastDTO = {
+function mapOpenWeatherWeatherForecastResponseToWeatherForecastDto(data: WeatherForecastResponse): WeatherForecastDto {
+  const result: WeatherForecastDto = {
     country: data.city.country,
     city: data.city.name,
-    data: data.list.map<WeatherForecastDataDTO>((weatherData) => ({
+    data: data.list.map<WeatherForecastDataDto>((weatherData) => ({
       unixTimestamp: weatherData.dt,
       temperature: weatherData.main.temp,
       maxTemperature: weatherData.main.temp_max,
@@ -41,11 +41,14 @@ function mapOpenWeatherWeatherForecastResponseToWeatherForecastDTO(data: Weather
       cloud: weatherData.clouds.all,
       weather: weatherData.weather[0]?.description ?? "",
       windSpeed: weatherData.wind.speed,
+      rain: weatherData.rain?.["3h"] ?? undefined,
+      snow: weatherData.snow?.["3h"] ?? undefined,
       icon: weatherData.weather[0]?.icon ?? "",
+      periodOfTime: weatherData.sys?.pod === "d" ? "Day" : "Night",
     })),
   };
 
   return result;
 }
 
-export { mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDTO, mapOpenWeatherWeatherForecastResponseToWeatherForecastDTO };
+export { mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDto, mapOpenWeatherWeatherForecastResponseToWeatherForecastDto };

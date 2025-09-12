@@ -1,11 +1,12 @@
 import { Controller, Get, HttpCode, HttpStatus, Query, UseGuards, UseInterceptors } from "@nestjs/common";
 import { WeatherService } from "./weather.service.js";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
-import { CoordinatesDTO, CurrentWeatherDTO, WeatherForecastDTO } from "../../dtos/weather.dto.js";
+import { CurrentWeatherDto, WeatherForecastDto } from "../../dtos/weather.dto.js";
 import ApiCommonResponses from "../../common/decorators/api_responses.decorator.js";
 import { CacheInterceptor, CacheTTL } from "@nestjs/cache-manager";
 import { Throttle, ThrottlerGuard } from "@nestjs/throttler";
-import { ApiResponseDTO } from "pinpin_library";
+import { ApiResponse } from "pinpin_library";
+import { CoordinatesDto } from "../../dtos/common.dto.js";
 
 //TODO:用戶驗證
 
@@ -16,14 +17,14 @@ export class WeatherController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "查詢當前天氣狀態" })
-  @ApiCommonResponses(HttpStatus.OK, "當前天氣查詢成功", CurrentWeatherDTO)
+  @ApiCommonResponses(HttpStatus.OK, "當前天氣查詢成功", CurrentWeatherDto)
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(1000 * 60 * 30)
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 3, ttl: 1000 * 10 } })
   @Get("currentWeather")
-  async getCurrentWeather(@Query() coordinatesDTO: CoordinatesDTO): Promise<ApiResponseDTO<CurrentWeatherDTO>> {
-    const result = await this.weatherService.getCurrentWeather(coordinatesDTO);
+  async getCurrentWeather(@Query() coordinatesDto: CoordinatesDto): Promise<ApiResponse<CurrentWeatherDto>> {
+    const result = await this.weatherService.getCurrentWeather(coordinatesDto);
 
     return {
       statusCode: HttpStatus.OK,
@@ -34,14 +35,14 @@ export class WeatherController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "查詢未來天氣預報" })
-  @ApiCommonResponses(HttpStatus.OK, "天氣預報查詢成功", WeatherForecastDTO)
+  @ApiCommonResponses(HttpStatus.OK, "天氣預報查詢成功", WeatherForecastDto)
   @UseInterceptors(CacheInterceptor)
   @CacheTTL(1000 * 60 * 30)
   @UseGuards(ThrottlerGuard)
   @Throttle({ default: { limit: 3, ttl: 1000 * 10 } })
   @Get("weatherForecast")
-  async getWeatherForecast(@Query() coordinatesDTO: CoordinatesDTO): Promise<ApiResponseDTO<WeatherForecastDTO>> {
-    const result = await this.weatherService.getWeatherForecast(coordinatesDTO);
+  async getWeatherForecast(@Query() coordinatesDto: CoordinatesDto): Promise<ApiResponse<WeatherForecastDto>> {
+    const result = await this.weatherService.getWeatherForecast(coordinatesDto);
 
     return {
       statusCode: HttpStatus.OK,

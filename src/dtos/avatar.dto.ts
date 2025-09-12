@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { AvatarResponseDTO } from "pinpin_library";
+import { AvatarResponse } from "pinpin_library";
 
-class AvatarDTO implements AvatarResponseDTO {
+class AvatarDto implements AvatarResponse {
   @ApiProperty({
     description: "編號",
     example: 1,
@@ -30,7 +30,7 @@ class AvatarDTO implements AvatarResponseDTO {
   })
   create_at: Date;
 
-  constructor(data: AvatarResponseDTO) {
+  constructor(data: AvatarResponse) {
     this.id = data.id;
     this.public_id = data.public_id;
     this.type = data.type;
@@ -38,4 +38,4 @@ class AvatarDTO implements AvatarResponseDTO {
   }
 }
 
-export default AvatarDTO;
+export default AvatarDto;

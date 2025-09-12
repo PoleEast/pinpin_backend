@@ -5,10 +5,10 @@ import ApiCommonResponses from "../../common/decorators/api_responses.decorator.
 import { JwtGuard } from "../../common/guards/jwt.guard.js";
 import GetUser from "../../common/decorators/get-user.decorator.js";
 import { User } from "../../entities/user.entity.js";
-import { ApiResponseDTO, AvatarChangeHistoryResponseDTO, AvatarResponseDTO, UserProfileResponseDTO } from "pinpin_library";
+import { ApiResponse, AvatarChangeHistoryResponse, AvatarResponse, UserProfileResponse } from "pinpin_library";
 import { UserProfileDto } from "../../dtos/userProfile.dto.js";
-import AvatarChangeHistoryDTO from "../../dtos/avatarChangeHistory.dto.js";
-import AvatarDTO from "../../dtos/avatar.dto.js";
+import AvatarChangeHistoryDto from "../../dtos/avatarChangeHistory.dto.js";
+import AvatarDto from "../../dtos/avatar.dto.js";
 
 @ApiTags("用戶個人資料")
 @Controller("userProfile")
@@ -21,10 +21,10 @@ export class UserProfileController {
   @ApiCookieAuth()
   @UseGuards(JwtGuard)
   @Get("getUserProfile")
-  async getUserProfile(@GetUser() user: User): Promise<ApiResponseDTO<UserProfileResponseDTO>> {
+  async getUserProfile(@GetUser() user: User): Promise<ApiResponse<UserProfileResponse>> {
     const result = await this.userProfileService.getUserProfile(user.id);
 
-    const apiResponse: ApiResponseDTO<UserProfileDto> = {
+    const apiResponse: ApiResponse<UserProfileDto> = {
       statusCode: HttpStatus.OK,
       message: "用戶個人資料查詢成功",
       data: result,
@@ -35,11 +35,11 @@ export class UserProfileController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "用戶頭像變更歷史查詢" })
-  @ApiCommonResponses(HttpStatus.OK, "用戶頭像變更歷史查詢成功", AvatarChangeHistoryDTO)
+  @ApiCommonResponses(HttpStatus.OK, "用戶頭像變更歷史查詢成功", AvatarChangeHistoryDto)
   @ApiCookieAuth()
   @UseGuards(JwtGuard)
   @Get("getChangeHistoryAvatar")
-  async getChangeHistoryAvatar(@GetUser() user: User): Promise<ApiResponseDTO<AvatarChangeHistoryResponseDTO[]>> {
+  async getChangeHistoryAvatar(@GetUser() user: User): Promise<ApiResponse<AvatarChangeHistoryResponse[]>> {
     const result = await this.userProfileService.getChangeHistoryAvatar(user.id);
 
     return {
@@ -55,7 +55,7 @@ export class UserProfileController {
   @ApiCookieAuth()
   @UseGuards(JwtGuard)
   @Patch("updateUserProfile")
-  async updateUserProfile(@GetUser() user: User, @Body() UserProfileDto: UserProfileDto): Promise<ApiResponseDTO<UserProfileResponseDTO>> {
+  async updateUserProfile(@GetUser() user: User, @Body() UserProfileDto: UserProfileDto): Promise<ApiResponse<UserProfileResponse>> {
     const result = await this.userProfileService.updateUserProfile(user.id, UserProfileDto);
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -69,11 +69,11 @@ export class UserProfileController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "用戶頭像變更" })
-  @ApiCommonResponses(HttpStatus.OK, "頭像變更成功", AvatarDTO)
+  @ApiCommonResponses(HttpStatus.OK, "頭像變更成功", AvatarDto)
   @ApiCookieAuth()
   @UseGuards(JwtGuard)
   @Patch("updateAvatar")
-  async updateAvatar(@GetUser() user: User, @Body("avatar_id") avatarId: number): Promise<ApiResponseDTO<AvatarResponseDTO>> {
+  async updateAvatar(@GetUser() user: User, @Body("avatar_id") avatarId: number): Promise<ApiResponse<AvatarResponse>> {
     const result = await this.userProfileService.updateAvatar(user.id, avatarId);
 
     return {

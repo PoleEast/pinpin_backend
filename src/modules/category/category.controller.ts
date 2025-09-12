@@ -1,17 +1,17 @@
 import ApiCommonResponses from "../../common/decorators/api_responses.decorator.js";
 import {
-  CountryDTO,
-  CurrencyDTO,
-  LanguageDTO,
-  SettingDTO,
-  travelInterestDTO,
-  TravelInterestTypeDTO,
-  TravelStyleDTO,
+  CountryDto,
+  CurrencyDto,
+  LanguageDto,
+  SettingDto,
+  travelInterestDto,
+  TravelInterestTypeDto,
+  TravelStyleDto,
 } from "../../dtos/category.dto.js";
 import { Controller, Get, HttpCode, HttpStatus, Logger } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { CategoryService } from "./category.service.js";
-import { ApiResponseDTO } from "pinpin_library";
+import { ApiResponse } from "pinpin_library";
 
 @ApiTags("類別")
 @Controller("category")
@@ -20,12 +20,12 @@ export class CategoryController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "國家資料查詢" })
-  @ApiCommonResponses(HttpStatus.OK, "國家資料查詢成功", CountryDTO)
+  @ApiCommonResponses(HttpStatus.OK, "國家資料查詢成功", CountryDto)
   @Get("getCountry")
-  async getCountry(): Promise<ApiResponseDTO<CountryDTO[]>> {
+  async getCountry(): Promise<ApiResponse<CountryDto[]>> {
     const result = await this.categoryService.getCountry();
 
-    const apiResponse: ApiResponseDTO<CountryDTO[]> = {
+    const apiResponse: ApiResponse<CountryDto[]> = {
       statusCode: HttpStatus.OK,
       message: "國家資料查詢成功",
       data: result,
@@ -36,12 +36,12 @@ export class CategoryController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "幣別資料查詢" })
-  @ApiCommonResponses(HttpStatus.OK, "幣別資料查詢成功", CurrencyDTO)
+  @ApiCommonResponses(HttpStatus.OK, "幣別資料查詢成功", CurrencyDto)
   @Get("getCurrency")
-  async getCurrency(): Promise<ApiResponseDTO<CurrencyDTO[]>> {
+  async getCurrency(): Promise<ApiResponse<CurrencyDto[]>> {
     const result = await this.categoryService.getCurrency();
 
-    const apiResponse: ApiResponseDTO<CurrencyDTO[]> = {
+    const apiResponse: ApiResponse<CurrencyDto[]> = {
       statusCode: HttpStatus.OK,
       message: "幣別資料查詢成功",
       data: result,
@@ -54,12 +54,12 @@ export class CategoryController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "語言資料查詢" })
-  @ApiCommonResponses(HttpStatus.OK, "語言資料查詢成功", LanguageDTO)
+  @ApiCommonResponses(HttpStatus.OK, "語言資料查詢成功", LanguageDto)
   @Get("getLanguage")
-  async getLanguage(): Promise<ApiResponseDTO<LanguageDTO[]>> {
+  async getLanguage(): Promise<ApiResponse<LanguageDto[]>> {
     const result = await this.categoryService.getLanguage();
 
-    const apiResponse: ApiResponseDTO<LanguageDTO[]> = {
+    const apiResponse: ApiResponse<LanguageDto[]> = {
       statusCode: HttpStatus.OK,
       message: "語言資料查詢成功",
       data: result,
@@ -70,12 +70,12 @@ export class CategoryController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "旅遊興趣類別查詢" })
-  @ApiCommonResponses(HttpStatus.OK, "旅遊興趣類別查詢成功", TravelInterestTypeDTO)
+  @ApiCommonResponses(HttpStatus.OK, "旅遊興趣類別查詢成功", TravelInterestTypeDto)
   @Get("getTravelInterestType")
-  async getTravelInterestType(): Promise<ApiResponseDTO<TravelInterestTypeDTO[]>> {
+  async getTravelInterestType(): Promise<ApiResponse<TravelInterestTypeDto[]>> {
     const result = await this.categoryService.getTravelInterestType();
 
-    const apiResponse: ApiResponseDTO<TravelInterestTypeDTO[]> = {
+    const apiResponse: ApiResponse<TravelInterestTypeDto[]> = {
       statusCode: HttpStatus.OK,
       message: "旅遊興趣類別查詢成功",
       data: result,
@@ -86,12 +86,12 @@ export class CategoryController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "旅遊興趣類查詢" })
-  @ApiCommonResponses(HttpStatus.OK, "旅遊興趣查詢成功", travelInterestDTO)
+  @ApiCommonResponses(HttpStatus.OK, "旅遊興趣查詢成功", travelInterestDto)
   @Get("getTravelInterest")
-  async getTravelInterest(): Promise<ApiResponseDTO<travelInterestDTO[]>> {
+  async getTravelInterest(): Promise<ApiResponse<travelInterestDto[]>> {
     const result = await this.categoryService.getTravelInterest();
 
-    const apiResponse: ApiResponseDTO<travelInterestDTO[]> = {
+    const apiResponse: ApiResponse<travelInterestDto[]> = {
       statusCode: HttpStatus.OK,
       message: "旅遊興趣類別查詢成功",
       data: result,
@@ -102,12 +102,12 @@ export class CategoryController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "旅遊風格查詢" })
-  @ApiCommonResponses(HttpStatus.OK, "旅遊風格查詢成功", TravelStyleDTO)
+  @ApiCommonResponses(HttpStatus.OK, "旅遊風格查詢成功", TravelStyleDto)
   @Get("getTravelStyles")
-  async getTravelStyles(): Promise<ApiResponseDTO<TravelStyleDTO[]>> {
+  async getTravelStyles(): Promise<ApiResponse<TravelStyleDto[]>> {
     const result = await this.categoryService.getTravelStyles();
 
-    const apiResponse: ApiResponseDTO<TravelStyleDTO[]> = {
+    const apiResponse: ApiResponse<TravelStyleDto[]> = {
       statusCode: HttpStatus.OK,
       message: "旅遊風格查詢成功",
       data: result,
@@ -118,12 +118,12 @@ export class CategoryController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "設定頁面資料查詢" })
-  @ApiCommonResponses(HttpStatus.OK, "設定頁面資料查詢成功", SettingDTO)
+  @ApiCommonResponses(HttpStatus.OK, "設定頁面資料查詢成功", SettingDto)
   @Get("getSettingData")
-  async getSettingData(): Promise<ApiResponseDTO<SettingDTO>> {
+  async getSettingData(): Promise<ApiResponse<SettingDto>> {
     const result = await this.categoryService.getSettingData();
 
-    const apiResponse: ApiResponseDTO<SettingDTO> = {
+    const apiResponse: ApiResponse<SettingDto> = {
       statusCode: HttpStatus.OK,
       message: "設定頁面資料查詢成功",
       data: result,

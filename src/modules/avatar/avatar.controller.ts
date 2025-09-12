@@ -1,13 +1,13 @@
 import { BadRequestException, Controller, Get, HttpCode, HttpStatus, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { ApiBody, ApiConsumes, ApiCookieAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { AvatarService } from "./avatar.service.js";
-import ApiCommonResponses, { ApiResponseDTO } from "../../common/decorators/api_responses.decorator.js";
+import { ApiCommonResponses, ApiResponseDto } from "../../common/decorators/api_responses.decorator.js";
 import { JwtGuard } from "../../common/guards/jwt.guard.js";
 import { FileInterceptor } from "@nestjs/platform-express";
 import GetUser from "../../common/decorators/get-user.decorator.js";
 import { User } from "../../entities/user.entity.js";
-import AvatarDTO from "../../dtos/avatar.dto.js";
-import { AvatarResponseDTO } from "pinpin_library";
+import AvatarDto from "../../dtos/avatar.dto.js";
+import { AvatarResponse } from "pinpin_library";
 
 @ApiTags("頭像")
 @Controller("avatar")
@@ -16,9 +16,9 @@ export class AvatarController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "預設頭像獲取" })
-  @ApiCommonResponses(HttpStatus.OK, "預設頭像獲取成功", AvatarDTO)
+  @ApiCommonResponses(HttpStatus.OK, "預設頭像獲取成功", AvatarDto)
   @Get("getDefaultAvatar")
-  async getDefaultAvatar(): Promise<ApiResponseDTO<AvatarDTO[]>> {
+  async getDefaultAvatar(): Promise<ApiResponseDto<AvatarDto[]>> {
     const result = await this.avatarService.getDefaultAvatar();
 
     return {
@@ -30,11 +30,11 @@ export class AvatarController {
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "用戶頭像獲取" })
-  @ApiCommonResponses(HttpStatus.OK, "用戶頭像獲取成功", AvatarDTO)
+  @ApiCommonResponses(HttpStatus.OK, "用戶頭像獲取成功", AvatarDto)
   @ApiCookieAuth()
   @UseGuards(JwtGuard)
   @Get("getUserAvatar")
-  async getUserAvatar(@GetUser() user: User): Promise<ApiResponseDTO<AvatarDTO[]>> {
+  async getUserAvatar(@GetUser() user: User): Promise<ApiResponseDto<AvatarDto[]>> {
     const result = await this.avatarService.getUserAvatar(user);
 
     return {
@@ -46,20 +46,20 @@ export class AvatarController {
 
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "用戶頭像上傳" })
-  @ApiCommonResponses(HttpStatus.CREATED, "用戶頭像上傳成功", AvatarDTO)
+  @ApiCommonResponses(HttpStatus.CREATED, "用戶頭像上傳成功", AvatarDto)
   @ApiCookieAuth()
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
       type: "object",
       properties: {
-        file: {
+        avatar: {
           type: "string",
           format: "binary",
           description: "用戶頭像圖片 (支援 jpeg, jpg, png, gif 格式)",
         },
       },
-      required: ["file"],
+      required: ["avatar"],
     },
   })
   @UseGuards(JwtGuard)
@@ -78,11 +78,11 @@ export class AvatarController {
     }),
   )
   @Post("upload")
-  async uploadAvatar(@UploadedFile() file: Express.Multer.File, @GetUser() user: User): Promise<ApiResponseDTO<AvatarResponseDTO>> {
-    if (!file) {
+  async uploadAvatar(@UploadedFile() avatar: Express.Multer.File, @GetUser() user: User): Promise<ApiResponseDto<AvatarResponse>> {
+    if (!avatar) {
       throw new BadRequestException("請上傳檔案");
     }
-    const result = await this.avatarService.uploadAvatar(file, user);
+    const result = await this.avatarService.uploadAvatar(avatar, user);
 
     return {
       statusCode: HttpStatus.CREATED,

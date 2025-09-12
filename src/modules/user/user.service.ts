@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { AccountDTO, LoginDTO, RegisterDTO } from "../../dtos/user.dto.js";
+import { AccountDto, LoginDto, RegisterDto } from "../../dtos/user.dto.js";
 import { RegisterServiceData, LoginServiceData } from "../../interfaces/user.interface.js";
 import { User } from "../../entities/user.entity.js";
 import * as bcrypt from "bcrypt";
@@ -25,7 +25,7 @@ export class UserService {
    *
    * @param registerDto 註冊資訊
    */
-  async Register(registerDto: RegisterDTO): Promise<RegisterServiceData> {
+  async Register(registerDto: RegisterDto): Promise<RegisterServiceData> {
     // 檢查帳號是否已經存在
     if (await this.userRepositoryManager.FindOneByAccount(registerDto.account)) {
       throw new ConflictException("帳號已經存在");
@@ -75,7 +75,7 @@ export class UserService {
    * @returns 帳號和token
    * @throws UnauthorizedException 帳號或密碼錯誤
    */
-  async Login(loginDto: LoginDTO): Promise<LoginServiceData> {
+  async Login(loginDto: LoginDto): Promise<LoginServiceData> {
     const user = await this.userRepositoryManager.FindOneByAccountWithProfileWhitAvatar(loginDto.account);
     if (!user) {
       throw new UnauthorizedException("帳號或密碼錯誤");
@@ -102,27 +102,27 @@ export class UserService {
   }
 
   /**
-   * 依據使用者資料和AccountRequestDTO更新使用者資料
+   * 依據使用者資料和AccountRequestDto更新使用者資料
    *
    * @param user 使用者資料
-   * @param accountRequestDTO 要更新的資料
-   * @returns AccountRequestDTO
+   * @param accountRequestDto 要更新的資料
+   * @returns AccountRequestDto
    * @throws UnauthorizedException 使用者授權失效
    */
-  async updateUser(user: User, accountDTO: AccountDTO): Promise<AccountDTO> {
+  async updateUser(user: User, accountDto: AccountDto): Promise<AccountDto> {
     if (!user) {
       throw new UnauthorizedException("使用者授權失效");
     }
 
-    user.email = accountDTO.email ?? user.email;
-    user.passwordHash = accountDTO.password ? this.getHashPassword(accountDTO.password) : user.passwordHash;
+    user.email = accountDto.email ?? user.email;
+    user.passwordHash = accountDto.password ? this.getHashPassword(accountDto.password) : user.passwordHash;
 
     const updatedUser = await this.userRepositoryManager.Save(user);
 
-    accountDTO.account = updatedUser.account;
-    accountDTO.email = updatedUser.email;
+    accountDto.account = updatedUser.account;
+    accountDto.email = updatedUser.email;
 
-    return accountDTO;
+    return accountDto;
   }
 
   /**

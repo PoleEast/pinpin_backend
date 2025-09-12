@@ -1,15 +1,15 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {
-  CountryResponseDTO,
-  CurrencyResponseDTO,
-  LanguageResponseDTO,
-  SettingResponseDTO,
-  TravelInterestsResponseDTO,
-  TravelInterestTypeResponseDTO,
-  TravelStyleResponseDTO,
+  CountryResponse,
+  CurrencyResponse,
+  LanguageResponse,
+  SettingResponse,
+  TravelInterestsResponse,
+  TravelInterestTypeResponse,
+  TravelStyleResponse,
 } from "pinpin_library";
 
-class CountryDTO implements CountryResponseDTO {
+class CountryDto implements CountryResponse {
   @ApiProperty({
     description: "編號",
     example: 1,
@@ -59,7 +59,7 @@ class CountryDTO implements CountryResponseDTO {
   })
   icon_type: string;
 
-  constructor(data: CountryResponseDTO) {
+  constructor(data: CountryResponse) {
     this.id = data.id;
     this.code = data.code;
     this.dial_code = data.dial_code;
@@ -70,7 +70,7 @@ class CountryDTO implements CountryResponseDTO {
   }
 }
 
-class CurrencyDTO implements CurrencyResponseDTO {
+class CurrencyDto implements CurrencyResponse {
   @ApiProperty({
     description: "編號",
     example: 1,
@@ -99,7 +99,7 @@ class CurrencyDTO implements CurrencyResponseDTO {
   })
   icon_type: string;
 
-  constructor(data: CurrencyResponseDTO) {
+  constructor(data: CurrencyResponse) {
     this.id = data.id;
     this.code = data.code;
     this.icon = data.icon;
@@ -107,7 +107,7 @@ class CurrencyDTO implements CurrencyResponseDTO {
   }
 }
 
-class LanguageDTO implements LanguageResponseDTO {
+class LanguageDto implements LanguageResponse {
   @ApiProperty({
     description: "編號",
     example: 1,
@@ -129,14 +129,14 @@ class LanguageDTO implements LanguageResponseDTO {
   })
   local_name: string;
 
-  constructor(data: LanguageResponseDTO) {
+  constructor(data: LanguageResponse) {
     this.id = data.id;
     this.english_name = data.english_name;
     this.local_name = data.local_name;
   }
 }
 
-class TravelInterestTypeDTO implements TravelInterestTypeResponseDTO {
+class TravelInterestTypeDto implements TravelInterestTypeResponse {
   @ApiProperty({
     description: "編號",
     example: 1,
@@ -165,7 +165,7 @@ class TravelInterestTypeDTO implements TravelInterestTypeResponseDTO {
   })
   travel_interests: number[];
 
-  constructor(data: TravelInterestTypeResponseDTO) {
+  constructor(data: TravelInterestTypeResponse) {
     this.id = data.id;
     this.name = data.name;
     this.color = data.color;
@@ -173,7 +173,7 @@ class TravelInterestTypeDTO implements TravelInterestTypeResponseDTO {
   }
 }
 
-class travelInterestDTO implements TravelInterestsResponseDTO {
+class travelInterestDto implements TravelInterestsResponse {
   @ApiProperty({
     description: "編號",
     example: 1,
@@ -202,7 +202,7 @@ class travelInterestDTO implements TravelInterestsResponseDTO {
   })
   icon_type: string;
 
-  constructor(data: TravelInterestsResponseDTO) {
+  constructor(data: TravelInterestsResponse) {
     this.id = data.id;
     this.name = data.name;
     this.icon = data.icon;
@@ -210,7 +210,7 @@ class travelInterestDTO implements TravelInterestsResponseDTO {
   }
 }
 
-class TravelStyleDTO implements TravelStyleResponseDTO {
+class TravelStyleDto implements TravelStyleResponse {
   @ApiProperty({
     description: "編號",
     example: 1,
@@ -253,7 +253,7 @@ class TravelStyleDTO implements TravelStyleResponseDTO {
   })
   color: string;
 
-  constructor(data: TravelStyleResponseDTO) {
+  constructor(data: TravelStyleResponse) {
     this.id = data.id;
     this.name = data.name;
     this.description = data.description;
@@ -263,7 +263,7 @@ class TravelStyleDTO implements TravelStyleResponseDTO {
   }
 }
 
-class SettingDTO implements SettingResponseDTO {
+class SettingDto implements SettingResponse {
   @ApiProperty({
     description: "國家資料",
     example: [
@@ -277,7 +277,7 @@ class SettingDTO implements SettingResponseDTO {
     ],
     required: true,
   })
-  country: CountryResponseDTO[];
+  country: CountryResponse[];
 
   @ApiProperty({
     description: "貨幣資料",
@@ -290,7 +290,7 @@ class SettingDTO implements SettingResponseDTO {
     ],
     required: true,
   })
-  currency: CurrencyResponseDTO[];
+  currency: CurrencyResponse[];
 
   @ApiProperty({
     description: "語言資料",
@@ -303,7 +303,7 @@ class SettingDTO implements SettingResponseDTO {
     ],
     required: true,
   })
-  language: LanguageResponseDTO[];
+  language: LanguageResponse[];
 
   @ApiProperty({
     description: "旅遊類型資料",
@@ -317,7 +317,7 @@ class SettingDTO implements SettingResponseDTO {
     ],
     required: true,
   })
-  travelInterestType: TravelInterestTypeResponseDTO[];
+  travelInterestType: TravelInterestTypeResponse[];
 
   @ApiProperty({
     description: "旅遊興趣資料",
@@ -330,7 +330,7 @@ class SettingDTO implements SettingResponseDTO {
     ],
     required: true,
   })
-  travelInterest: TravelInterestsResponseDTO[];
+  travelInterest: TravelInterestsResponse[];
 
   @ApiProperty({
     description: "旅遊風格資料",
@@ -344,9 +344,9 @@ class SettingDTO implements SettingResponseDTO {
       },
     ],
   })
-  travelStyle: TravelInterestsResponseDTO[];
+  travelStyle: TravelInterestsResponse[];
 
-  constructor(data: SettingResponseDTO) {
+  constructor(data: SettingResponse) {
     this.country = data.country;
     this.currency = data.currency;
     this.language = data.language;
@@ -356,4 +356,4 @@ class SettingDTO implements SettingResponseDTO {
   }
 }
 
-export { CountryDTO, CurrencyDTO, LanguageDTO, TravelInterestTypeDTO, travelInterestDTO, TravelStyleDTO, SettingDTO };
+export { CountryDto, CurrencyDto, LanguageDto, TravelInterestTypeDto, travelInterestDto, TravelStyleDto, SettingDto };

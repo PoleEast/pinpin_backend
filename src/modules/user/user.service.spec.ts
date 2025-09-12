@@ -307,7 +307,17 @@ describe("UserService", () => {
         profile: mockUserProfile,
       };
 
-      const mockCreatedUser = { id: 1 };
+      const mockCreatedUser = {
+        id: 1,
+        account: "newUser",
+        passwordHash: "hashedPassword",
+        profile: {
+          id: 1,
+          nickname: "NewUser",
+          avatar: { id: 1, public_id: "default_avatar" },
+          avatar_changed_history: [],
+        },
+      };
 
       const mockLoadedUser = {
         id: 1,
@@ -344,7 +354,7 @@ describe("UserService", () => {
       expect(mockUserRepositoryManager.FindOneByAccount).toHaveBeenCalledWith("newUser");
       expect(mockUserProfileService.New).toHaveBeenCalledWith("NewUser");
       expect(mockAvatarService.getRandomDefaultAvatar).toHaveBeenCalled();
-      expect(mockUserRepositoryManager.Save).toHaveBeenCalledTimes(1);
+      expect(mockUserRepositoryManager.Save).toHaveBeenCalledTimes(2);
       expect(mockJwtService.sign).toHaveBeenCalled();
     });
 
@@ -399,7 +409,14 @@ describe("UserService", () => {
       mockAvatarService.getRandomDefaultAvatar.mockResolvedValue({ id: 1 });
       mockUserProfileService.NewAvatarChangeHistory.mockReturnValue({});
       mockUserRepositoryManager.New.mockReturnValue({});
-      mockUserRepositoryManager.Save.mockResolvedValue({ id: 1 });
+      mockUserRepositoryManager.Save.mockResolvedValue({
+        id: 1,
+        profile: {
+          id: 1,
+          avatar: { id: 1 },
+          avatar_changed_history: [],
+        },
+      });
       mockUserRepositoryManager.FindOneByIdWithProfileWhitAvatar.mockResolvedValue(null);
 
       await expect(service.Register(registerDto)).rejects.toThrow("找不到用戶");
@@ -502,7 +519,7 @@ describe("UserService", () => {
         passwordHash: "oldHash",
       } as User;
 
-      const accountDTO = {
+      const accountDto = {
         email: "new@example.com",
       };
 
@@ -513,7 +530,7 @@ describe("UserService", () => {
 
       mockUserRepositoryManager.Save.mockResolvedValue(updatedUser);
 
-      const result = await service.updateUser(user, accountDTO);
+      const result = await service.updateUser(user, accountDto);
 
       expect(result.email).toBe("new@example.com");
       expect(result.account).toBe("testUser");
@@ -531,7 +548,7 @@ describe("UserService", () => {
         passwordHash: "oldHash",
       } as User;
 
-      const accountDTO = {
+      const accountDto = {
         password: "newPassword123",
       };
 
@@ -544,7 +561,7 @@ describe("UserService", () => {
 
       mockUserRepositoryManager.Save.mockResolvedValue(updatedUser);
 
-      const result = await service.updateUser(user, accountDTO);
+      const result = await service.updateUser(user, accountDto);
 
       expect(bcrypt.hashSync).toHaveBeenCalledWith("newPassword123", 10);
       expect(mockUserRepositoryManager.Save).toHaveBeenCalledWith({
@@ -562,7 +579,7 @@ describe("UserService", () => {
         passwordHash: "oldHash",
       } as User;
 
-      const accountDTO = {
+      const accountDto = {
         email: "new@example.com",
         password: "newPassword123",
       };
@@ -577,7 +594,7 @@ describe("UserService", () => {
 
       mockUserRepositoryManager.Save.mockResolvedValue(updatedUser);
 
-      const result = await service.updateUser(user, accountDTO);
+      const result = await service.updateUser(user, accountDto);
 
       expect(result.email).toBe("new@example.com");
       expect(mockUserRepositoryManager.Save).toHaveBeenCalledWith({
@@ -595,7 +612,7 @@ describe("UserService", () => {
         passwordHash: "originalHash",
       } as User;
 
-      const accountDTO = {
+      const accountDto = {
         email: undefined,
         password: undefined,
       };
@@ -606,7 +623,7 @@ describe("UserService", () => {
 
       mockUserRepositoryManager.Save.mockResolvedValue(updatedUser);
 
-      const result = await service.updateUser(user, accountDTO);
+      const result = await service.updateUser(user, accountDto);
 
       expect(result.email).toBe("original@example.com");
       expect(mockUserRepositoryManager.Save).toHaveBeenCalledWith({
@@ -617,11 +634,11 @@ describe("UserService", () => {
     });
 
     it("用戶為 null 應該拋出 UnauthorizedException", async () => {
-      const accountDTO = {
+      const accountDto = {
         email: "test@example.com",
       };
 
-      await expect(service.updateUser(null as unknown as User, accountDTO)).rejects.toThrow("使用者授權失效");
+      await expect(service.updateUser(null as unknown as User, accountDto)).rejects.toThrow("使用者授權失效");
     });
   });
 

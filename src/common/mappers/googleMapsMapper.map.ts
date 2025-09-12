@@ -1,11 +1,16 @@
 import {
+  AutoCompletResponse,
+  GetLocationByIdResponse,
   GOOGLE_MAPS_PLACE_BUSINESS_STATUS,
   GOOGLE_MAPS_PLACE_PRICE_LEVEL,
   GoogleMapsPlaceBusinessStatus,
   GoogleMapsPlacePriceLevel,
+  OpeningTimePeriods,
+  Location,
 } from "pinpin_library";
 import { ORIGINAL_GOOGLE_MAPS_PLACE } from "../constants/constants.js";
 import { ConstObjectValues } from "../utils/type.util.js";
+import { places_v1 } from "@googleapis/places";
 
 function googleBusinessStatusMapper(businessStatus?: string | null): GoogleMapsPlaceBusinessStatus {
   switch (businessStatus) {
@@ -70,4 +75,129 @@ function reversePriceLevelMapper(priceLevel: GoogleMapsPlacePriceLevel): ConstOb
   }
 }
 
-export { googleBusinessStatusMapper, googlePriceLevelMapper, reverseBusinessStatusMapper, reversePriceLevelMapper };
+function googleOpeningTimePeriodsMapper(openingTime?: places_v1.Schema$GoogleMapsPlacesV1PlaceOpeningHours): OpeningTimePeriods[] {
+  if (!openingTime || !openingTime.periods) {
+    return [];
+  }
+
+  const result: OpeningTimePeriods[] = openingTime.periods.reduce<OpeningTimePeriods[]>((acc: OpeningTimePeriods[], period) => {
+    if (
+      typeof period.close?.hour !== "number" ||
+      typeof period.close?.minute !== "number" ||
+      typeof period.open?.hour !== "number" ||
+      typeof period.open?.minute !== "number" ||
+      typeof period.open?.day !== "number"
+    )
+      return acc;
+
+    const openingTimePeriods: OpeningTimePeriods = {
+      open: {
+        hour: period.open?.hour,
+        minute: period.open?.minute,
+      },
+      close: {
+        hour: period.close?.hour,
+        minute: period.close?.minute,
+      },
+      day: [period.open.day],
+    };
+
+    if (acc.length === 0) {
+      acc.push(openingTimePeriods);
+      return acc;
+    }
+
+    const index = acc.findIndex(
+      (value) =>
+        value.open.hour === openingTimePeriods.open.hour &&
+        value.open.minute === openingTimePeriods.open.minute &&
+        value.close.hour === openingTimePeriods.close.hour &&
+        value.close.minute === openingTimePeriods.close.minute,
+    );
+
+    if (index === -1) acc.push(openingTimePeriods);
+    else acc[index].day.push(period.open.day);
+    return acc;
+  }, []);
+
+  return result;
+}
+
+async function mapGoogleMapsPlaceTextSearchResponseToSearchLocationDto(
+  data: places_v1.Schema$GoogleMapsPlacesV1Place,
+  photoURLCallback: (name: string, maxImageWidth?: number, maxImageHeight?: number) => Promise<string> | string,
+  maxImageWidth?: number,
+  imageMaxHeight: number = 200,
+): Promise<Location> {
+  return {
+    phoneNumber: data.internationalPhoneNumber || "",
+    rating: data.rating || 0,
+    businessStatus: googleBusinessStatusMapper(data.businessStatus),
+    priceLevel: googlePriceLevelMapper(data.priceLevel),
+    userRatingCount: data.userRatingCount || 0,
+    name: data.displayName?.text || "",
+    primaryType: data.primaryType || "",
+    address: data.shortFormattedAddress || "",
+    id: data.id || "",
+    photoURL: data.photos?.[0].name ? await photoURLCallback(data.photos[0].name, maxImageWidth, imageMaxHeight) : "",
+    IconMaskBaseURL: data.iconMaskBaseUri + ".svg" || "",
+  };
+}
+
+function mapGoogleMapsPlaceAutocompleteResponseToAutoCompletResponseDto(
+  data: places_v1.Schema$GoogleMapsPlacesV1AutocompletePlacesResponseSuggestion,
+): AutoCompletResponse {
+  return {
+    placeId: data.placePrediction?.placeId || "",
+    types: data.placePrediction?.types || [],
+    text: data.placePrediction?.structuredFormat?.mainText?.text || "",
+    address: data.placePrediction?.structuredFormat?.secondaryText?.text || "",
+  };
+}
+
+function mapGoogleMapsPlaceGetLocationResponseGetLocationByIdResponseDto(data: places_v1.Schema$GoogleMapsPlacesV1Place): GetLocationByIdResponse {
+  return {
+    phoneNumber: data.internationalPhoneNumber || "",
+    rating: data.rating || 0,
+    businessStatus: googleBusinessStatusMapper(data.businessStatus),
+    priceLevel: googlePriceLevelMapper(data.priceLevel),
+    userRatingCount: data.userRatingCount || 0,
+    name: data.displayName?.text || "",
+    primaryType: data.primaryType || "",
+    address: data.shortFormattedAddress || "",
+    id: data.id || "",
+    photoURL: data.photos?.[0]?.name || "",
+    IconMaskBaseURL: data.iconMaskBaseUri + ".svg" || "",
+    location: {
+      lat: data.location?.latitude || 0,
+      lng: data.location?.longitude || 0,
+    },
+    googleMapsUri: data.googleMapsUri || "",
+    website: data.websiteUri || "",
+    openingTimePeriods: googleOpeningTimePeriodsMapper(data.regularOpeningHours),
+    reviews:
+      data.reviews?.map((review) => ({
+        reviewerDisplayName: review.authorAttribution?.displayName || "",
+        photoUri: review.authorAttribution?.photoUri || "",
+        time: review.relativePublishTimeDescription || "",
+        rating: review.rating || 0,
+        text: review.text?.text || "",
+      })) || [],
+    priceRange: {
+      min: data.priceRange?.startPrice?.units || "",
+      max: data.priceRange?.endPrice?.units || "",
+      currencyCode: data.priceRange?.endPrice?.currencyCode || "",
+    },
+    timeZone: data.timeZone?.id || "",
+  };
+}
+
+export {
+  googleBusinessStatusMapper,
+  googlePriceLevelMapper,
+  reverseBusinessStatusMapper,
+  reversePriceLevelMapper,
+  mapGoogleMapsPlaceTextSearchResponseToSearchLocationDto,
+  mapGoogleMapsPlaceAutocompleteResponseToAutoCompletResponseDto,
+  mapGoogleMapsPlaceGetLocationResponseGetLocationByIdResponseDto,
+};

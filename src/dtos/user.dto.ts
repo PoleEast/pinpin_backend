@@ -1,9 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
-import { IsDate, IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength, ValidateIf } from "class-validator";
-import { AccountRequestDTO, LoginRequestDTO, RegisterRequestDTO, USERPROFILE_REQUSER_VALIDATION, USER_VALIDATION } from "pinpin_library";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength, ValidateIf } from "class-validator";
+import { AccountRequest, LoginRequest, RegisterRequest, USERPROFILE_REQUSER_VALIDATION, USER_VALIDATION } from "pinpin_library";
 
-class RegisterDTO implements RegisterRequestDTO {
+class RegisterDto implements RegisterRequest {
   @ApiProperty({
     description: "帳號",
     example: "superman",
@@ -51,7 +50,7 @@ class RegisterDTO implements RegisterRequestDTO {
   }
 }
 
-class LoginDTO implements LoginRequestDTO {
+class LoginDto implements LoginRequest {
   @ApiProperty({
     description: "帳號",
     example: "superman",
@@ -85,7 +84,7 @@ class LoginDTO implements LoginRequestDTO {
   }
 }
 
-class AccountDTO implements AccountRequestDTO {
+class AccountDto implements AccountRequest {
   @ApiProperty({
     description: "帳號",
     example: "superman",
@@ -125,15 +124,6 @@ class AccountDTO implements AccountRequestDTO {
   @IsOptional()
   @IsEmail({}, { message: "電子郵件格式錯誤" })
   email?: string;
-
-  @ApiProperty({
-    description: "建立時間",
-    required: false,
-  })
-  @Type(() => Date)
-  @IsDate()
-  @IsOptional()
-  createAt?: Date;
 }
 
-export { RegisterDTO, LoginDTO, AccountDTO };
+export { RegisterDto, LoginDto, AccountDto };

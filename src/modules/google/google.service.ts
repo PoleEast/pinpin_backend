@@ -2,8 +2,8 @@ import { ConstObjectValues } from "@/common/utils/type.util.js";
 import { INJECTION_TOKEN, ORIGINAL_GOOGLE_MAPS_PLACE } from "../../common/constants/constants.js";
 import { ConfigOptions } from "@/interfaces/google.interface.js";
 import { places, places_v1 } from "@googleapis/places";
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { readFileSync } from "fs";
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
+
 @Injectable()
 export class GoogleService {
   private places: places_v1.Places;
@@ -50,15 +50,15 @@ export class GoogleService {
     }
   }
 
-  async getTestSearchLocation(
-    keyword: string,
-    primaryType: string = "",
-    priceLevel?: ConstObjectValues<typeof ORIGINAL_GOOGLE_MAPS_PLACE.PRICE_LEVEL>[],
-    nextPageToken: string = "",
-    pageSize: number = 12,
-  ): Promise<places_v1.Schema$GoogleMapsPlacesV1SearchTextResponse> {
-    return JSON.parse(readFileSync("./src/assets/locationData.json", "utf-8")) as places_v1.Schema$GoogleMapsPlacesV1SearchTextResponse;
-  }
+  // async getTestSearchLocation(
+  //   keyword: string,
+  //   primaryType: string = "",
+  //   priceLevel?: ConstObjectValues<typeof ORIGINAL_GOOGLE_MAPS_PLACE.PRICE_LEVEL>[],
+  //   nextPageToken: string = "",
+  //   pageSize: number = 12,
+  // ): Promise<places_v1.Schema$GoogleMapsPlacesV1SearchTextResponse> {
+  //   return JSON.parse(readFileSync("./src/assets/locationData.json", "utf-8")) as places_v1.Schema$GoogleMapsPlacesV1SearchTextResponse;
+  // }
 
   async autocomplete(keyword: string, sessionToken: string, primaryTypes?: string[]) {
     try {
@@ -81,17 +81,19 @@ export class GoogleService {
   }
 
   async getLocationById(placeID: string, sessionToken?: string) {
-    // try {
-    //   const response = await this.places.places.get({
-    //     name: placeID,
-    //     sessionToken: sessionToken,
-    //     fields: "*",
-    //   });
-    //   return response.data;
-    // } catch (error) {
-    //   const errorResponse = new HttpException("第三方服務發生錯誤", HttpStatus.INTERNAL_SERVER_ERROR, { cause: error });
-    //   throw errorResponse;
-    // }
+    try {
+      const response = await this.places.places.get({
+        name: `places/${placeID}`,
+        sessionToken: sessionToken,
+        fields: "*",
+        languageCode: "zh-TW",
+      });
+      return response.data;
+    } catch (error) {
+      Logger.error(JSON.stringify(error));
+      const errorResponse = new HttpException("第三方服務發生錯誤", HttpStatus.INTERNAL_SERVER_ERROR, { cause: error });
+      throw errorResponse;
+    }
   }
 
   async getPhoto(placeId: string, maxWidth?: number, maxHeight: number = 200): Promise<string> {

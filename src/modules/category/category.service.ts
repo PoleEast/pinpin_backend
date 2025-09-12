@@ -1,5 +1,5 @@
 import { CurrencyRepositoryManager } from "../../repositories/currency.repository.js";
-import { CountryDTO, CurrencyDTO, LanguageDTO, travelInterestDTO, TravelInterestTypeDTO, TravelStyleDTO } from "../../dtos/category.dto.js";
+import { CountryDto, CurrencyDto, LanguageDto, travelInterestDto, TravelInterestTypeDto, TravelStyleDto } from "../../dtos/category.dto.js";
 import { CountryRepositoryManager } from "../../repositories/country.repository.js";
 import { Injectable } from "@nestjs/common";
 import { Currency } from "../../entities/currency.entity.js";
@@ -12,7 +12,7 @@ import { TravelInterest } from "../../entities/travel_interest.entity.js";
 import { TravelInterestRepositoryManager } from "../../repositories/travel_Interest.repository.js";
 import { TravelStylesRepositoryManager } from "../../repositories/travel_styles.repostiories.js";
 import { TravelStyle } from "@/entities/travel_style.entity.js";
-import { SettingResponseDTO } from "pinpin_library";
+import { SettingResponse } from "pinpin_library";
 
 @Injectable()
 export class CategoryService {
@@ -28,12 +28,12 @@ export class CategoryService {
   /**
    * 獲取所有國家資料
    *
-   * @returns {Promise<CountryDTO[]>} 包含所有國家資訊的陣列
+   * @returns {Promise<CountryDto[]>} 包含所有國家資訊的陣列
    */
-  async getCountry(): Promise<CountryDTO[]> {
+  async getCountry(): Promise<CountryDto[]> {
     const countries: Country[] = await this.countryRepositoryManager.FindAllWithIconType();
 
-    const countryDTOs: CountryDTO[] = countries.map((country) => ({
+    const countryDtos: CountryDto[] = countries.map((country) => ({
       id: country.id,
       code: country.code,
       dial_code: country.dialCode,
@@ -43,89 +43,89 @@ export class CategoryService {
       icon_type: country.iconType.name,
     }));
 
-    return countryDTOs;
+    return countryDtos;
   }
 
   /**
    * 獲取所有幣別資料
    *
-   * @returns {Promise<CurrencyDTO[]>} 包含所有幣別資訊的陣列
+   * @returns {Promise<CurrencyDto[]>} 包含所有幣別資訊的陣列
    */
-  async getCurrency(): Promise<CurrencyDTO[]> {
+  async getCurrency(): Promise<CurrencyDto[]> {
     const countries: Currency[] = await this.currencyRepositoryManager.FindAllWithIconType();
 
-    const currencyDTOs: CurrencyDTO[] = countries.map((currency) => ({
+    const currencyDtos: CurrencyDto[] = countries.map((currency) => ({
       id: currency.id,
       code: currency.code,
       icon: currency.icon,
       icon_type: currency.iconType.name,
     }));
 
-    return currencyDTOs;
+    return currencyDtos;
   }
 
   /**
    * 獲取所有語言資料
    *
-   * @returns {Promise<LanguageDTO[]>} 包含所有語言資訊的陣列
+   * @returns {Promise<LanguageDto[]>} 包含所有語言資訊的陣列
    */
-  async getLanguage(): Promise<LanguageDTO[]> {
+  async getLanguage(): Promise<LanguageDto[]> {
     const languages: Language[] = await this.languageRepositoryManager.FindAll();
 
-    const languageDTOs: LanguageDTO[] = languages.map((language) => ({
+    const languageDtos: LanguageDto[] = languages.map((language) => ({
       id: language.id,
       english_name: language.englishName,
       local_name: language.localName,
     }));
 
-    return languageDTOs;
+    return languageDtos;
   }
 
   /**
    * 獲取所有旅遊興趣類別資料
    *
-   * @returns {Promise<TravelInterestTypeDTO[]>} 包含所有旅遊興趣類別資訊的陣列
+   * @returns {Promise<TravelInterestTypeDto[]>} 包含所有旅遊興趣類別資訊的陣列
    */
-  async getTravelInterestType(): Promise<TravelInterestTypeDTO[]> {
+  async getTravelInterestType(): Promise<TravelInterestTypeDto[]> {
     const result: TravelInterestType[] = await this.travelInterestTypeRepositoryManager.FindAllWithTravelInterest();
 
-    const travelInterestTypeDTOs: TravelInterestTypeDTO[] = result.map((travelInterestType) => ({
+    const travelInterestTypeDtos: TravelInterestTypeDto[] = result.map((travelInterestType) => ({
       id: travelInterestType.id,
       name: travelInterestType.name,
       color: travelInterestType.color,
       travel_interests: travelInterestType.travelInterests?.map((travelInterest) => travelInterest.id) ?? [],
     }));
 
-    return travelInterestTypeDTOs;
+    return travelInterestTypeDtos;
   }
 
   /**
    * 獲取所有旅遊興趣資料
    *
-   * @returns {Promise<travelInterestDTO[]>} 包含所有旅遊興趣資訊的陣列
+   * @returns {Promise<travelInterestDto[]>} 包含所有旅遊興趣資訊的陣列
    */
-  async getTravelInterest(): Promise<travelInterestDTO[]> {
+  async getTravelInterest(): Promise<travelInterestDto[]> {
     const result: TravelInterest[] = await this.travelInterestRepositoryManager.FindAllWithIconType();
 
-    const travelInterestDTOs: travelInterestDTO[] = result.map((travelInterest) => ({
+    const travelInterestDtos: travelInterestDto[] = result.map((travelInterest) => ({
       id: travelInterest.id,
       name: travelInterest.name,
       icon: travelInterest.icon,
       icon_type: travelInterest.iconType.name,
     }));
 
-    return travelInterestDTOs;
+    return travelInterestDtos;
   }
 
   /**
    * 獲取所有旅遊風格資料
    *
-   * @returns {Promise<TravelStyleDTO[]>} 包含所有旅遊風格資訊的陣列
+   * @returns {Promise<TravelStyleDto[]>} 包含所有旅遊風格資訊的陣列
    */
-  async getTravelStyles(): Promise<TravelStyleDTO[]> {
+  async getTravelStyles(): Promise<TravelStyleDto[]> {
     const result: TravelStyle[] = await this.travelStylesRepositoryManager.FindAllWithIconType();
 
-    const travelStylesDTOs: TravelStyleDTO[] = result.map((travelStyle) => ({
+    const travelStylesDtos: TravelStyleDto[] = result.map((travelStyle) => ({
       id: travelStyle.id,
       name: travelStyle.name,
       description: travelStyle.description,
@@ -134,15 +134,15 @@ export class CategoryService {
       icon_type: travelStyle.iconType.name,
     }));
 
-    return travelStylesDTOs;
+    return travelStylesDtos;
   }
 
   /**
    * 獲取所有設定頁面資料
    *
-   * @returns {Promise<SettingResponseDTO>} 包含所有設定資訊的物件
+   * @returns {Promise<SettingResponse>} 包含所有設定資訊的物件
    */
-  async getSettingData(): Promise<SettingResponseDTO> {
+  async getSettingData(): Promise<SettingResponse> {
     const [country, currency, language, travelInterestType, travelInterest, travelStyle] = await Promise.all([
       this.getCountry(),
       this.getCurrency(),
@@ -152,7 +152,7 @@ export class CategoryService {
       this.getTravelStyles(),
     ]);
 
-    const settingResponse: SettingResponseDTO = {
+    const settingResponse: SettingResponse = {
       country: country,
       currency: currency,
       language: language,

@@ -1,6 +1,6 @@
-import { CoordinatesDTO } from "@/dtos/weather.dto.js";
 import { InjectionToken } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { Coordinates } from "pinpin_library";
 
 interface OpenWeatherAsyncConfig {
   useFactory: (configService: ConfigService) => Promise<ConfigOptions> | ConfigOptions;
@@ -12,7 +12,7 @@ interface ConfigOptions {
 }
 
 interface CurrentWeatherResponse {
-  coord: CoordinatesDTO;
+  coord: Coordinates;
   weather: WeatherCondition[];
   base: string;
   main: MainWeatherData;
@@ -102,7 +102,7 @@ interface SystemData {
 interface City {
   id: number;
   name: string;
-  coord: CoordinatesDTO;
+  coord: Coordinates;
   country: string;
   population: number;
   timeZone: number;

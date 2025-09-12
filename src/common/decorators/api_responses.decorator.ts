@@ -1,7 +1,7 @@
 import { HttpStatus, Type, applyDecorators } from "@nestjs/common";
 import { ApiProperty, ApiResponse, ApiExtraModels, getSchemaPath } from "@nestjs/swagger";
 
-export class ApiResponseDTO<T = unknown> implements ApiResponseDTO<T> {
+export class ApiResponseDto<T = unknown> implements ApiResponseDto<T> {
   @ApiProperty({ example: 200 })
   statusCode!: number;
 
@@ -23,7 +23,7 @@ export function ApiCommonResponses<T extends Type<unknown>>(
       ApiResponse({
         status: successStatusCode,
         description: successDescription,
-        type: ApiResponseDTO,
+        type: ApiResponseDto,
       }),
       ApiResponse({
         status: HttpStatus.BAD_REQUEST,
@@ -50,13 +50,13 @@ export function ApiCommonResponses<T extends Type<unknown>>(
 
   // 有數據類型的情況，使用 schema 引用方式
   return applyDecorators(
-    ApiExtraModels(successType, ApiResponseDTO),
+    ApiExtraModels(successType, ApiResponseDto),
     ApiResponse({
       status: successStatusCode,
       description: successDescription,
       schema: {
         allOf: [
-          { $ref: getSchemaPath(ApiResponseDTO) },
+          { $ref: getSchemaPath(ApiResponseDto) },
           {
             properties: {
               data: {

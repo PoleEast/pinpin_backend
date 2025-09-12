@@ -1,11 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsArray, IsBoolean, IsDate, IsIn, IsNumber, IsOptional, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
-import { USERPROFILE_REQUSER_VALIDATION, UserProfileRequestDTO, UserProfileResponseDTO } from "pinpin_library";
-import { AccountDTO } from "./user.dto.js";
-import AvatarDTO from "./avatar.dto.js";
+import { AccountRequest, AvatarResponse, USERPROFILE_REQUSER_VALIDATION, UserProfileRequest, UserProfileResponse } from "pinpin_library";
+import { AccountDto } from "./user.dto.js";
+import AvatarDto from "./avatar.dto.js";
 
-class UserProfileDto implements UserProfileResponseDTO, UserProfileRequestDTO {
+class UserProfileDto implements UserProfileResponse, UserProfileRequest {
   @ApiProperty({
     description: "座右銘",
     example: "我是超人",
@@ -69,9 +69,9 @@ class UserProfileDto implements UserProfileResponseDTO, UserProfileRequestDTO {
     description: "頭像資料",
   })
   @ValidateNested()
-  @Type(() => AvatarDTO)
+  @Type(() => AvatarDto)
   @IsOptional()
-  avatar!: AvatarDTO;
+  avatar!: AvatarResponse;
 
   @ApiProperty({
     description: "封面照id",
@@ -193,9 +193,9 @@ class UserProfileDto implements UserProfileResponseDTO, UserProfileRequestDTO {
     required: false,
   })
   @ValidateNested()
-  @Type(() => AccountDTO)
+  @Type(() => AccountDto)
   @IsOptional()
-  user?: AccountDTO;
+  user?: AccountRequest;
 }
 
 export { UserProfileDto };

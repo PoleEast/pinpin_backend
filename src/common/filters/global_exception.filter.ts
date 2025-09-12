@@ -1,18 +1,15 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from "@nestjs/common";
 import { Response } from "express";
 import { DatabaseException } from "../exception/database.exception.js";
-import { ApiErrorResponseDTO } from "pinpin_library";
+import { ApiErrorResponse } from "pinpin_library";
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(GlobalExceptionFilter.name);
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    this.logger.error("發生錯誤", (exception as Error).stack);
-
-    const errorResponse: ApiErrorResponseDTO = {
+    const errorResponse: ApiErrorResponse = {
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       message: "發生預期之外的錯誤",
       error: exception instanceof Error ? exception.name : JSON.stringify(exception),
@@ -24,13 +21,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       errorResponse.error = exception.name || errorResponse.error;
 
       if (exception.cause) {
-        Logger.error("詳細錯誤訊息", exception.cause);
+        Logger.debug("詳細錯誤訊息", exception.cause);
       }
     } else if (exception instanceof DatabaseException) {
       errorResponse.statusCode = HttpStatus.SERVICE_UNAVAILABLE;
       errorResponse.message = exception.message || errorResponse.message;
       errorResponse.error = exception.name || errorResponse.error;
     }
+
+    Logger.debug("錯誤回應", JSON.stringify(exception, Object.getOwnPropertyNames(exception)));
 
     response.status(errorResponse.statusCode).json(errorResponse);
   }

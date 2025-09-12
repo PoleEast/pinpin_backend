@@ -1,27 +1,28 @@
 import { Injectable } from "@nestjs/common";
 import { OpenWeatherService } from "../openWeather/openWeather.service.js";
-import { CoordinatesDTO, CurrentWeatherDTO, WeatherForecastDTO } from "@/dtos/weather.dto.js";
+import { CurrentWeatherDto, WeatherForecastDto } from "@/dtos/weather.dto.js";
 import {
-  mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDTO,
-  mapOpenWeatherWeatherForecastResponseToWeatherForecastDTO,
+  mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDto,
+  mapOpenWeatherWeatherForecastResponseToWeatherForecastDto,
 } from "../../common/mappers/weatherMapper.map.js";
+import { Coordinates } from "pinpin_library";
 
 @Injectable()
 export class WeatherService {
   constructor(private readonly openWeatherService: OpenWeatherService) {}
 
-  async getCurrentWeather(coordinatesDTO: CoordinatesDTO): Promise<CurrentWeatherDTO> {
-    const response = await this.openWeatherService.getCurrentWeather(coordinatesDTO);
+  async getCurrentWeather(coordinatesDto: Coordinates): Promise<CurrentWeatherDto> {
+    const response = await this.openWeatherService.getCurrentWeather(coordinatesDto);
 
-    const result = mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDTO(response);
+    const result = mapOpenWeatherCurrentWeatherResponseToCurrentWeatherDto(response);
 
     return result;
   }
 
-  async getWeatherForecast(coordinatesDTO: CoordinatesDTO): Promise<WeatherForecastDTO> {
-    const response = await this.openWeatherService.getWeatherForecast(coordinatesDTO);
+  async getWeatherForecast(coordinatesDto: Coordinates): Promise<WeatherForecastDto> {
+    const response = await this.openWeatherService.getWeatherForecast(coordinatesDto);
 
-    const result = mapOpenWeatherWeatherForecastResponseToWeatherForecastDTO(response);
+    const result = mapOpenWeatherWeatherForecastResponseToWeatherForecastDto(response);
 
     return result;
   }

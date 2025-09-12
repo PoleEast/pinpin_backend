@@ -1,8 +1,7 @@
-import { CoordinatesDTO } from "@/dtos/weather.dto.js";
 import { INJECTION_TOKEN } from "../../common/constants/constants.js";
 import { ConfigOptions, CurrentWeatherResponse, WeatherForecastResponse } from "@/interfaces/openWeather.interface.js";
 import { Inject, Injectable, ServiceUnavailableException } from "@nestjs/common";
-import { OPENWEATHER_CONFIG } from "pinpin_library";
+import { Coordinates, OPENWEATHER_CONFIG } from "pinpin_library";
 
 @Injectable()
 export class OpenWeatherService {
@@ -22,7 +21,7 @@ export class OpenWeatherService {
     this.apikey = this.config.apiKey;
   }
 
-  async getCurrentWeather(coordinatesDTO: CoordinatesDTO): Promise<CurrentWeatherResponse> {
+  async getCurrentWeather(coordinatesDTO: Coordinates): Promise<CurrentWeatherResponse> {
     const url = this.generateURL(coordinatesDTO, "CURRENT_WEATHER");
 
     try {
@@ -38,7 +37,7 @@ export class OpenWeatherService {
     }
   }
 
-  async getWeatherForecast(coordinatesDTO: CoordinatesDTO): Promise<WeatherForecastResponse> {
+  async getWeatherForecast(coordinatesDTO: Coordinates): Promise<WeatherForecastResponse> {
     const url = this.generateURL(coordinatesDTO, "FORECAST_5_DAY");
 
     try {
@@ -54,7 +53,7 @@ export class OpenWeatherService {
     }
   }
 
-  private generateURL(coordinatesDTO: CoordinatesDTO, resourceType: keyof typeof OPENWEATHER_CONFIG.RESOURCES): URL {
+  private generateURL(coordinatesDTO: Coordinates, resourceType: keyof typeof OPENWEATHER_CONFIG.RESOURCES): URL {
     const baseUrl = `${OPENWEATHER_CONFIG.BASE_URL}/${OPENWEATHER_CONFIG.VERSION}/${OPENWEATHER_CONFIG.RESOURCES[resourceType]}`;
 
     const url = new URL(baseUrl);

@@ -1,7 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { GoogleService } from "../google/google.service.js";
-import { autoCompletResponseeDTO, GoogleMapsPlacePriceLevel, IsearchLocationDTO, IsearchLocationResponseDTO } from "pinpin_library";
-import { googleBusinessStatusMapper, googlePriceLevelMapper, reversePriceLevelMapper } from "../../common/mappers/index.js";
+import { AutoCompletResponse, GetLocationByIdResponse, GoogleMapsPlacePriceLevel, Location, SearchLocationResponse } from "pinpin_library";
+import {
+  mapGoogleMapsPlaceAutocompleteResponseToAutoCompletResponseDto,
+  mapGoogleMapsPlaceGetLocationResponseGetLocationByIdResponseDto,
+  mapGoogleMapsPlaceTextSearchResponseToSearchLocationDto,
+  reversePriceLevelMapper,
+} from "../../common/mappers/index.js";
 import { ConstObjectValues } from "../../common/utils/type.util.js";
 import { ORIGINAL_GOOGLE_MAPS_PLACE } from "../../common/constants/constants.js";
 
@@ -19,42 +24,34 @@ export class SearchLocationService {
     nextPageToken: string = "",
     pageSize: number = 12,
     maxImageHeight: number = 200,
-  ): Promise<IsearchLocationResponseDTO> {
+  ): Promise<SearchLocationResponse> {
     // 將 Google Maps 的價格等級轉換為原始的價格等級
     const originalPriceLevels: ConstObjectValues<typeof ORIGINAL_GOOGLE_MAPS_PLACE.PRICE_LEVEL>[] =
       priceLevel?.map((level) => reversePriceLevelMapper(level)) || [];
 
     const response = await this.googleService.getTextSearch(keyword, primaryType, originalPriceLevels, nextPageToken, pageSize);
-    // const response = await this.googleService.getTestSearchLocation(keyword, primaryType, originalPriceLevels, nextPageToken, pageSize);
-    // 如果沒有找到任何地點，返回空的結果
+
     if (!response.places || response.places.length === 0) {
       return { locations: [], nextPageToken: "" };
     }
 
-    // 將 Google Maps 的地點轉換為自定義的地點 DTO
+    // 將 Google Maps 的地點轉換為自定義的地點 Dto
     //TODO: 實作型別守衛
-    const locations: IsearchLocationDTO[] = await Promise.all(
+    const locations: Location[] = await Promise.all(
       response.places
         .filter((place) => place.displayName?.text && place.id)
         .map(
-          async (place): Promise<IsearchLocationDTO> => ({
-            phoneNumber: place.internationalPhoneNumber || "",
-            rating: place.rating || 0,
-            businessStatus: googleBusinessStatusMapper(place.businessStatus),
-            priceLevel: googlePriceLevelMapper(place.priceLevel),
-            userRatingCount: place.userRatingCount || 0,
-            name: place.displayName?.text || "",
-            primaryType: place.primaryType || "",
-            address: place.shortFormattedAddress || "",
-            id: place.id || "",
-            // photoURL: place.photos?.[0].name ? await this.getPhotoURL(place.photos[0].name, undefined, maxImageHeight) : "",
-            photoURL: this.getTestPhotoURL(),
-            IconMaskBaseURL: place.iconMaskBaseUri + ".svg" || "",
-          }),
+          async (place): Promise<Location> =>
+            mapGoogleMapsPlaceTextSearchResponseToSearchLocationDto(
+              place,
+              (name, width, height) => this.getPhotoURL(name, width, height),
+              undefined,
+              maxImageHeight,
+            ),
         ),
     );
 
-    const result: IsearchLocationResponseDTO = {
+    const result: SearchLocationResponse = {
       locations: locations,
       nextPageToken: response.nextPageToken || "",
     };
@@ -62,7 +59,7 @@ export class SearchLocationService {
     return result;
   }
 
-  async getPhotoURL(photoName?: string, maxImageWidth?: number, maxImageHeight: number = 200): Promise<string> {
+  async getPhotoURL(photoName: string, maxImageWidth?: number, maxImageHeight: number = 200): Promise<string> {
     if (!photoName) {
       return "";
     }
@@ -82,27 +79,28 @@ export class SearchLocationService {
    * @param primaryTypes  地點類型
    * @returns  自動完成的結果
    */
-  async getAutoComplete(keyword: string, sessionToken: string, primaryTypes?: string[]): Promise<autoCompletResponseeDTO[]> {
+  async getAutoComplete(keyword: string, sessionToken: string, primaryTypes?: string[]): Promise<AutoCompletResponse[]> {
     const response = await this.googleService.autocomplete(keyword, sessionToken, primaryTypes);
 
     if (!response.suggestions || response.suggestions.length === 0) {
       return [];
     }
 
-    const result: autoCompletResponseeDTO[] = response.suggestions
+    const result: AutoCompletResponse[] = response.suggestions
       .filter((suggestion) => suggestion.placePrediction?.placeId && suggestion.placePrediction?.structuredFormat)
-      .map((suggestion) => ({
-        placeId: suggestion.placePrediction?.placeId || "",
-        types: suggestion.placePrediction?.types || [],
-        text: suggestion.placePrediction?.structuredFormat?.mainText?.text || "",
-        address: suggestion.placePrediction?.structuredFormat?.secondaryText?.text || "",
-      }));
+      .map((suggestion) => mapGoogleMapsPlaceAutocompleteResponseToAutoCompletResponseDto(suggestion));
 
     return result;
   }
 
-  async getLocationById(placeID: string, sessionToken?: string) {
-    const result = await this.googleService.getLocationById(placeID, sessionToken);
+  async getLocationById(placeID: string, sessionToken?: string): Promise<GetLocationByIdResponse> {
+    const response = await this.googleService.getLocationById(placeID, sessionToken);
+
+    if (!response) {
+      throw new Error("無效的地點ID");
+    }
+
+    const result: GetLocationByIdResponse = mapGoogleMapsPlaceGetLocationResponseGetLocationByIdResponseDto(response);
 
     return result;
   }

@@ -1,42 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Transform } from "class-transformer";
-import { IsNotEmpty, IsNumber, Max, Min } from "class-validator";
-import {
-  type WeatherRequestDTO,
-  type CurrentWeatherResponseDTO,
-  type WeatherData,
-  type WeatherForecastData,
-  COORDINATES_VALIDATION,
-  WeatherForecastResponseDTO,
-} from "pinpin_library";
 
-//TODO:鑽寫API參數驗證錯誤的訊息
+import { CurrentWeatherResponse, WeatherData, WeatherForecastData, WeatherForecastResponse, PeriodOfTime } from "pinpin_library";
 
-class CoordinatesDTO implements WeatherRequestDTO {
-  @ApiProperty({
-    description: "經度",
-    type: Number,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  @Min(COORDINATES_VALIDATION.LAT.MIN)
-  @Max(COORDINATES_VALIDATION.LAT.MAX)
-  @Transform(({ value }) => parseFloat(value))
-  lat: number;
+//TODO:撰寫API參數驗證錯誤的訊息
 
-  @ApiProperty({
-    description: "緯度",
-    type: Number,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  @Min(COORDINATES_VALIDATION.LNG.MIN)
-  @Max(COORDINATES_VALIDATION.LNG.MAX)
-  @Transform(({ value }) => parseFloat(value))
-  lng: number;
-}
-
-class CurrentWeatherDataDTO implements WeatherData {
+class CurrentWeatherDataDto implements WeatherData {
   @ApiProperty({ description: "Unix 時間戳", example: 1755066442 })
   unixTimestamp: number;
 
@@ -77,31 +45,34 @@ class CurrentWeatherDataDTO implements WeatherData {
   icon: string;
 }
 
-class WeatherForecastDataDTO extends CurrentWeatherDataDTO implements WeatherForecastData {
+class WeatherForecastDataDto extends CurrentWeatherDataDto implements WeatherForecastData {
   @ApiProperty({ description: "降雨機率 (%)", example: 30 })
   PoP: number;
+
+  @ApiProperty({ description: "早上或晚上", enum: ["d", "n"] })
+  periodOfTime: PeriodOfTime;
 }
 
-class CurrentWeatherDTO implements CurrentWeatherResponseDTO {
+class CurrentWeatherDto implements CurrentWeatherResponse {
   @ApiProperty({ description: "國家代碼", example: "TW" })
   country: string;
 
   @ApiProperty({ description: "城市名稱", example: "Xianeibu" })
   city: string;
 
-  @ApiProperty({ description: "天氣資料", type: CurrentWeatherDataDTO })
-  data: CurrentWeatherDataDTO;
+  @ApiProperty({ description: "天氣資料", type: CurrentWeatherDataDto })
+  data: WeatherData;
 }
 
-class WeatherForecastDTO implements WeatherForecastResponseDTO {
+class WeatherForecastDto implements WeatherForecastResponse {
   @ApiProperty({ description: "國家代碼", example: "TW" })
   country: string;
 
   @ApiProperty({ description: "城市名稱", example: "Xianeibu" })
   city: string;
 
-  @ApiProperty({ description: "天氣資料", type: [WeatherForecastDataDTO] })
-  data: WeatherForecastDataDTO[];
+  @ApiProperty({ description: "天氣資料", type: [WeatherForecastDataDto] })
+  data: WeatherForecastData[];
 }
 
-export { CoordinatesDTO, CurrentWeatherDTO, CurrentWeatherDataDTO, WeatherForecastDataDTO, WeatherForecastDTO };
+export { CurrentWeatherDto, CurrentWeatherDataDto, WeatherForecastDataDto, WeatherForecastDto };
