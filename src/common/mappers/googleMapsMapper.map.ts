@@ -127,7 +127,7 @@ async function mapGoogleMapsPlaceTextSearchResponseToSearchLocationDto(
   data: places_v1.Schema$GoogleMapsPlacesV1Place,
   photoURLCallback: (name: string, maxImageWidth?: number, maxImageHeight?: number) => Promise<string> | string,
   maxImageWidth?: number,
-  imageMaxHeight: number = 200,
+  maxImageHeight: number = 200,
 ): Promise<Location> {
   return {
     phoneNumber: data.internationalPhoneNumber || "",
@@ -139,7 +139,7 @@ async function mapGoogleMapsPlaceTextSearchResponseToSearchLocationDto(
     primaryType: data.primaryType || "",
     address: data.shortFormattedAddress || "",
     id: data.id || "",
-    photoURL: data.photos?.[0].name ? await photoURLCallback(data.photos[0].name, maxImageWidth, imageMaxHeight) : "",
+    photoURL: data.photos?.[0].name ? await photoURLCallback(data.photos[0].name, maxImageWidth, maxImageHeight) : "",
     IconMaskBaseURL: data.iconMaskBaseUri + ".svg" || "",
   };
 }
@@ -155,7 +155,12 @@ function mapGoogleMapsPlaceAutocompleteResponseToAutoCompletResponseDto(
   };
 }
 
-function mapGoogleMapsPlaceGetLocationResponseGetLocationByIdResponseDto(data: places_v1.Schema$GoogleMapsPlacesV1Place): GetLocationByIdResponse {
+async function mapGoogleMapsPlaceGetLocationResponseGetLocationByIdResponseDto(
+  data: places_v1.Schema$GoogleMapsPlacesV1Place,
+  photoURLCallback: (name: string, maxImageWidth?: number, maxImageHeight?: number) => Promise<string> | string,
+  maxImageWidth?: number,
+  maxImageHeight: number = 200,
+): Promise<GetLocationByIdResponse> {
   return {
     phoneNumber: data.internationalPhoneNumber || "",
     rating: data.rating || 0,
@@ -163,10 +168,10 @@ function mapGoogleMapsPlaceGetLocationResponseGetLocationByIdResponseDto(data: p
     priceLevel: googlePriceLevelMapper(data.priceLevel),
     userRatingCount: data.userRatingCount || 0,
     name: data.displayName?.text || "",
-    primaryType: data.primaryType || "",
+    primaryType: data.primaryTypeDisplayName?.text || "",
     address: data.shortFormattedAddress || "",
     id: data.id || "",
-    photoURL: data.photos?.[0]?.name || "",
+    photoURL: data.photos?.[0].name ? await photoURLCallback(data.photos[0].name, maxImageWidth, maxImageHeight) : "",
     IconMaskBaseURL: data.iconMaskBaseUri + ".svg" || "",
     location: {
       lat: data.location?.latitude || 0,
@@ -189,6 +194,7 @@ function mapGoogleMapsPlaceGetLocationResponseGetLocationByIdResponseDto(data: p
       currencyCode: data.priceRange?.endPrice?.currencyCode || "",
     },
     timeZone: data.timeZone?.id || "",
+    country: data.addressComponents?.findLast((x) => x.types?.includes("country"))?.longText ?? "",
   };
 }
 

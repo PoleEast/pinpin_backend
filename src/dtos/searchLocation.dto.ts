@@ -266,6 +266,16 @@ class GetLocationByIdDto extends LocationDto implements GetLocationByIdResponse 
     },
   })
   timeZone: string;
+
+  @ApiProperty({
+    description: "國家",
+    example: "Taiwan",
+    externalDocs: {
+      description: "Google Places Address Components",
+      url: "https://developers.google.com/maps/documentation/places/web-service/reference/rest/v1/places?hl=zh-tw#addresscomponent",
+    },
+  })
+  country: string;
 }
 
 export { AutoCompleteDto, SearchLocationDto, GetLocationByIdDto, OpeningTimePeriodsDto, ReviewDto, PriceRangeDto, LocationDto };
