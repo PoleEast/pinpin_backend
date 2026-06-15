@@ -44,7 +44,7 @@ export class SearchLocationService {
           async (place): Promise<Location> =>
             mapGoogleMapsPlaceTextSearchResponseToSearchLocationDto(
               place,
-              (name, width, height) => this.getPhotoURL(name, width, height),
+              (name, width, height) => this.getTestPhotoURL(),
               undefined,
               maxImageHeight,
             ),
@@ -93,14 +93,19 @@ export class SearchLocationService {
     return result;
   }
 
-  async getLocationById(placeID: string, sessionToken?: string): Promise<GetLocationByIdResponse> {
+  async getLocationById(placeID: string, sessionToken?: string, maxImageHeight: number = 200): Promise<GetLocationByIdResponse> {
     const response = await this.googleService.getLocationById(placeID, sessionToken);
 
     if (!response) {
       throw new Error("無效的地點ID");
     }
 
-    const result: GetLocationByIdResponse = mapGoogleMapsPlaceGetLocationResponseGetLocationByIdResponseDto(response);
+    const result: GetLocationByIdResponse = await mapGoogleMapsPlaceGetLocationResponseGetLocationByIdResponseDto(
+      response,
+      (name, width, height) => this.getTestPhotoURL(),
+      undefined,
+      maxImageHeight,
+    );
 
     return result;
   }
